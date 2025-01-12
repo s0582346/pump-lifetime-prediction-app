@@ -5,6 +5,7 @@ import 'package:flutter_predictive_maintenance_app/features/history/presentation
 import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_screen.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_screen.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/custom_bottom_navigation_bar_item.dart';
+import 'package:flutter_predictive_maintenance_app/navigation/custom_app_bar.dart';
 
 class NavigationPage extends ConsumerWidget {
   const NavigationPage({super.key});
@@ -14,9 +15,7 @@ class NavigationPage extends ConsumerWidget {
     final currentIndex = ref.watch(bottomNavigationProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF007167),
-      ),
+      appBar: const CustomAppBar(),
       body: IndexedStack(
         index: currentIndex,
         children: const [
