@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_predictive_maintenance_app/navigation/navigation_page.dart';
+import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
