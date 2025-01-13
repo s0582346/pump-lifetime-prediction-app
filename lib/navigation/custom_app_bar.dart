@@ -8,10 +8,10 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: const Color(0xFF007167),
       title: const Text(
-        'Netzsch',
+        'NETZSCH',
         style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          fontWeight: FontWeight.w900,
           color: Colors.white,
         ),
       ),

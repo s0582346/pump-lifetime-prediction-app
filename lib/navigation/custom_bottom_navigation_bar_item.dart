@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomBottomNavigationBarItem extends BottomNavigationBarItem {
   
+  // constructor
   CustomBottomNavigationBarItem({
     required String assetPath,
     Color inactiveColor = Colors.grey,
@@ -11,7 +12,7 @@ class CustomBottomNavigationBarItem extends BottomNavigationBarItem {
     double activeWidth = 35.0,
     double activeHeight = 35.0,
     String label = '',
-  }) : super(
+  }) : super( // calling the constructor in the parent class
           icon: Image.asset(
             assetPath,
             color: inactiveColor,
@@ -25,5 +26,5 @@ class CustomBottomNavigationBarItem extends BottomNavigationBarItem {
             height: activeHeight,
           ),
           label: label,
-        );
+    );
 }
