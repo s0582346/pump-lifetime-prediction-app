@@ -12,11 +12,11 @@ class NavigationPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentIndex = ref.watch(bottomNavigationProvider);
+    final currentIndex = ref.watch(bottomNavigationProvider); // watch the state of the bottomNavigationProvider
 
     return Scaffold(
       appBar: const CustomAppBar(),
-      body: IndexedStack(
+      body: IndexedStack( // IndexedStack is used to display the screen based on the index / it maintains the state of the screen
         index: currentIndex,
         children: const [
           HistoryScreen(),
@@ -27,7 +27,7 @@ class NavigationPage extends ConsumerWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (index) {
-          ref.read(bottomNavigationProvider.notifier).state = index;
+          ref.read(bottomNavigationProvider.notifier).state = index; // update the state of the bottomNavigationProvider
         },
         items: [
           CustomBottomNavigationBarItem(assetPath: 'assets/nav/database.png'),
