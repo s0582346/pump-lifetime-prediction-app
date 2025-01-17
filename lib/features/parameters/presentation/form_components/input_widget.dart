@@ -32,14 +32,14 @@ class InputWidget extends StatelessWidget {
           ),
         ),
         Container(
-          height: 43,
+          height: 50,
           child: TextFormField(
           initialValue: initialValue,
           onChanged: onChanged,
           decoration: InputDecoration(
             hintText: placeholder,
             hintStyle: const TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               color: Colors.grey,
             ),
             border: OutlineInputBorder(
@@ -57,7 +57,7 @@ class InputWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          style: const TextStyle(fontSize: 14),
+          style: const TextStyle(fontSize: 16),
           keyboardType: TextInputType.number,
         )
         )
