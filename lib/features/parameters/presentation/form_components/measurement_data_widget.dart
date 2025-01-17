@@ -1,3 +1,4 @@
+//final pumpDataState = ref.watch(pumpDataProvider);
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_controllers/pump_data_controller.dart';
@@ -6,14 +7,15 @@ import 'package:flutter_predictive_maintenance_app/features/parameters/presentat
 import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_components/primary_button.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';  
 
-class PumpDataWidget extends ConsumerWidget {
-  const PumpDataWidget({super.key});
+
+class MeasurementDataWidget extends ConsumerWidget {
+  const MeasurementDataWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pumpDataNotifier = ref.read(pumpDataProvider.notifier);
-
-    return ListView(
+    
+     return ListView(
       padding: const EdgeInsets.all(50.0),
       children: [
         SelectWidget(
@@ -25,21 +27,6 @@ class PumpDataWidget extends ConsumerWidget {
           label: 'Medium',
           onChanged: (value) => pumpDataNotifier.medium = value,
         ),
-        InputWidget(
-          label: 'Festoffkonzentration [%]',
-          placeholder: 'z.B. 30%',
-          onChanged: (value) => pumpDataNotifier.solidConcentration = value,
-        ),
-        InputWidget(
-          label: 'zulässiger Gesamtverschleiß [%]',
-          placeholder: 'z.B. 70%',
-          onChanged: (value) => pumpDataNotifier.permissibleTotalWear = value,
-        ),
-        SelectWidget(
-          label: 'Messbarer Parameter',
-          onChanged: (value) => pumpDataNotifier.measurableParameter = value,
-          items: ['Volumenstrom', 'Druck'],
-        ),
         PrimaryButton(
           onPressed: () => pumpDataNotifier.savePumpData(),
           label: 'Speichern',
@@ -48,4 +35,5 @@ class PumpDataWidget extends ConsumerWidget {
       ],
     );
   }
+
 }

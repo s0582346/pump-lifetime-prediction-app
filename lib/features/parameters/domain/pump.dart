@@ -1,5 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 class Pump {
   final String? type;
   final String? rotorGeometry;
