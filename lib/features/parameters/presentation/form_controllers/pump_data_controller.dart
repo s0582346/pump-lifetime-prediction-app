@@ -30,7 +30,7 @@ class PumpDataController extends Notifier<Pump> {
     state = state.copyWith(medium: medium);
   }
 
-  set measurableParameter(String measurableParameter) {
+  set measurableParameter(String? measurableParameter) {
     state = state.copyWith(measurableParameter: measurableParameter);
   }
 
