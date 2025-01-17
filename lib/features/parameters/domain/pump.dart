@@ -8,6 +8,7 @@ class Pump {
   final String? medium;
   final String? measurableParameter;
   final String? permissibleTotalWear;
+  final String? solidConcentration;
 
   Pump({
     this.type,
@@ -17,6 +18,7 @@ class Pump {
     this.medium,
     this.measurableParameter,
     this.permissibleTotalWear,
+    this.solidConcentration
   });
 
 
@@ -29,6 +31,7 @@ class Pump {
     String? medium,
     String? measurableParameter,
     String? permissibleTotalWear,
+    String? solidConcentration
   }) {
     return Pump(
       type: type ?? this.type,
@@ -38,6 +41,7 @@ class Pump {
       medium: medium ?? this.medium,
       measurableParameter: measurableParameter ?? this.measurableParameter,
       permissibleTotalWear: permissibleTotalWear ?? this.permissibleTotalWear,
+      solidConcentration: solidConcentration ?? this.solidConcentration
     );
   }
 }

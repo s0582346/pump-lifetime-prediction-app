@@ -10,7 +10,7 @@ class PumpDataController extends Notifier<Pump> {
   }
 
 
-  set pumpType(String type) {
+  set pumpType(String? type) {
     state = state.copyWith(type: type);
   }
 
@@ -37,6 +37,10 @@ class PumpDataController extends Notifier<Pump> {
   set permissibleTotalWear(String permissibleTotalWear) {
     state = state.copyWith(permissibleTotalWear: permissibleTotalWear);
   }
+  
+  set solidConcentration(String solidConcentration) {
+    state = state.copyWith(solidConcentration: solidConcentration);
+  }
 
 
   void reset() {
@@ -46,10 +50,8 @@ class PumpDataController extends Notifier<Pump> {
   Future<void> savePumpData() async {
     // save the pump data to the database
     print('Type: ${state.type}');
-    print('rotor Geometry: ${state.rotorGeometry}');
-    print('stator Geometry: ${state.statorGeometry}');
-    print('speed Change: ${state.speedChange}');
     print('medium: ${state.medium}');
+    print('solid Concentration: ${state.solidConcentration}');
     print('measurable Parameter: ${state.measurableParameter}');
     print('permissible Total Wear: ${state.permissibleTotalWear}');
 
