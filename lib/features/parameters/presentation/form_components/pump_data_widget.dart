@@ -14,7 +14,7 @@ class PumpDataWidget extends ConsumerWidget {
     final pumpDataNotifier = ref.read(pumpDataProvider.notifier);
 
     return ListView(
-      padding: const EdgeInsets.all(50.0),
+      padding: const EdgeInsets.all(40.0),
       children: [
         SelectWidget(
           label: 'Pumpentyp',
@@ -24,11 +24,6 @@ class PumpDataWidget extends ConsumerWidget {
         InputWidget(
           label: 'Medium',
           onChanged: (value) => pumpDataNotifier.medium = value,
-        ),
-        InputWidget(
-          label: 'Festoffkonzentration [%]',
-          placeholder: 'z.B. 30%',
-          onChanged: (value) => pumpDataNotifier.solidConcentration = value,
         ),
         InputWidget(
           label: 'zulässiger Gesamtverschleiß [%]',
