@@ -1,11 +1,11 @@
 class Pump {
-  final String? type;
+  final String? type; // +
   final String? rotorGeometry;
   final String? statorGeometry;
-  final String? speedChange;
-  final String? medium;
-  final String? measurableParameter;
-  final String? permissibleTotalWear;
+  final String? speedChange; // Drehzahländerung
+  final String? medium; // +
+  final String? measurableParameter; // +
+  final String? permissibleTotalWear; // +
   final String? solidConcentration;
 
   Pump({

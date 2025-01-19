@@ -42,7 +42,6 @@ class PumpDataController extends Notifier<Pump> {
     state = state.copyWith(solidConcentration: solidConcentration);
   }
 
-
   void reset() {
     state = Pump();
   } 

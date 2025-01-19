@@ -19,15 +19,16 @@ class _SelectWidgetState extends State<SelectWidget> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 325,
-      height: 85,
+      height: 90,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             widget.label,
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 15,
               color: Colors.grey,
+              fontWeight: FontWeight.bold,
             ),
           ),
           Container(

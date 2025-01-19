@@ -8,8 +8,8 @@ class FormScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      child: PumpDataWidget(),
-      //child: MeasurementDataWidget(),
+      //child: PumpDataWidget(),
+      child: MeasurementDataWidget(),
     );
   }
 }
