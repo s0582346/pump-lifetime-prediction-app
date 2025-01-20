@@ -12,29 +12,35 @@ class PumpDataWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pumpDataNotifier = ref.read(pumpDataProvider.notifier);
+    final pumpDataState = ref.watch(pumpDataProvider);
 
     return ListView(
       padding: const EdgeInsets.all(40.0),
       children: [
         SelectWidget(
           label: 'Pumpentyp',
+          selectedValue: pumpDataState.type,
           onChanged: (value) => pumpDataNotifier.pumpType = value,
           items: ['a', 'b', 'c'],
         ),
         InputWidget(
           label: 'Medium',
+          initialValue: pumpDataState.medium,
           onChanged: (value) => pumpDataNotifier.medium = value,
         ),
         InputWidget(
           label: 'zulässiger Gesamtverschleiß [%]',
           placeholder: 'z.B. 70%',
+          initialValue: pumpDataState.permissibleTotalWear,
           onChanged: (value) => pumpDataNotifier.permissibleTotalWear = value,
         ),
         SelectWidget(
           label: 'Messbarer Parameter',
+          selectedValue: pumpDataState.measurableParameter,
           onChanged: (value) => pumpDataNotifier.measurableParameter = value,
           items: ['Volumenstrom', 'Druck'],
         ),
+        const SizedBox(height: 20),
         PrimaryButton(
           onPressed: () => pumpDataNotifier.savePumpData(),
           label: 'Speichern',

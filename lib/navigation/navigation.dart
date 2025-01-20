@@ -7,8 +7,8 @@ import 'package:flutter_predictive_maintenance_app/features/chart/presentation/c
 import 'package:flutter_predictive_maintenance_app/navigation/custom_bottom_navigation_bar_item.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/custom_app_bar.dart';
 
-class NavigationPage extends ConsumerWidget {
-  const NavigationPage({super.key});
+class Navigation extends ConsumerWidget {
+  const Navigation({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
