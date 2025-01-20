@@ -24,6 +24,7 @@ class InputWidget extends StatelessWidget {
       child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // label
         Text(
           label,
           style: const TextStyle(
@@ -33,14 +34,15 @@ class InputWidget extends StatelessWidget {
           ),
         ),
         Container(
-          height: 50,
+          height: 40,
           child: TextFormField(
           initialValue: initialValue,
           onChanged: onChanged,
           decoration: InputDecoration(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             hintText: placeholder,
             hintStyle: const TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               color: Colors.grey,
             ),
             border: OutlineInputBorder(
@@ -58,7 +60,7 @@ class InputWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          style: const TextStyle(fontSize: 16),
+          style: const TextStyle(fontSize: 14),
           keyboardType: TextInputType.number,
         )
         )

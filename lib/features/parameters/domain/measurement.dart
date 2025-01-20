@@ -5,7 +5,7 @@ class Measurement{
   final Double? volumeFlow;
   final Double? pressure;
   final Double? rotationalFrequency;
-  final Int? currentOperatingHours;
+  final String? currentOperatingHours;
   final Int? averageOperatingHoursPerDay;
 
   Measurement({
@@ -22,7 +22,7 @@ class Measurement{
     Double? volumeFlow,
     Double? pressure,
     Double? rotationalFrequency,
-    Int? currentOperatingHours,
+    String? currentOperatingHours,
     Int? averageOperatingHoursPerDay
   }) {
     return Measurement(

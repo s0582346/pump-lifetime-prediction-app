@@ -1,13 +1,10 @@
-//final pumpDataState = ref.watch(pumpDataProvider);
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-//import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_controllers/pump_data_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_controllers/measurement_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_components/input_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_components/select_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_components/primary_button.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';  
-
 
 class MeasurementDataWidget extends ConsumerWidget {
   const MeasurementDataWidget({super.key});
@@ -15,6 +12,7 @@ class MeasurementDataWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final measurementNotifier = ref.read(measurementProvider.notifier);
+    final measurementState = ref.watch(measurementProvider);
     
      return ListView(
       padding: const EdgeInsets.all(50.0),
@@ -22,20 +20,25 @@ class MeasurementDataWidget extends ConsumerWidget {
         //TODO implement condition for volume flow
         InputWidget(
           label: 'Datum',
+          initialValue: measurementState.date,
           onChanged: (value) => measurementNotifier.date = value,
         ),
         InputWidget(
           label: 'Volumenstrom',
+          initialValue: measurementState.volumeFlow,
           onChanged: (value) => measurementNotifier.volumeFlow = value,
         ),
         InputWidget(
           label: 'Drehzahl',
+          initialValue: measurementState.rotationalFrequency,
           onChanged: (value) => measurementNotifier.rotationalFrequency = value,
         ),
         InputWidget(
           label: 'Aktuelle Betriebsstunden',
+          initialValue: measurementState.currentOperatingHours,
           onChanged: (value) => measurementNotifier.currentOperatingHours = value,
         ),
+        const SizedBox(height: 20),
         PrimaryButton(
           onPressed: () => measurementNotifier.saveMeasurement(),
           label: 'Speichern',

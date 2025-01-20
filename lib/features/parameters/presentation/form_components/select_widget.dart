@@ -26,17 +26,23 @@ class _SelectWidgetState extends State<SelectWidget> {
           Text(
             widget.label,
             style: const TextStyle(
-              fontSize: 15,
+              fontSize: 14,
               color: Colors.grey,
               fontWeight: FontWeight.bold,
             ),
           ),
           Container(
-            height: 50,
+            height: 40,
             child: DropdownButtonFormField<String>(
               value: (widget.selectedValue != null && widget.selectedValue!.isNotEmpty) ? widget.selectedValue : null,
               onChanged: widget.onChanged,
-              hint: const Text('Bitte auswählen'),
+              hint: const Text(
+                'Bitte auswählen',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+              ),
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderSide: const BorderSide(
@@ -52,13 +58,14 @@ class _SelectWidgetState extends State<SelectWidget> {
                   ),
                   borderRadius: BorderRadius.circular(3),
                 ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               ),
               items: widget.items.map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(
                     value,
-                    style: const TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 14),
                   ),
                 );
               }).toList(),
