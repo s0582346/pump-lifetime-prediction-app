@@ -5,9 +5,10 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseHelper {
 
  static final DatabaseHelper _instance = DatabaseHelper._internal();
-  factory DatabaseHelper() => _instance;
   static Database? _database;
 
+  // this makes the class a singleton
+  factory DatabaseHelper() => _instance;
   // private constructor
    DatabaseHelper._internal();
 
@@ -18,7 +19,7 @@ class DatabaseHelper {
     return _database!;
   }
 
-   Future<Database> _initDB(String filePath) async {
+  Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
   
     print('Database path: $dbPath');
@@ -29,7 +30,7 @@ class DatabaseHelper {
       path,
       version: 1,
       onConfigure: (db) async {
-        await db.execute('PRAGMA foreign_keys = ON');
+        await db.execute('PRAGMA foreign_keys = ON'); // enable foreign keys
       },
       onCreate: _createTables,
     );
@@ -41,11 +42,11 @@ class DatabaseHelper {
     // create pump table
     await db.execute('''
       CREATE TABLE pump (
-        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        id TEXT PRIMARY KEY NOT NULL,
         type TEXT NOT NULL,
         medium TEXT NOT NULL,
         measurableParameter TEXT NOT NULL,
-        permissibleTotalWear INTEGER NOT NULL
+        permissibleTotalWear INTEGER NOT NULL,
         solidConcentration INTEGER
       )
     ''');
@@ -59,7 +60,8 @@ class DatabaseHelper {
         pressure INTEGER,
         rotationalFrequency INTEGER NOT NULL,
         currentOperatingHours INTEGER,
-        averageOperatingHoursPerDay INTEGER
+        averageOperatingHoursPerDay INTEGER,
+        adjustment_id TEXT NOT NULL,
         FOREIGN KEY (adjustment_id) REFERENCES adjustment(id)
       )
     ''');
@@ -68,9 +70,10 @@ class DatabaseHelper {
     await db.execute(
       '''
       CREATE TABLE adjustment (
-        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        id TEXT PRIMARY KEY NOT NULL,
+        status TEXT NOT NULL,
         date TEXT NOT NULL,
-        pump_id INT NOT NULL,
+        pump_id TEXT NOT NULL,
         FOREIGN KEY (pump_id) REFERENCES pump(id)
       )
       '''
@@ -83,7 +86,9 @@ class DatabaseHelper {
     return await db.insert(
       table, 
       data, 
-      conflictAlgorithm: ConflictAlgorithm.replace
+      conflictAlgorithm: ConflictAlgorithm.replace // replace if the same data is inserted
     );
   }
+
+  // 
 }
