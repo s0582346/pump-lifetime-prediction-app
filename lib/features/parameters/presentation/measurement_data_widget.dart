@@ -15,7 +15,7 @@ class MeasurementDataWidget extends ConsumerWidget {
     final measurementState = ref.watch(measurementProvider);
     
      return ListView(
-      padding: const EdgeInsets.all(50.0),
+      padding: const EdgeInsets.all(40.0),
       children: [
         //TODO implement condition for volume flow
         InputWidget(

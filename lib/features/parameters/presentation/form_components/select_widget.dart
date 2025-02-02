@@ -31,7 +31,7 @@ class _SelectWidgetState extends State<SelectWidget> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Container(
+          SizedBox(
             height: 40,
             child: DropdownButtonFormField<String>(
               value: (widget.selectedValue != null && widget.selectedValue!.isNotEmpty) ? widget.selectedValue : null,

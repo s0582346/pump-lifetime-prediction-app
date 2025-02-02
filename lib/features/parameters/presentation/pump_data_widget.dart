@@ -21,7 +21,7 @@ class PumpDataWidget extends ConsumerWidget {
           label: 'Pumpentyp',
           selectedValue: pumpDataState.type,
           onChanged: (value) => pumpDataNotifier.pumpType = value,
-          items: ['a', 'b', 'c'],
+          items: const ['a', 'b', 'c'],
         ),
         InputWidget(
           label: 'Medium',
@@ -38,7 +38,7 @@ class PumpDataWidget extends ConsumerWidget {
           label: 'Messbarer Parameter',
           selectedValue: pumpDataState.measurableParameter,
           onChanged: (value) => pumpDataNotifier.measurableParameter = value,
-          items: ['Volumenstrom', 'Druck'],
+          items: const ['Volumenstrom', 'Druck'],
         ),
         const SizedBox(height: 20),
         PrimaryButton(

@@ -1,12 +1,11 @@
-import 'dart:ffi';
 
 class Measurement{
-  final DateTime? date;
-  final Double? volumeFlow;
-  final Double? pressure;
-  final Double? rotationalFrequency;
-  final String? currentOperatingHours;
-  final Int? averageOperatingHoursPerDay;
+  final date;
+  final volumeFlow;
+  final pressure;
+  final rotationalFrequency;
+  final currentOperatingHours;
+  final averageOperatingHoursPerDay;
 
   Measurement({
     this.date,
@@ -18,12 +17,12 @@ class Measurement{
   });
 
   Measurement copyWith({
-    DateTime? date,
-    Double? volumeFlow,
-    Double? pressure,
-    Double? rotationalFrequency,
-    String? currentOperatingHours,
-    Int? averageOperatingHoursPerDay
+    date,
+    volumeFlow,
+    pressure,
+    rotationalFrequency,
+    currentOperatingHours,
+    averageOperatingHoursPerDay
   }) {
     return Measurement(
       date: date ?? this.date,
@@ -33,5 +32,16 @@ class Measurement{
       currentOperatingHours: currentOperatingHours ?? this.currentOperatingHours,
       averageOperatingHoursPerDay: averageOperatingHoursPerDay ?? this.averageOperatingHoursPerDay
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'date': date,
+      'volumeFlow': volumeFlow,
+      'pressure': pressure,
+      'rotationalFrequency': rotationalFrequency,
+      'currentOperatingHours': currentOperatingHours,
+      'averageOperatingHoursPerDay': averageOperatingHoursPerDay
+    };
   }
 }

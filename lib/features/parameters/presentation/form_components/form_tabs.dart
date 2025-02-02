@@ -3,7 +3,7 @@ import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FormTabs extends ConsumerWidget {
-  const FormTabs({Key? key}) : super(key: key);
+  const FormTabs({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,7 +25,7 @@ class FormTabs extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const SizedBox(height: 8),
-                  Text(
+                  const Text(
                     'Pumpendaten',
                     style: TextStyle(
                       color: Colors.grey,  // for unselected text

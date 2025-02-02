@@ -42,4 +42,17 @@ class Pump {
       solidConcentration: solidConcentration ?? this.solidConcentration
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'type': type,
+      'rotorGeometry': rotorGeometry,
+      'statorGeometry': statorGeometry,
+      'speedChange': speedChange,
+      'medium': medium,
+      'measurableParameter': measurableParameter,
+      'permissibleTotalWear': permissibleTotalWear,
+      'solidConcentration': solidConcentration
+    };
+  }
 }
