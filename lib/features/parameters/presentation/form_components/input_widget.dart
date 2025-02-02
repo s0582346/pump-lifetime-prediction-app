@@ -33,7 +33,7 @@ class InputWidget extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Container(
+        SizedBox(
           height: 40,
           child: TextFormField(
           initialValue: initialValue,
