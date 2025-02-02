@@ -47,6 +47,16 @@ class PumpDataController extends Notifier<Pump> {
   } 
 
   Future<void> savePumpData() async {
+    
+    final convertedState = state.copyWith(
+      solidConcentration: state.solidConcentration,
+      type: state.type,
+      medium: state.medium,
+      measurableParameter: state.measurableParameter,
+      permissibleTotalWear: state.permissibleTotalWear
+    );
+
+
     // save the pump data to the database
     print('Type: ${state.type}');
     print('medium: ${state.medium}');

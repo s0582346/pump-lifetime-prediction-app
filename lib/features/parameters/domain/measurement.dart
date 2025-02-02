@@ -1,6 +1,6 @@
-
 class Measurement{
-  final date;
+  final date = DateTime.now();
+  final adjustmentId;
   final volumeFlow;
   final pressure;
   final rotationalFrequency;
@@ -8,7 +8,7 @@ class Measurement{
   final averageOperatingHoursPerDay;
 
   Measurement({
-    this.date,
+    this.adjustmentId,
     this.volumeFlow,
     this.pressure,
     this.rotationalFrequency,
@@ -17,7 +17,7 @@ class Measurement{
   });
 
   Measurement copyWith({
-    date,
+    adjustmentId,
     volumeFlow,
     pressure,
     rotationalFrequency,
@@ -25,7 +25,7 @@ class Measurement{
     averageOperatingHoursPerDay
   }) {
     return Measurement(
-      date: date ?? this.date,
+      adjustmentId: adjustmentId ?? this.adjustmentId,
       volumeFlow: volumeFlow ?? this.volumeFlow,
       pressure: pressure ?? this.pressure,
       rotationalFrequency: rotationalFrequency ?? this.rotationalFrequency,
@@ -36,7 +36,8 @@ class Measurement{
 
   Map<String, dynamic> toMap() {
     return {
-      'date': date,
+      'adjustmentId': adjustmentId,
+      'date': date.toIso8601String(),
       'volumeFlow': volumeFlow,
       'pressure': pressure,
       'rotationalFrequency': rotationalFrequency,

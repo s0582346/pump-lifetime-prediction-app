@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_controllers/measurement_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_components/input_widget.dart';
-import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_components/select_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_components/primary_button.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';  
 
@@ -18,11 +17,6 @@ class MeasurementDataWidget extends ConsumerWidget {
       padding: const EdgeInsets.all(40.0),
       children: [
         //TODO implement condition for volume flow
-        InputWidget(
-          label: 'Datum',
-          initialValue: measurementState.date,
-          onChanged: (value) => measurementNotifier.date = value,
-        ),
         InputWidget(
           label: 'Volumenstrom',
           initialValue: measurementState.volumeFlow,
