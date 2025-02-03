@@ -15,7 +15,7 @@ class AdjustmentRepository {
     await db.rawInsert(
       'INSERT INTO pump (id, type, medium, measurableParameter, permissibleTotalWear) VALUES (?, ?, ?, ?, ?)',	
       ['NM045', 'NM045', 'sand', 'volumeFlow', '70'],
-    ); */
+    );*/ 
 
 
     final List<Map<String, dynamic>> existingAdjustment = await db.rawQuery(
@@ -29,7 +29,7 @@ class AdjustmentRepository {
  
     // if no open adjustment found, create a new one
     return await db.rawInsert(
-      'INSERT INTO adjustment (id, status, pump_id, date) VALUES (?, ?, ?, ?)',
+      'INSERT INTO adjustment (id, status, pumpId, date) VALUES (?, ?, ?, ?)',
       [    
         'NM045-1', // should not be static, 
         'open',

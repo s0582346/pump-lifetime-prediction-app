@@ -4,7 +4,8 @@ import 'package:flutter_predictive_maintenance_app/features/parameters/presentat
 import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_components/input_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_components/select_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_components/primary_button.dart';
-import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';  
+import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
+import 'package:flutter_predictive_maintenance_app/features/parameters/domain/pump.dart';  
 
 class PumpDataWidget extends ConsumerWidget {
   const PumpDataWidget({super.key});

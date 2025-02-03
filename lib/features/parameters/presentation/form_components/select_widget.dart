@@ -7,7 +7,13 @@ class SelectWidget extends StatefulWidget {
   final ValueChanged<String?>? onChanged;
   final List<String> items;
    
-  const SelectWidget({super.key, this.selectedValue, this.label = '', required this.onChanged, required this.items});
+  const SelectWidget({
+    super.key, 
+    this.selectedValue, 
+    this.label = '', 
+    required this.onChanged, 
+    required this.items
+  });
 
   @override
   _SelectWidgetState createState() => _SelectWidgetState();

@@ -13,8 +13,18 @@ class MeasurementService {
       // Get or create adjustment
       final adjustmentId = await adjustmentRepo.getOrCreateAdjustment();
 
-      // Save measurement with the adjustment ID
-      await measurementRepo.saveMeasurement(measurement.copyWith(adjustmentId: adjustmentId));
+      final updatedMeasurement = measurement.copyWith(adjustmentId: adjustmentId);
+
+      print('Date: ${updatedMeasurement.date}');
+      print('Adjustment ID: ${updatedMeasurement.adjustmentId}');
+      print('Volume Flow: ${updatedMeasurement.volumeFlow}');
+      print('Pressure: ${updatedMeasurement.pressure}');
+      print('Rotational Frequency: ${updatedMeasurement.rotationalFrequency}');
+      print('Current Operating Hours: ${updatedMeasurement.currentOperatingHours}');
+      print('Average Operating Hours Per Day: ${updatedMeasurement.averageOperatingHoursPerDay}');
+
+
+      await measurementRepo.saveMeasurement(updatedMeasurement);
     } catch (e) {
       // Handle errors appropriately
       print('Error saving measurement: $e');

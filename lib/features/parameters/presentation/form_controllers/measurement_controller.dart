@@ -1,3 +1,4 @@
+import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/pump_data_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/parameters/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/parameters/application/measurement_service.dart';
@@ -29,28 +30,24 @@ class MeasurementController extends Notifier<Measurement> {
   }
 
   set pressure(value) {
-    //value = Utils().convertToInt(value);
     state = state.copyWith(pressure: value);
   }
 
   set rotationalFrequency(value) {
-    //value = Utils().convertToInt(value);
     state = state.copyWith(rotationalFrequency: value);
   }
 
   set currentOperatingHours(value) {
-    //value = Utils().convertToInt(value);
     state = state.copyWith(currentOperatingHours: value);
   }
 
   set averageOperatingHoursPerDay(value) {
-    //value = Utils().convertToInt(value);
     state = state.copyWith(averageOperatingHoursPerDay: value);
   }
 
-
+ // reset the form
   void reset() {
-    state = Measurement();
+    state = build();
   }
 
   // save the measurement data to the database
@@ -64,18 +61,9 @@ class MeasurementController extends Notifier<Measurement> {
       currentOperatingHours: Utils().convertToInt(state.currentOperatingHours),
       averageOperatingHoursPerDay: Utils().convertToInt(state.averageOperatingHoursPerDay),
     );
-
-    print('Date: ${convertedState.date}');
-    print('Volume Flow: ${convertedState.volumeFlow}');
-    print('Pressure: ${convertedState.pressure}');
-    print('Rotational Frequency: ${convertedState.rotationalFrequency}');
-    print('Current Operating Hours: ${convertedState.currentOperatingHours}');
-    print('Average Operating Hours Per Day: ${convertedState.averageOperatingHoursPerDay}');
-
     
     _measurementService.saveMeasurement(convertedState);
     
-    // reset the form
     reset();
   }
 }

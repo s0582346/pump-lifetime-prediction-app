@@ -9,7 +9,7 @@ class MeasurementRepository {
   // Save measurement with linked adjustment ID
   Future<void> saveMeasurement(Measurement measurement) async {
     await db.insert(
-      'measurement',
+      'measurements',
       measurement.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
