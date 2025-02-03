@@ -43,7 +43,7 @@ class PumpDataController extends Notifier<Pump> {
   }
 
   void reset() {
-    state = Pump();
+    state = build();
   } 
 
   Future<void> savePumpData() async {
@@ -67,6 +67,9 @@ class PumpDataController extends Notifier<Pump> {
     print('sending to server...');
     await Future.delayed(const Duration(seconds: 2));
     print('Server response: success');
+
+  
+    state = build();
   }
 }
 

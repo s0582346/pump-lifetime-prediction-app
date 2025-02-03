@@ -61,8 +61,8 @@ class DatabaseHelper {
         rotationalFrequency INTEGER NOT NULL,
         currentOperatingHours INTEGER,
         averageOperatingHoursPerDay INTEGER,
-        adjustment_id TEXT NOT NULL,
-        FOREIGN KEY (adjustment_id) REFERENCES adjustment(id)
+        adjustmentId TEXT NOT NULL,
+        FOREIGN KEY (adjustmentId) REFERENCES adjustment(id)
       )
     ''');
 
@@ -73,8 +73,8 @@ class DatabaseHelper {
         id TEXT PRIMARY KEY NOT NULL,
         status TEXT NOT NULL,
         date TEXT NOT NULL,
-        pump_id TEXT NOT NULL,
-        FOREIGN KEY (pump_id) REFERENCES pump(id)
+        pumpId TEXT NOT NULL,
+        FOREIGN KEY (pumpId) REFERENCES pump(id)
       )
       '''
     );
