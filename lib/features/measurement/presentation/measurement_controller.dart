@@ -1,7 +1,7 @@
-import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/pump_data_widget.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/pump_data_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_predictive_maintenance_app/features/parameters/domain/measurement.dart';
-import 'package:flutter_predictive_maintenance_app/features/parameters/application/measurement_service.dart';
+import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/measurement/application/measurement_service.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 
 class MeasurementController extends Notifier<Measurement> {

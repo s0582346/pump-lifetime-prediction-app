@@ -1,7 +1,7 @@
 import 'package:flutter_predictive_maintenance_app/database/database_helper.dart';
-import 'package:flutter_predictive_maintenance_app/features/parameters/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/data/adjustment_repository.dart';
-import 'package:flutter_predictive_maintenance_app/features/parameters/data/measurement_repository.dart';
+import 'package:flutter_predictive_maintenance_app/features/measurement/data/measurement_repository.dart';
 
 class MeasurementService {
   Future<void> saveMeasurement(Measurement measurement) async {
