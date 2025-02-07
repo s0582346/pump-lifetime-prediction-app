@@ -15,7 +15,7 @@ class Navigation extends ConsumerWidget {
     final currentIndex = ref.watch(bottomNavigationProvider); // watch the state of the bottomNavigationProvider
 
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: const CustomAppBar(title: 'NETZSCH'),
       body: IndexedStack( // IndexedStack is used to display the screen based on the index / it maintains the state of the screen
         index: currentIndex,
         children: const [

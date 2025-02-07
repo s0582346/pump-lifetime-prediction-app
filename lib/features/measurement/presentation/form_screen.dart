@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_predictive_maintenance_app/components/form_components/form_tabs.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_predictive_maintenance_app/features/pump/pump_data_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/measurement_data_widget.dart';
 
 
