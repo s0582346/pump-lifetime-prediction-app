@@ -31,4 +31,17 @@ class MeasurementService {
     }
     	
   }
+
+
+  Future<List<Measurement>> fetchMeasurements() async {
+    // Simulating data fetch from database or API
+    return [
+      Measurement(
+        volumeFlow: 18.5,
+        rotationalFrequency: 30,
+        currentOperatingHours: 100
+      ),
+      // Add more mock measurements
+    ];
+  }
 }
