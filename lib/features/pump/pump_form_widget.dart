@@ -7,8 +7,8 @@ import 'package:flutter_predictive_maintenance_app/components/form_components/pr
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/pump.dart';  
 
-class PumpDataWidget extends ConsumerWidget {
-  const PumpDataWidget({super.key});
+class PumpFormWidget extends ConsumerWidget {
+  const PumpFormWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

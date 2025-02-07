@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key});
+  final String title;
+
+  // constructor
+  const CustomAppBar({super.key, required this.title});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AppBar(
       backgroundColor: const Color(0xFF007167),
-      title: const Text(
-        'NETZSCH',
-        style: TextStyle(
+      title: Text(
+        title,
+        style: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w900,
           color: Colors.white,
