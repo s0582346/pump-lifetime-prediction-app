@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/form_components/form_tabs.dart';
+import 'package:flutter_predictive_maintenance_app/components/form_components/form_tabs.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/pump_data_widget.dart';
-import 'package:flutter_predictive_maintenance_app/features/parameters/presentation/measurement_data_widget.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/pump_data_widget.dart';
+import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/measurement_data_widget.dart';
 
 
 class FormScreen extends ConsumerWidget {
@@ -10,10 +10,13 @@ class FormScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final FormTab currentTab = ref.watch(currentTabProvider);
+    //final FormTab currentTab = ref.watch(currentTabProvider);
     //final pumpDataState = ref.watch(pumpDataProvider);
 
+    return MeasurementDataWidget();
+
   	
+    /*
     Widget buildContent() {
       switch (currentTab) {
         case FormTab.pumpData:
@@ -31,5 +34,6 @@ class FormScreen extends ConsumerWidget {
         ),
       ],
     );
+    */
   }
 }

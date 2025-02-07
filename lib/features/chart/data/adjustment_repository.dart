@@ -1,5 +1,5 @@
 import 'package:flutter_predictive_maintenance_app/database/database_helper.dart';
-import 'package:flutter_predictive_maintenance_app/features/parameters/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AdjustmentRepository {

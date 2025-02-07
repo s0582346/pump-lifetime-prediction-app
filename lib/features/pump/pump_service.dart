@@ -1,5 +1,5 @@
 import 'package:flutter_predictive_maintenance_app/database/database_helper.dart';
-import 'package:flutter_predictive_maintenance_app/features/parameters/domain/pump.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/pump.dart';
 
 class PumpService{
 

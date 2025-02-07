@@ -1,5 +1,5 @@
 import 'package:sqflite/sqflite.dart';
-import 'package:flutter_predictive_maintenance_app/features/parameters/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 
 class MeasurementRepository {
   final Database db;
