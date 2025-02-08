@@ -10,9 +10,9 @@ class PumpScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
+    return const Scaffold(
       appBar: CustomAppBar(title: 'NETZSCH'),
-      body: const PumpFormWidget(),
+      body: PumpFormWidget(),
     );
   }
 }

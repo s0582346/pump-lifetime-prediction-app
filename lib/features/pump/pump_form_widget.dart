@@ -12,17 +12,17 @@ class PumpFormWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pumpDataNotifier = ref.read(pumpDataProvider.notifier);
-    final pumpDataState = ref.watch(pumpDataProvider);
+    final pumpDataNotifier = ref.read(pumpFormProvider.notifier);
+    final pumpDataState = ref.watch(pumpFormProvider);
 
     return ListView(
       padding: const EdgeInsets.all(40.0),
       children: [
         SelectWidget(
-          label: 'Pumpentyp',
+          label: 'Pump Type',
           selectedValue: pumpDataState.type,
           onChanged: (value) => pumpDataNotifier.pumpType = value,
-          items: const ['a', 'b', 'c'],
+          items: const ['NM045', 'NM063', 'NM070', 'NM090', 'NM100', 'NM150'],
         ),
         InputWidget(
           label: 'Medium',
@@ -30,21 +30,27 @@ class PumpFormWidget extends ConsumerWidget {
           onChanged: (value) => pumpDataNotifier.medium = value,
         ),
         InputWidget(
-          label: 'zulässiger Gesamtverschleiß [%]',
+          label: 'Permissible Total Wear [%]',
           placeholder: 'z.B. 70%',
           initialValue: pumpDataState.permissibleTotalWear,
           onChanged: (value) => pumpDataNotifier.permissibleTotalWear = value,
         ),
         SelectWidget(
-          label: 'Messbarer Parameter',
+          label: 'Measurable Parameter',
           selectedValue: pumpDataState.measurableParameter,
           onChanged: (value) => pumpDataNotifier.measurableParameter = value,
-          items: const ['Volumenstrom', 'Druck'],
+          items: const ['volume flow', 'pressure'],
         ),
         const SizedBox(height: 20),
         PrimaryButton(
-          onPressed: () => pumpDataNotifier.savePumpData(),
-          label: 'Speichern',
+          onPressed: () async {
+             final success = pumpDataNotifier.savePumpData();
+             if (await success) {
+              ref.invalidate(pumpsProvider);  // Invalidate the provider to trigger a rebuild
+              Navigator.of(context).pop();  // Handle navigation in the widget
+            }
+          },
+          label: 'Save',
           buttonColor: AppColors.greyColor,
         ),
       ],

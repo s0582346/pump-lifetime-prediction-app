@@ -1,3 +1,4 @@
+import 'package:flutter_predictive_maintenance_app/features/pump/pump_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/pump.dart';
 
@@ -6,9 +7,8 @@ class PumpDataController extends Notifier<Pump> {
   // initialize the state of the controller
   @override
   Pump build() {
-    return Pump();
+    return Pump(type: '');
   }
-
 
   set pumpType(String? type) {
     state = state.copyWith(type: type);
@@ -46,8 +46,9 @@ class PumpDataController extends Notifier<Pump> {
     state = build();
   } 
 
-  Future<void> savePumpData() async {
-    
+  Future<bool> savePumpData() async {
+
+    // TODO: add all the fields
     final convertedState = state.copyWith(
       solidConcentration: state.solidConcentration,
       type: state.type,
@@ -56,21 +57,24 @@ class PumpDataController extends Notifier<Pump> {
       permissibleTotalWear: state.permissibleTotalWear
     );
 
-
-    // save the pump data to the database
-    print('Type: ${state.type}');
-    print('medium: ${state.medium}');
-    print('solid Concentration: ${state.solidConcentration}');
-    print('measurable Parameter: ${state.measurableParameter}');
-    print('permissible Total Wear: ${state.permissibleTotalWear}');
-
-    print('sending to server...');
-    await Future.delayed(const Duration(seconds: 2));
-    print('Server response: success');
-
-  
-    state = build();
+    try {
+      await PumpService().savePump(convertedState);
+      state = build();
+      return true;  // success
+    } catch (e) {
+      return false;  // failure
+    }
   }
 }
 
-final pumpDataProvider = NotifierProvider<PumpDataController, Pump>(() => PumpDataController());
+// providers 
+final pumpFormProvider = NotifierProvider<PumpDataController, Pump>(() => PumpDataController());
+
+final pumpServiceProvider = Provider<PumpService>((ref) {
+  return PumpService();
+});
+
+final pumpsProvider = FutureProvider<List<Pump>>((ref) async {
+  final repo = ref.read(pumpServiceProvider);
+  return await repo.getPumps();
+});
