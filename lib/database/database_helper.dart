@@ -42,9 +42,13 @@ class DatabaseHelper {
     // create pump table
     await db.execute('''
       CREATE TABLE pump (
+        date TEXT NOT NULL,
         id TEXT PRIMARY KEY NOT NULL,
         type TEXT NOT NULL,
-        medium TEXT NOT NULL,
+        rotorGeometry TEXT,
+        statorGeometry TEXT,
+        speedChange TEXT,
+        medium TEXT,
         measurableParameter TEXT NOT NULL,
         permissibleTotalWear INTEGER NOT NULL,
         solidConcentration INTEGER

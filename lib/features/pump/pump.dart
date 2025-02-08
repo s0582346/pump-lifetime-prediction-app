@@ -1,35 +1,38 @@
 class Pump {
-  final String? type; // +
-  final String? rotorGeometry;
-  final String? statorGeometry;
-  final String? speedChange; // Drehzahländerung
-  final String? medium; // +
-  final String? measurableParameter; // +
-  final String? permissibleTotalWear; // +
-  final String? solidConcentration;
+  final DateTime date;
+  final String type;
+  final rotorGeometry;
+  final statorGeometry;
+  final speedChange; // Drehzahländerung
+  final medium;
+  final measurableParameter; // volume flow or pressure
+  final permissibleTotalWear; // percent
+  final solidConcentration; // percent
 
   Pump({
-    this.type,
+    required this.type,
     this.rotorGeometry,
     this.statorGeometry,
     this.speedChange,
     this.medium,
     this.measurableParameter,
     this.permissibleTotalWear,
-    this.solidConcentration
-  });
+    this.solidConcentration,
+  }) : date = DateTime.now();
 
+  // This getter makes pump.id always equal pump.type.
+  String get id => type;
 
-  // It creates a new instance of a class with some fields updated while keeping other fields the same as the original instance.
+  // Updated copyWith without id parameter since id is derived from type.
   Pump copyWith({
     String? type,
-    String? rotorGeometry,
-    String? statorGeometry,
-    String? speedChange,
-    String? medium,
-    String? measurableParameter,
-    String? permissibleTotalWear,
-    String? solidConcentration
+    rotorGeometry,
+    statorGeometry,
+    speedChange,
+    medium,
+    measurableParameter,
+    permissibleTotalWear,
+    solidConcentration,
   }) {
     return Pump(
       type: type ?? this.type,
@@ -39,12 +42,14 @@ class Pump {
       medium: medium ?? this.medium,
       measurableParameter: measurableParameter ?? this.measurableParameter,
       permissibleTotalWear: permissibleTotalWear ?? this.permissibleTotalWear,
-      solidConcentration: solidConcentration ?? this.solidConcentration
+      solidConcentration: solidConcentration ?? this.solidConcentration,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
+      'date': date.toIso8601String(),
+      'id': id, // id will be the same as type
       'type': type,
       'rotorGeometry': rotorGeometry,
       'statorGeometry': statorGeometry,
@@ -52,7 +57,20 @@ class Pump {
       'medium': medium,
       'measurableParameter': measurableParameter,
       'permissibleTotalWear': permissibleTotalWear,
-      'solidConcentration': solidConcentration
+      'solidConcentration': solidConcentration,
     };
+  }
+
+  factory Pump.fromMap(Map<String, dynamic> map) {
+    return Pump(
+      type: map['type'],
+      rotorGeometry: map['rotorGeometry'],
+      statorGeometry: map['statorGeometry'],
+      speedChange: map['speedChange'],
+      medium: map['medium'],
+      measurableParameter: map['measurableParameter'],
+      permissibleTotalWear: map['permissibleTotalWear'],
+      solidConcentration: map['solidConcentration'],
+    );
   }
 }
