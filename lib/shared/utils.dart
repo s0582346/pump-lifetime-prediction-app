@@ -15,4 +15,8 @@ class Utils {
 
     return (doubleValue * 100).toInt();
   }
+
+  dynamic getAdjustmentId(String pumpId, int adjustmentCount) {
+    return '$pumpId-$adjustmentCount';
+  }
 }

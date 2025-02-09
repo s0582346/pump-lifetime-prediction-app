@@ -49,7 +49,7 @@ class Pump {
   Map<String, dynamic> toMap() {
     return {
       'date': date.toIso8601String(),
-      'id': id, // id will be the same as type
+      'id': id,
       'type': type,
       'rotorGeometry': rotorGeometry,
       'statorGeometry': statorGeometry,
