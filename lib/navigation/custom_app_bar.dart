@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/initial_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final String title;
@@ -25,7 +26,13 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
             color: Colors.white,
           ),
           onPressed: () {
-
+            // TODO: WIP - this needs to open a side menu
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => InitialScreen(), // pass the selected pump to the Navigation widget
+                ),
+                (Route<dynamic> route) => false // remove all the routes from the stack
+            );
           },
         ),
       ],

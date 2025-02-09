@@ -41,6 +41,12 @@ class PumpFormWidget extends ConsumerWidget {
           onChanged: (value) => pumpDataNotifier.measurableParameter = value,
           items: const ['volume flow', 'pressure'],
         ),
+        SelectWidget(
+          label: 'Type of Time Entry',
+          selectedValue: pumpDataState.typeOfTimeEntry,
+          onChanged: (value) => pumpDataNotifier.typeOfTimeEntry = value,
+          items: const ['currentOperatingHours', 'average per day'],
+        ),
         const SizedBox(height: 20),
         PrimaryButton(
           onPressed: () async {

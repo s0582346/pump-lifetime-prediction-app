@@ -1,35 +1,56 @@
+import 'dart:async';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/application/measurement_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
-class HistoryController extends Notifier<List<Measurement>> {
-  //final MeasurementService _measurementService = MeasurementService();
+class HistoryController extends AsyncNotifier<Map<String, List<Measurement>>> {
+  late final MeasurementService _measurementService;
 
   @override
-  List<Measurement> build() {
-    return [];
+  FutureOr<Map<String, List<Measurement>>> build() async {
+    // Initialize the service
+    _measurementService = ref.read(measurementServiceProvider);
+    
+    // Get initial data
+    return _fetchMeasurements();
   }
 
-
-  // controller methods
-}
-
-
-
-final measurementServiceProvider = Provider((ref) => MeasurementService());
-
-final measurementsProvider = FutureProvider<List<Measurement>>(
-  (ref) async {
+  Future<Map<String, List<Measurement>>> _fetchMeasurements() async {
     final pump = ref.watch(selectedPumpProvider);
 
-    // if pump is null, return an empty list
+    // If pump is null, return an empty dataset
     if (pump == null) {
-      return [];
+      return {};
     }
 
-    final repo = ref.read(measurementServiceProvider);
-    return repo.fetchMeasurements(pump.id);
-  },
+    try {
+      final measurements = await _measurementService.fetchMeasurements(pump.id);
+
+      // Group by adjustment_id
+      final groupedMeasurements = <String, List<Measurement>>{};
+      for (var measurement in measurements) {
+        groupedMeasurements.putIfAbsent(measurement.adjustmentId, () => []).add(measurement);
+      }
+
+      return groupedMeasurements;
+    } catch (e, stackTrace) {
+      // AsyncNotifier will automatically handle the error state
+      throw AsyncError(e, stackTrace);
+    }
+  }
+
+  /// Manually refresh measurements
+  Future<void> refresh() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() => _fetchMeasurements());
+  }
+}
+
+/// Provider for HistoryController
+final historyControllerProvider = AsyncNotifierProvider<HistoryController, Map<String, List<Measurement>>>(
+  HistoryController.new
 );
+
+/// MeasurementService Provider
+final measurementServiceProvider = Provider((ref) => MeasurementService());

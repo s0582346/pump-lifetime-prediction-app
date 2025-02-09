@@ -8,6 +8,7 @@ class Pump {
   final measurableParameter; // volume flow or pressure
   final permissibleTotalWear; // percent
   final solidConcentration; // percent
+  final typeOfTimeEntry; // currentOperatingHours or average per day
 
   Pump({
     required this.type,
@@ -18,6 +19,7 @@ class Pump {
     this.measurableParameter,
     this.permissibleTotalWear,
     this.solidConcentration,
+    this.typeOfTimeEntry,
   }) : date = DateTime.now();
 
   // This getter makes pump.id always equal pump.type.
@@ -33,6 +35,7 @@ class Pump {
     measurableParameter,
     permissibleTotalWear,
     solidConcentration,
+    typeOfTimeEntry,
   }) {
     return Pump(
       type: type ?? this.type,
@@ -43,6 +46,7 @@ class Pump {
       measurableParameter: measurableParameter ?? this.measurableParameter,
       permissibleTotalWear: permissibleTotalWear ?? this.permissibleTotalWear,
       solidConcentration: solidConcentration ?? this.solidConcentration,
+      typeOfTimeEntry: typeOfTimeEntry ?? this.typeOfTimeEntry,
     );
   }
 
@@ -58,6 +62,7 @@ class Pump {
       'measurableParameter': measurableParameter,
       'permissibleTotalWear': permissibleTotalWear,
       'solidConcentration': solidConcentration,
+      'typeOfTimeEntry': typeOfTimeEntry,
     };
   }
 
@@ -71,6 +76,7 @@ class Pump {
       measurableParameter: map['measurableParameter'],
       permissibleTotalWear: map['permissibleTotalWear'],
       solidConcentration: map['solidConcentration'],
+      typeOfTimeEntry: map['typeOfTimeEntry'],
     );
   }
 }
