@@ -36,22 +36,29 @@ class MeasurementService {
 
   /// Fetch measurements for a given pump
   /// [pumpId] The pump ID to fetch measurements for
-  Future<List<Measurement>> fetchMeasurements(pumpId) async { 
+  Future<List<Measurement>> fetchMeasurements(pumpId) async {
+    print('Fetching measurements for pump: $pumpId');
+
     final db = await DatabaseHelper().database;
+    /*
     final adjustmentRepo = AdjustmentRepository(db: db);
     
     final adjustmentId = await adjustmentRepo.getOpenAdjustment(pumpId);
 
     if (adjustmentId.isEmpty) {
       return [];
-    }
+    }*/
 
-    final measurements = await db.rawQuery(
-      ''' SELECT * FROM measurements WHERE adjustmentId = ? ''',
-      [adjustmentId[0]['id']]
+    final List<Map<String, dynamic>> measurements = await db.rawQuery(
+      '''
+      SELECT m.*
+      FROM measurements m
+      JOIN adjustment a ON m.adjustmentId = a.id
+      WHERE a.pumpId = ?;
+      ''',
+      [pumpId],
     );
 
-  
     return measurements.map((e) => Measurement.fromMap(e)).toList();
   }
 }

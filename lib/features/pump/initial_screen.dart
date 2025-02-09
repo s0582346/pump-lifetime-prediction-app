@@ -15,8 +15,19 @@ class InitialScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pumpsAsyncValue = ref.watch(pumpsProvider);
 
+
     return Scaffold(
-      appBar: const CustomAppBar(title: 'NETZSCH'),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF007167),
+        title: const Text(
+          "NETZSCH",
+            style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+          ),
+        ),
+      ),
       // Put the main content into the body
       body: pumpsAsyncValue.when(
         data: (pumps) {

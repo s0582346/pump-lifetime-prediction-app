@@ -42,6 +42,10 @@ class PumpDataController extends Notifier<Pump> {
     state = state.copyWith(solidConcentration: solidConcentration);
   }
 
+  set typeOfTimeEntry(String? typeOfTimeEntry) {
+    state = state.copyWith(typeOfTimeEntry: typeOfTimeEntry);
+  }
+
 
   Future<bool> savePumpData() async {
 
