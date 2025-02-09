@@ -4,14 +4,16 @@ import 'package:flutter_predictive_maintenance_app/features/chart/data/adjustmen
 import 'package:flutter_predictive_maintenance_app/features/measurement/data/measurement_repository.dart';
 
 class MeasurementService {
-  Future<void> saveMeasurement(Measurement measurement) async {
+
+  /// Save a measurement to the database
+  Future<void> saveMeasurement(Measurement measurement, String pumpId) async {
     final db = await DatabaseHelper().database;
     final adjustmentRepo = AdjustmentRepository(db: db);
-    final measurementRepo = MeasurementRepository(db: db);    
+    final measurementRepo = MeasurementRepository(db: db);   
 
     try {
       // Get or create adjustment
-      final adjustmentId = await adjustmentRepo.getOrCreateAdjustment();
+      final adjustmentId = await adjustmentRepo.getOrCreateAdjustment(pumpId);
 
       final updatedMeasurement = measurement.copyWith(adjustmentId: adjustmentId);
 
@@ -32,16 +34,24 @@ class MeasurementService {
     	
   }
 
+  /// Fetch measurements for a given pump
+  /// [pumpId] The pump ID to fetch measurements for
+  Future<List<Measurement>> fetchMeasurements(pumpId) async { 
+    final db = await DatabaseHelper().database;
+    final adjustmentRepo = AdjustmentRepository(db: db);
+    
+    final adjustmentId = await adjustmentRepo.getOpenAdjustment(pumpId);
 
-  Future<List<Measurement>> fetchMeasurements() async {
-    // Simulating data fetch from database or API
-    return [
-      Measurement(
-        volumeFlow: 18.5,
-        rotationalFrequency: 30,
-        currentOperatingHours: 100
-      ),
-      // Add more mock measurements
-    ];
+    if (adjustmentId.isEmpty) {
+      return [];
+    }
+
+    final measurements = await db.rawQuery(
+      ''' SELECT * FROM measurements WHERE adjustmentId = ? ''',
+      [adjustmentId[0]['id']]
+    );
+
+  
+    return measurements.map((e) => Measurement.fromMap(e)).toList();
   }
 }

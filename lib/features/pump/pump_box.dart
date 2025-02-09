@@ -11,13 +11,18 @@ class PumpBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => Navigation()),
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => Navigation(selectedPump: pump), // pass the selected pump to the Navigation widget
+          ),
+          (route) => false, // remove all the routes from the stack
         );
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
+
         padding: const EdgeInsets.all(16),
+
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
@@ -29,6 +34,7 @@ class PumpBox extends StatelessWidget {
             ),
           ],
         ),
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

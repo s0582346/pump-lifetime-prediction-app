@@ -42,9 +42,6 @@ class PumpDataController extends Notifier<Pump> {
     state = state.copyWith(solidConcentration: solidConcentration);
   }
 
-  void reset() {
-    state = build();
-  } 
 
   Future<bool> savePumpData() async {
 
@@ -67,7 +64,8 @@ class PumpDataController extends Notifier<Pump> {
   }
 }
 
-// providers 
+///  Providers
+
 final pumpFormProvider = NotifierProvider<PumpDataController, Pump>(() => PumpDataController());
 
 final pumpServiceProvider = Provider<PumpService>((ref) {

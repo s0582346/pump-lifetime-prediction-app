@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/application/measurement_service.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
+import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
+
 
 class MeasurementController extends Notifier<Measurement> {
   final MeasurementService _measurementService = MeasurementService();
@@ -43,27 +45,25 @@ class MeasurementController extends Notifier<Measurement> {
   set averageOperatingHoursPerDay(value) {
     state = state.copyWith(averageOperatingHoursPerDay: value);
   }
+ 
 
- // reset the form
-  void reset() {
-    state = build();
-  }
+  /// Save the measurement data to the database
+  Future<bool> saveMeasurement() async {
+    try {
+      final pump = ref.watch(selectedPumpProvider);
 
-  // save the measurement data to the database
-  Future<void> saveMeasurement() async {
+      if (pump == null) {
+        return false;
+      }
 
-    // convert values to int if necessary
-    final convertedState = state.copyWith(
-      volumeFlow: Utils().convertToInt(state.volumeFlow),
-      pressure: Utils().convertToInt(state.pressure),
-      rotationalFrequency: Utils().convertToInt(state.rotationalFrequency),
-      currentOperatingHours: Utils().convertToInt(state.currentOperatingHours),
-      averageOperatingHoursPerDay: Utils().convertToInt(state.averageOperatingHoursPerDay),
-    );
-    
-    _measurementService.saveMeasurement(convertedState);
-    
-    reset();
+      await _measurementService.saveMeasurement(state, pump.id);
+      state = build(); // reset the form
+      return true;
+    } catch (e) {
+      // Handle errors appropriately
+      print('Error saving measurement: $e');
+      return false;
+    }
   }
 }
 
