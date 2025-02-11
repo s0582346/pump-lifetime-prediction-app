@@ -6,6 +6,7 @@ class InputWidget extends StatefulWidget {
   final ValueChanged<String> onChanged;
   final String label;
   final String placeholder;
+  final TextInputType keyboardType;
 
   const InputWidget({
     super.key,
@@ -13,6 +14,7 @@ class InputWidget extends StatefulWidget {
     this.label = '',
     this.placeholder = '',
     required this.onChanged,
+    required this.keyboardType
   });
 
   @override
@@ -90,7 +92,7 @@ class _InputWidgetState extends State<InputWidget> {
                 ),
               ),
               style: const TextStyle(fontSize: 14),
-              keyboardType: TextInputType.number,
+              keyboardType: widget.keyboardType,
             )
           )
         ],

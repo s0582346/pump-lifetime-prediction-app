@@ -51,6 +51,7 @@ class DatabaseHelper {
         medium TEXT,
         measurableParameter TEXT NOT NULL,
         permissibleTotalWear INTEGER NOT NULL,
+        typeOfTimeEntry TEXT NOT NULL,
         solidConcentration INTEGER
       )
     ''');
@@ -59,13 +60,15 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE measurements (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        adjustmentId TEXT NOT NULL,
         date TEXT NOT NULL,
         volumeFlow INTEGER,
         pressure INTEGER,
         rotationalFrequency INTEGER NOT NULL,
+        Qn INTEGER,
+        pn INTEGER,
         currentOperatingHours INTEGER,
         averageOperatingHoursPerDay INTEGER,
-        adjustmentId TEXT NOT NULL,
         FOREIGN KEY (adjustmentId) REFERENCES adjustment(id)
       )
     ''');

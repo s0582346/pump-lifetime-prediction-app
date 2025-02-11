@@ -27,11 +27,11 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> with TickerProvid
 
     return Scaffold(
       body: measurementState.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primaryColor, backgroundColor: Colors.grey)), // TODO make a custom loading widget
         error: (e, _) => Center(child: Text("Error: $e")),
         data: (groupedMeasurements) {
           if (groupedMeasurements.isEmpty) {
-            return const Center(child: Text("No history available"));
+            return const Center(child: Text("No history available", style: TextStyle(fontSize: 20)));
           }
 
           _tabController = TabController(length: groupedMeasurements.length, vsync: this);
@@ -62,6 +62,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> with TickerProvid
     );
   }
 
+  /// Dispose the tab controller when the widget is removed
   @override
   void dispose() {
     _tabController.dispose();

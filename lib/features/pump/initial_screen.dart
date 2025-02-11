@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/components/form_components/primary_button.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/pump_data_controller.dart';
-import 'package:flutter_predictive_maintenance_app/navigation/custom_app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/pump_screen.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/pump_box.dart';

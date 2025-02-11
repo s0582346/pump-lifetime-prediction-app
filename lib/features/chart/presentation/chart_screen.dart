@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ChartScreen extends ConsumerWidget {

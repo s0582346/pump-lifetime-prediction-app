@@ -17,40 +17,27 @@ class MeasurementDataWidget extends ConsumerWidget {
     final measurementState = ref.watch(measurementProvider);
     final pump = ref.watch(selectedPumpProvider);
     
-    final String label;
-    final String initialValue;
-    final void Function(String) onChangedCallback;
-
-    // Set the label, initial value, and onChanged callback based on the selected pump
-    if (pump?.measurableParameter == 'volume flow') {
-      label = 'Volumen Flow';
-      initialValue = measurementState.volumeFlow ?? '';
-      onChangedCallback = (value) => measurementNotifier.volumeFlow = value;
-    } else {
-      label = 'Pressure';
-      initialValue = measurementState.pressure ?? '';
-      onChangedCallback = (value) => measurementNotifier.pressure = value;
-    }
-    
-    
     return ListView(
       padding: const EdgeInsets.all(40.0),
       children: [
         //TODO implement condition for volume flow
          InputWidget(
-          label: label,
-          initialValue: initialValue,
-          onChanged: onChangedCallback,
+          label: (pump?.measurableParameter == 'volume flow') ? 'Volumen Flow' : 'Pressure',
+          initialValue: (pump?.measurableParameter == 'volume flow') ? measurementState.volumeFlow : measurementState.pressure,	
+          onChanged: (value) => (pump?.measurableParameter == 'volume flow') ? measurementNotifier.volumeFlow = value : measurementNotifier.pressure = value,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
         ),
         InputWidget(
-          label: 'Drehzahl',
+          label: 'Rotational Frequency',
           initialValue: measurementState.rotationalFrequency,
           onChanged: (value) => measurementNotifier.rotationalFrequency = value,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
         ),
         InputWidget(
-          label: 'Aktuelle Betriebsstunden',
+          label: 'Current Operating Hours',
           initialValue: measurementState.currentOperatingHours,
           onChanged: (value) => measurementNotifier.currentOperatingHours = value,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
         ),
         const SizedBox(height: 20),
         PrimaryButton(

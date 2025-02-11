@@ -10,8 +10,18 @@ class PumpScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const Scaffold(
-      appBar: CustomAppBar(title: 'NETZSCH'),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF007167),
+        title: const Text(
+          "NETZSCH",
+            style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+          ),
+        ),
+      ),
       body: PumpFormWidget(),
     );
   }

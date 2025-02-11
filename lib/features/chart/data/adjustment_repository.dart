@@ -7,18 +7,21 @@ class AdjustmentRepository {
 
   AdjustmentRepository({required this.db});
 
-  Future<String> getOrCreateAdjustment(String pumpId) async {
+  /// Get the current adjustment ID for a given pump
+  /// [pumpId] The pump ID to get the adjustment ID for
+  Future<String> getCurrentAdjustmentId(String pumpId) async {
     try {
       
       // First check for existing open adjustment for this pump
-      final openAdjustment = await getOpenAdjustment(pumpId); 
+      final openAdjustment = await _getOpenAdjustment(pumpId); 
 
+      // if adjustment is found, return the adjustment id
       if (openAdjustment.isNotEmpty) {
         return openAdjustment[0]['id'].toString();
       }
  
       // if no open adjustment found, get adjustment count
-      final count = await getAdjustmentCount(pumpId);
+      final count = await _getAdjustmentCount(pumpId);
 
       final String adjustmentId = Utils().getAdjustmentId(pumpId, count);
 
@@ -40,7 +43,7 @@ class AdjustmentRepository {
   }
 
 
-  Future<List<Map<String, dynamic>>> getOpenAdjustment(pumpId) {
+  Future<List<Map<String, dynamic>>> _getOpenAdjustment(pumpId) {
     return db.rawQuery(
       'SELECT * FROM adjustment WHERE status = ? AND pumpId = ? LIMIT 1',
       ['open', pumpId],
@@ -49,7 +52,7 @@ class AdjustmentRepository {
   
   /// Get the count of adjustments for a given pump
   /// [pumpId] The pump ID to get the adjustment count for
-  Future<int> getAdjustmentCount(String pumpId) async {
+  Future<int> _getAdjustmentCount(String pumpId) async {
   try {
     final List<Map<String, dynamic>> result = await db.rawQuery(
       'SELECT COUNT(*) as count FROM adjustment WHERE pumpId = ?',
@@ -61,7 +64,9 @@ class AdjustmentRepository {
     if (result.isNotEmpty) {
       return result.first['count'] as int;
     }
+
     return 0;
+    
   } catch (e) {
     throw Exception('Failed to get adjustment count: $e');
   }
