@@ -55,7 +55,7 @@ class MeasurementController extends Notifier<Measurement> {
         return false;
       }
 
-      await _measurementService.saveMeasurement(state, pump.id);
+      await _measurementService.saveMeasurement(state, pump);
       state = build(); // reset the form
       return true;
     } catch (e) {

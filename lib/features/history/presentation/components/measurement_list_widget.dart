@@ -1,34 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 
 class MeasurementListWidget extends ConsumerWidget {
   final List<Measurement> measurements;
 
-  const MeasurementListWidget({Key? key, required this.measurements}) : super(key: key);
+  const MeasurementListWidget({super.key, required this.measurements});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final pump = ref.watch(selectedPumpProvider);
+    final slCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q' : 'n';
+    final lCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q/n' : 'p/n';
+    
     return SingleChildScrollView(
-      scrollDirection: Axis.vertical, // Enables horizontal scrolling if needed
+      scrollDirection: Axis.vertical,
       child: SingleChildScrollView(
         child: DataTable(
-          columnSpacing: 30.0,
-          columns: const [
-            DataColumn(
+          columnSpacing: 20.0,
+          headingRowHeight: 40.0,
+          columns: [
+            const DataColumn(
               label: Text(
                 "Datum",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
               ),
             ),
-            DataColumn(
+            const DataColumn(
               label: Padding(
               padding: EdgeInsets.only(right: 10.0),
               child: Text("h",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),),
               ), 
             ),
-            DataColumn(
+            const DataColumn(
               label: Text(
                 "n",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
@@ -36,34 +42,37 @@ class MeasurementListWidget extends ConsumerWidget {
             ),
             DataColumn(
               label: Text(
-                "Q",
+                slCLabel,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
               ),
             ),
             DataColumn(
               label: Text(
-                "Q/n",
+                lCLabel,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
               ),
             ),
-            DataColumn(label: Text(""),
-            ),
           ],
           rows: measurements.map((data) {
+            final slCVal = (pump?.measurableParameter == 'volume flow') ? data.volumeFlow : data.pressure;
+            final lCVal = (pump?.measurableParameter == 'volume flow') ? data.Qn : data.pn;
+
             return DataRow(cells: [
               DataCell(Text(_formatDate(data.date))),
-              DataCell(Text(data.currentOperatingHours.toString())),
-              DataCell(Text(data.rotationalFrequency.toString())),
-              DataCell(Text(data.volumeFlow.toString())),
-              DataCell(Text((data.volumeFlow / data.rotationalFrequency).toStringAsFixed(2))), // Calculated value
-              DataCell(
-                IconButton(
-                  onPressed: () {
-                    // Add action when clicked
-                  },
-                  icon: const Icon(Icons.more_horiz),
-                ),
-              ),
+              DataCell(Text(data.currentOperatingHours.toStringAsFixed(1))),
+              DataCell(Text(data.rotationalFrequency.toStringAsFixed(2))),
+              DataCell(Text(slCVal.toStringAsFixed(2))),
+              DataCell(Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(lCVal.toStringAsFixed(3)),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.more_horiz),
+                  ),
+                ],
+                )
+            ),
             ]);
           }).toList(),
         ),
