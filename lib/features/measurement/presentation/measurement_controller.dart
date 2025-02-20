@@ -69,3 +69,4 @@ class MeasurementController extends Notifier<Measurement> {
 final measurementProvider = NotifierProvider<MeasurementController, Measurement>(() => MeasurementController());
 
 
+final measurementServiceProvider = Provider((ref) => MeasurementService());

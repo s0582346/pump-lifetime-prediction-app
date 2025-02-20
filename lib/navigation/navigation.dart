@@ -50,6 +50,7 @@ class _NavigationState extends ConsumerState<Navigation> {
 
     return Scaffold(
       appBar: const CustomAppBar(title: 'NETZSCH'),
+      backgroundColor: Colors.white,
       body: IndexedStack(
         index: currentIndex,
         children: const [
@@ -59,6 +60,7 @@ class _NavigationState extends ConsumerState<Navigation> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
         currentIndex: currentIndex,
         onTap: (index) {
           ref.read(bottomNavigationProvider.notifier).state = index;

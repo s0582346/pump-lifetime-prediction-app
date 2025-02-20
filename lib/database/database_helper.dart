@@ -67,7 +67,7 @@ class DatabaseHelper {
         rotationalFrequency INTEGER NOT NULL,
         Qn INTEGER,
         pn INTEGER,
-        currentOperatingHours INTEGER,
+        currentOperatingHours INTEGER,  
         averageOperatingHoursPerDay INTEGER,
         FOREIGN KEY (adjustmentId) REFERENCES adjustment(id)
       )
@@ -85,6 +85,22 @@ class DatabaseHelper {
       )
       '''
     );
+
+    // create prediction table
+    await db.execute('''
+      CREATE TABLE prediction (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        adjustmentId TEXT NOT NULL,
+        date TEXT NOT NULL,
+        estimatedOperatingHours INTEGER,
+        estimatedMaintenanceDate INTEGER,
+        a REAL,
+        b REAL,
+        c REAL,
+        FOREIGN KEY (adjustmentId) REFERENCES adjustment(id)
+        )
+      ''');
+
   }
 
   // Generic CRUD operations

@@ -11,7 +11,7 @@ class MeasurementListWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pump = ref.watch(selectedPumpProvider);
-    final slCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q' : 'n';
+    final slCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q' : 'p';
     final lCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q/n' : 'p/n';
     
     return SingleChildScrollView(

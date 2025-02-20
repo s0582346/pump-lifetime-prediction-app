@@ -1,8 +1,8 @@
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 
-class Measurement{
+class Measurement {
   final date = DateTime.now();
-  final dynamic adjustmentId;
+  final adjustmentId;
   final volumeFlow;
   final pressure;
   final rotationalFrequency;
