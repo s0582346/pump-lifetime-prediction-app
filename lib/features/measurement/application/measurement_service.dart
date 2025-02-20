@@ -1,4 +1,5 @@
 import 'package:flutter_predictive_maintenance_app/database/database_helper.dart';
+import 'package:flutter_predictive_maintenance_app/features/chart/application/prediction_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/data/adjustment_repository.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/data/measurement_repository.dart';
@@ -12,31 +13,58 @@ class MeasurementService {
     final db = await DatabaseHelper().database;
     final adjustmentRepo = AdjustmentRepository(db: db);
     final measurementRepo = MeasurementRepository(db: db);   
+    final predictionService = PredictionService();
 
     try {
       // Get or create adjustment
       final adjustmentId = await adjustmentRepo.getCurrentAdjustmentId(pump.id); 
 
-      // calculate normalized Value
-      final reference = await getFirstMeasurement(adjustmentId);
-      final result = (reference != null) ? ((pump.measurableParameter == 'volume flow') ? Utils().calculateQn(measurement, Measurement.fromMap(reference)) : Utils().calculatePn(measurement, Measurement.fromMap(reference))) : 1;
+      final measurements = await measurementRepo.fetchMeasurementsByAdjustmentId(adjustmentId);
+
+      Measurement? reference;
+      double result = 1.0; // if no reference, qn or pn is 1
+      double? avgOperatingHoursPerDay;
+      if (measurements != null) {
+        reference = Measurement.fromMap(measurements.first);  
+
+        // calculate normalized Value
+        result = (pump.measurableParameter == 'volume flow') ? Utils().calculateQn(measurement, reference) : Utils().calculatePn(measurement, reference);
+      }
       
       final Qn = (pump.measurableParameter == 'volume flow') ? result : 0;
       final pn = (pump.measurableParameter == 'pressure') ? result : 0;
-      final updatedMeasurement = measurement.copyWith(adjustmentId: adjustmentId, Qn: Qn, pn: pn);
+      
+      // compute average operating hours per day
+      if (pump.typeOfTimeEntry == 'current operating hours') {
+        final startDate = measurements != null ? DateTime.parse(measurements.last['date']) : DateTime.now();
+        final startOperatingHours = measurements != null ? measurements.last['currentOperatingHours'] : 0;
+        final currentOperatingHours = int.parse(measurement.currentOperatingHours);
 
-      print('volume flow: ${updatedMeasurement.volumeFlow}');
-      //print('Adjustment ID: ${updatedMeasurement.adjustmentId}');
-      //print('Volume Flow: ${updatedMeasurement.volumeFlow}');
-      //print('Pressure: ${updatedMeasurement.pressure}');
-      //print('Rotational Frequency: ${updatedMeasurement.rotationalFrequency}');
-      //print('Current Operating Hours: ${updatedMeasurement.currentOperatingHours}');
-      //print('Average Operating Hours Per Day: ${updatedMeasurement.averageOperatingHoursPerDay}');
+        print('startDate: ${startDate}');
+        print('startOperatingHours: ${startOperatingHours}');
+        print('current operating hours ${currentOperatingHours}');
+        print('currentDate: ${measurement.date}');
 
-      final v = Utils().convertToInt(updatedMeasurement.volumeFlow);
-      print("volumen flow: $v");
+        avgOperatingHoursPerDay = Utils().calculateAverageOperatingHoursPerDay(
+          startOperatingHours: startOperatingHours, 
+          currentOperatingHours: currentOperatingHours, 
+          currentDate: measurement.date, 
+          startDate: startDate
+        );
 
-      await measurementRepo.saveMeasurement(updatedMeasurement);
+        print('avg: $avgOperatingHoursPerDay');
+      }
+     
+      final updatedMeasurement = measurement.copyWith(
+        adjustmentId: adjustmentId, 
+        averageOperatingHoursPerDay: avgOperatingHoursPerDay ?? measurements?.last['averageOperatingHoursPerDay'] ?? 0.0, 
+        Qn: Qn, 
+        pn: pn
+      );
+
+      await measurementRepo.saveMeasurement(updatedMeasurement);      
+      await predictionService.savePrediction(pump);
+      
     } catch (e) {
       // Handle errors appropriately
       print('Error saving: $e');
@@ -46,10 +74,11 @@ class MeasurementService {
 
   /// Fetch measurements for a given pump
   /// [pumpId] The pump ID to fetch measurements for
-  Future<List<Measurement>> fetchMeasurements(pumpId) async {
+  Future<List<Measurement>> fetchMeasurementsByPumpId(pumpId) async {
     print('Fetching measurements for pump: $pumpId');
 
     final db = await DatabaseHelper().database;
+    final measurementRepo = MeasurementRepository(db: db);
     /*
     final adjustmentRepo = AdjustmentRepository(db: db);
     
@@ -58,16 +87,20 @@ class MeasurementService {
     if (adjustmentId.isEmpty) {
       return [];
     }*/
+    final measurements = await measurementRepo.fetchMeasurementsByPumpId(pumpId);
+    return measurements.map((e) => Measurement.fromMap(e)).toList();
+  }
 
-    final List<Map<String, dynamic>> measurements = await db.rawQuery(
-      '''
-      SELECT m.*
-      FROM measurements m
-      JOIN adjustment a ON m.adjustmentId = a.id
-      WHERE a.pumpId = ?;
-      ''',
-      [pumpId],
-    );
+  Future<List<Measurement>?> fetchMeasurementsByAdjustmentId(adjustmentId) async {
+    print('Fetching measurements for adjustment: $adjustmentId');
+
+    final db = await DatabaseHelper().database;
+    final measurementRepo = MeasurementRepository(db: db);
+    
+    final measurements = await measurementRepo.fetchMeasurementsByAdjustmentId(adjustmentId);
+    if (measurements == null) {
+      return null;
+    }
 
     return measurements.map((e) => Measurement.fromMap(e)).toList();
   }

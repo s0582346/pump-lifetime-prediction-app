@@ -26,6 +26,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> with TickerProvid
     final measurementState = ref.watch(historyControllerProvider);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: measurementState.when(
         loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primaryColor, backgroundColor: Colors.grey)), // TODO make a custom loading widget
         error: (e, _) => Center(child: Text("Error: $e")),

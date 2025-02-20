@@ -11,8 +11,10 @@ class FormScreen extends ConsumerWidget {
     //final FormTab currentTab = ref.watch(currentTabProvider);
     //final pumpDataState = ref.watch(pumpDataProvider);
 
-    return MeasurementDataWidget();
-
+    return const Scaffold(
+      backgroundColor: Colors.white,
+      body: MeasurementDataWidget(),
+    ); 
   	
     /*
     Widget buildContent() {

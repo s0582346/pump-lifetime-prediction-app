@@ -13,7 +13,7 @@ class AdjustmentRepository {
     try {
       
       // First check for existing open adjustment for this pump
-      final openAdjustment = await _getOpenAdjustment(pumpId); 
+      final openAdjustment = await getOpenAdjustment(pumpId); 
 
       // if adjustment is found, return the adjustment id
       if (openAdjustment.isNotEmpty) {
@@ -23,13 +23,13 @@ class AdjustmentRepository {
       // if no open adjustment found, get adjustment count
       final count = await _getAdjustmentCount(pumpId);
 
-      final String adjustmentId = Utils().getAdjustmentId(pumpId, count);
+      final String adjustmentId = Utils().formatAdjustmentId(pumpId, count);
 
       // If no open adjustment found, create a new one
       await db.rawInsert(
         'INSERT INTO adjustment (id, status, pumpId, date) VALUES (?, ?, ?, ?)',
         [    
-          adjustmentId,  // Using passed pumpId
+          adjustmentId,
           'open',
           pumpId,  // Using passed pumpId
           DateTime.now().toIso8601String(),
@@ -43,7 +43,7 @@ class AdjustmentRepository {
   }
 
 
-  Future<List<Map<String, dynamic>>> _getOpenAdjustment(pumpId) {
+  Future<List<Map<String, dynamic>>> getOpenAdjustment(pumpId) {
     return db.rawQuery(
       'SELECT * FROM adjustment WHERE status = ? AND pumpId = ? LIMIT 1',
       ['open', pumpId],
@@ -51,6 +51,7 @@ class AdjustmentRepository {
   }
   
   /// Get the count of adjustments for a given pump
+  /// If no adjustments are found, return 0
   /// [pumpId] The pump ID to get the adjustment count for
   Future<int> _getAdjustmentCount(String pumpId) async {
   try {
