@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/controllers/history_controller.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,10 +47,11 @@ class MeasurementDataWidget extends ConsumerWidget {
 
             if (await success) {
               Future.microtask(() => ref.read(historyControllerProvider.notifier).refresh());
+              Future.microtask(() => ref.read(chartControllerProvider.notifier).refresh());
               ref.read(bottomNavigationProvider.notifier).state = 0; // Navigate to the history screen
             }
           },
-          label: 'Speichern',
+          label: 'Save',
           buttonColor: AppColors.greyColor,
         ),
       ],

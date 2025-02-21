@@ -94,6 +94,7 @@ class DatabaseHelper {
         date TEXT NOT NULL,
         estimatedOperatingHours INTEGER,
         estimatedMaintenanceDate INTEGER,
+        residualWear INTEGER,
         a REAL,
         b REAL,
         c REAL,

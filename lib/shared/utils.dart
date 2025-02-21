@@ -120,7 +120,7 @@ class Utils {
 
 
   List<FlSpot> generateQuadraticSpots(double a, double b, double c,
-    {double start = 0, double end = 120, double step = 1}) {
+    {double start = 0, double end = 100, double step = 1}) {
   final List<FlSpot> spots = [];
   for (double x = start; x <= end; x += step) {
     final double y = a * x * x + b * x + c; 

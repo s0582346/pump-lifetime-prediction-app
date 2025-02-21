@@ -12,72 +12,90 @@ import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 
 class PredictionService {
 
-  Future<List<Prediction>> getPredictions(Pump pump) async {
+ Future<List<Prediction>> getPredictions(Pump pump) async {
+  try {
     final db = await DatabaseHelper().database;
     final predictionService = PredictionRepository(db: db);
-    
+
     final predictionsMapList = await predictionService.getPredictions(pump.id);
     return predictionsMapList.map((map) => Prediction.fromMap(map)).toList();
+  } catch (e, stackTrace) {
+    // Log the error and return an empty list as a fallback
+    print('Error fetching predictions: $e\n$stackTrace');
+    return [];
+  }
+}
+
+Future<void> savePrediction(Pump pump) async {
+  print('Saving prediction for pump ${pump.id}');
+
+  final db = await DatabaseHelper().database;
+  final predictionService = PredictionRepository(db: db);
+  final measurementService = MeasurementService();
+  final adjustmentService = AdjustmentService();
+  final adjustment = await adjustmentService.getOpenAdjustment(pump.id);
+
+  if (adjustment == null || adjustment['id'] == null) {
+    print('Error: Adjustment ID is null.');
+    return;
   }
 
-  Future<void> savePrediction(Pump pump) async {
-    final db = await DatabaseHelper().database;
-    final predictionService = PredictionRepository(db: db);
-    final measurementService = MeasurementService();
-    final adjustmentService = AdjustmentService();
-    final adjustment = await adjustmentService.getOpenAdjustment(pump.id);
-    final prediction = Prediction();
+  // Check if an existing prediction already exists
+  Prediction? existingPrediction = await predictionService.getPredictionByAdjustmentId(adjustment['id']);
 
-    // current operating hours
-    if (pump.measurableParameter == 'volume flow') {
+  // If an existing prediction is found, use it; otherwise, create a new one
+  Prediction prediction = existingPrediction ?? Prediction();
 
-      final measurements = await measurementService.fetchMeasurementsByAdjustmentId(adjustment['id']);
+  if (pump.measurableParameter == 'volume flow') {
+    final measurements = await measurementService.fetchMeasurementsByAdjustmentId(adjustment['id']);
 
-      if (measurements == null || measurements.length < 5) {
-        return;
-      }
-      // make a List out of all currrent operating hours from the first entry
-      final currentOperatingHours = measurements.map((measurement) => measurement.currentOperatingHours).toList();
-      
-      // make a list out of all q/n beginning from the first entry
-      final qn = measurements.map((measurement) => measurement.Qn).toList();
+    if (measurements == null || measurements.length < 5) {
+      print('Not enough measurements. Skipping prediction.');
+      return;
+    }
 
-      // find regression line
-      final model = fitQuadratic(currentOperatingHours, qn);
+    final currentOperatingHours = measurements.map((m) => m.currentOperatingHours).toList();
+    final qn = measurements.map((m) => m.Qn).toList();
 
-      print('Fitted Model => $model'); 
-      // e.g. y = a x^2 + b x + c
+    final model = fitQuadratic(currentOperatingHours, qn);
+    print('Fitted Model => $model');
 
-      // 2. Solve for x at y = 0.900
-      final solutions = findXForY(model, 0.900);
-      
+    final solutions = findXForY(model, 0.900);
 
-      double? estimatedOperatingHours = 0.0;
-       // 3. Print solutions
-      if (solutions.isEmpty) {
-        print('No real solution for y=0.900.');
-      } else {
-        for (final x in solutions) {
-        // Possibly ignore negative solution if it doesn't make sense physically
+    double? estimatedOperatingHours;
+    if (solutions.isEmpty) {
+      print('No real solution for y=0.900.');
+    } else {
+      for (final x in solutions) {
         if (x >= 0) {
           print('At y=0.900 => x= $x (Operating Hours)');
           estimatedOperatingHours = x;
         }
-        }
       }
-      
+    }
 
-      //final remainingDaysTillMaintenance = Utils().calculateRemainingDaysTillMaintenance(measurements.last.date, yPred, currentOperatingHours.last, measurements.last.averageOperatingHoursPerDay);
-
-      // format estimated maintenance date
-      //final estimatedMaintenanceDate = Utils().getEstimatedMaintenanceDate(remainingDaysTillMaintenance);
-
-      // save prediction
-      prediction.copyWith(estimatedOperatingHours: estimatedOperatingHours, adjusmentId: adjustment['id'], a: model.a, b: model.b, c: model.c);
-    } 
-    
-    return await predictionService.savePrediction(prediction, adjustment['id']);
+    // ✅ Step 3: Update the existing or new Prediction object
+    prediction = prediction.copyWith(
+      estimatedOperatingHours: estimatedOperatingHours,
+      adjusmentId: adjustment['id'],
+      a: model.a,
+      b: model.b,
+      c: model.c,
+    );
   }
+
+  print('Estimated Operating hours: ${prediction.estimatedOperatingHours}');
+
+  // ✅ Step 4: Save the updated prediction (Update if exists, Insert if new)
+  if (existingPrediction != null) {
+    await predictionService.updatePrediction(prediction);
+    print('Updated existing prediction');
+  } else {
+    await predictionService.savePrediction(prediction, adjustment['id']);
+    print('Inserted new prediction');
+  }
+}
+
 
 
 

@@ -40,6 +40,7 @@ class _SelectWidgetState extends State<SelectWidget> {
           SizedBox(
             height: 40,
             child: DropdownButtonFormField<String>(
+              dropdownColor: Colors.white,
               value: (widget.selectedValue != null && widget.selectedValue!.isNotEmpty) ? widget.selectedValue : null,
               onChanged: widget.onChanged,
               hint: const Text(

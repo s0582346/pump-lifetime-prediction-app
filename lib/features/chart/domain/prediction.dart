@@ -1,5 +1,5 @@
 class Prediction {
-  final String? id;
+  final id;
   final double? a;  // Quadratic coefficient
   final double? b;  // Quadratic coefficient
   final double? c;  // Quadratic coefficient
@@ -23,7 +23,7 @@ class Prediction {
   }) : date = date ?? DateTime.now();
 
   Prediction copyWith({
-    String? id,
+    id,
     double? a,
     double? b,
     double? c,
@@ -55,7 +55,7 @@ class Prediction {
       'residualWear': residualWear,
       'estimatedOperatingHours': estimatedOperatingHours,
       'estimatedMaintenanceDate': estimatedMaintenanceDate?.toIso8601String(),
-      'adjusmentId': adjusmentId,
+      'adjustmentId': adjusmentId,
       'date': date.toIso8601String(),
     };
   }
@@ -71,7 +71,7 @@ class Prediction {
       estimatedMaintenanceDate: map['estimatedMaintenanceDate'] != null
           ? DateTime.parse(map['estimatedMaintenanceDate'])
           : null,
-      adjusmentId: map['adjusmentId'],
+      adjusmentId: map['adjustmentId'],
       date: map['date'] != null ? DateTime.parse(map['date']) : DateTime.now(),
     );
   }

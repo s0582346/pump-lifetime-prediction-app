@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter_predictive_maintenance_app/features/chart/application/adjustment_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/application/prediction_service.dart';
+import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
 import 'package:flutter_predictive_maintenance_app/shared/controllers/base_measurement_controller.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
@@ -12,14 +15,18 @@ final chartControllerProvider =
     AsyncNotifierProvider<ChartController, ChartState>(ChartController.new);
 
 class ChartController extends AsyncNotifier<ChartState> {
-  late final MeasurementService _measurementService;
-  late final PredictionService _predictionService;
+
+  late final MeasurementService _measurementService =
+      ref.read(measurementServiceProvider);
+
+  late final PredictionService _predictionService =
+      ref.read(predictionServiceProvider);
+
 
   // On build, fetch measurements and predictions together.
   @override
   Future<ChartState> build() async {
-    _measurementService = ref.read(measurementServiceProvider);
-    _predictionService = ref.read(predictionServiceProvider);
+   
 
     final pump = ref.watch(selectedPumpProvider);
     if (pump == null) {
@@ -52,6 +59,11 @@ class ChartController extends AsyncNotifier<ChartState> {
   Future<void> refresh() async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() => build());
+  }
+
+  Future<void> closeAdjustment(adjustmentId) async {
+    AdjustmentService().closeAdjustment(adjustmentId);
+    
   }
 
   Map<String, List<Measurement>> _groupMeasurements(

@@ -28,6 +28,7 @@ class InitialScreen extends ConsumerWidget {
         ),
       ),
       // Put the main content into the body
+      backgroundColor: Colors.white,
       body: pumpsAsyncValue.when(
         data: (pumps) {
           if (pumps.isEmpty) {
@@ -84,7 +85,7 @@ class InstructionBox extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.symmetric(horizontal: 24),
       decoration: BoxDecoration(
-        color: Colors.blue.shade50,
+        color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(8),
       ),
       child: const Text(

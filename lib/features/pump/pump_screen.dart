@@ -22,6 +22,7 @@ class PumpScreen extends ConsumerWidget {
           ),
         ),
       ),
+      backgroundColor: Colors.white,
       body: PumpFormWidget(),
     );
   }

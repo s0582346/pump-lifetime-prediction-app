@@ -49,6 +49,23 @@ class AdjustmentRepository {
       ['open', pumpId],
     );
   }
+
+  /// Closes the adjustment by setting its status to "closed" and recording the closing time.
+Future<void> closeAdjustment(Database db, String adjustmentId) async {
+  try {
+    await db.update(
+      'adjustment',
+      {
+        'status': 'close',
+      },
+      where: 'id = ?',
+      whereArgs: [adjustmentId],
+    );
+    print('Adjustment $adjustmentId successfully closed.');
+  } catch (e) {
+    print('Failed to close adjustment: $e');
+  }
+}
   
   /// Get the count of adjustments for a given pump
   /// If no adjustments are found, return 0
