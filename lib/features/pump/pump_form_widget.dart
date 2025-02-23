@@ -53,7 +53,7 @@ class PumpFormWidget extends ConsumerWidget {
           label: 'Type of Time Entry',
           selectedValue: pumpDataState.typeOfTimeEntry,
           onChanged: (value) => pumpDataNotifier.typeOfTimeEntry = value,
-          items: const ['current operating hours', 'average operating hours per day'],
+          items: const ['operating time (absolute)', 'operating time (relative)', 'average operating time per day'],
         ),
         const SizedBox(height: 20),
         PrimaryButton(

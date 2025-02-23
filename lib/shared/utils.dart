@@ -5,9 +5,27 @@ import 'package:path/path.dart';
 
 class Utils {
 
-  // save 
+  String formatDate(dynamic date) {
+  
+    DateTime parsedDate;
+
+    if (date is DateTime) {
+      parsedDate = date;
+    } else if (date is String) {
+      // Assuming the string is in the format "dd.MM.yyyy"
+      parsedDate = DateFormat('yyyy-MM-dd').parse(date);
+    } else {
+      throw Exception('Unsupported date format');
+    }
+
+    return "${parsedDate.day.toString().padLeft(2, '0')}"
+         ".${parsedDate.month.toString().padLeft(2, '0')}"
+         ".${parsedDate.year}";
+         
+  }
+
+  
   dynamic convertToInt(value, {factor = 100}) {
-    print("value: $value");
 
     if (value == null) return 0;
     if (value is int) return value * factor; // Directly multiply if it's already an int
@@ -80,13 +98,19 @@ class Utils {
   /// average operating hours per day, current date and last date
   /// TO USE
   /// - when type of time entry = 'average operating hours per day'
-  int calculateCurrentOperatingHours(startOperatingHours, averageOperatingHoursPerDay, currentDate, lastDate) {
+  double? calculateCurrentOperatingHours(double? startOperatingHours, int? averageOperatingHoursPerDay, DateTime? currentDate, DateTime? lastDate) {
     if (startOperatingHours == null || averageOperatingHoursPerDay == null || currentDate == null || lastDate == null) {
       return 0;
     }
 
-    final currentDays = currentDate.difference(lastDate).inDays;
-    final currentOperatingHours = startOperatingHours + (averageOperatingHoursPerDay * currentDays);
+    final dayDiff = currentDate.difference(lastDate).inHours / 24;
+    print("dayDiff: $dayDiff");
+    
+    if (dayDiff <= 0) {
+      return null;
+    }
+
+    final currentOperatingHours = startOperatingHours + (averageOperatingHoursPerDay * dayDiff);
     
     return currentOperatingHours;
   }
@@ -101,20 +125,24 @@ class Utils {
     required DateTime currentDate,
   }) {
 
+    print("is start bigger than current: ${startOperatingHours >= currentOperatingHours}");
     // Ensure we don't have illogical inputs
     if (startOperatingHours >= currentOperatingHours) {
       return null;
     }
 
     // Compute fractional day difference
-    final double dayDiff = currentDate.difference(startDate).inHours / 24.0;
+    final double dayDiff = currentDate.difference(startDate).inHours / 24;
+
+    print("dayDiff: $dayDiff");
 
     // If dayDiff is 0, it means either same day or timestamps are identical
-    if (dayDiff == 0) {
+    if (dayDiff <= 0) {
       return null;
     }
 
     final double average = (currentOperatingHours - startOperatingHours) / dayDiff;
+    print("average: $average");
     return average; 
   }
 
@@ -153,14 +181,12 @@ class Utils {
 
   /// Returns a formatted date string indicating the maintenance date based
   /// on the [daysTillMaintenance] parameter.
-  String getEstimatedMaintenanceDate(int daysTillMaintenance) {
-    final now = DateTime.now();
-
-    final maintenanceDate = now.add(Duration(days: daysTillMaintenance));
+  DateTime getEstimatedMaintenanceDate(int hoursTillMaintenance, DateTime currentDate) {
+    final maintenanceDate = currentDate.add(Duration(hours: hoursTillMaintenance));
   
     // Format the date into a human-readable string (e.g., "Feb 20, 2025")
     //final formatter = DateFormat('MMM d, yyyy');
     //return formatter.format(maintenanceDate);
-    return maintenanceDate.toIso8601String();
+    return maintenanceDate;
   }
 }

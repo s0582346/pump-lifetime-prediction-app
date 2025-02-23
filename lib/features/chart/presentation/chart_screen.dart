@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
+import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
@@ -28,6 +29,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
   @override
   Widget build(BuildContext context) {
     final chartState = ref.watch(chartControllerProvider);
+    final pump = ref.watch(selectedPumpProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -110,9 +112,11 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
                       measurements: groupedMeasurements[adjustmentId]!,
                       adjustmentId: adjustmentId,
                       estimatedOperatingHours: predictionForTab.estimatedOperatingHours,
+                      estimatedAdjustmentDay: predictionForTab.estimatedMaintenanceDate,
                       // Either pass the full Prediction...
                       // ... or just pass the regressionSpots if that’s all you need
                       regression: regressionSpots,
+                      pump: pump!,
                     );
                   }).toList(),
                 ),

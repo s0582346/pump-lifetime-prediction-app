@@ -42,13 +42,37 @@ class PumpBox extends StatelessWidget {
               pump.id,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 20,
               ),
             ),
             const SizedBox(height: 4),
-            Text('Measurable Parameter: ${pump.measurableParameter}'),
-            Text('Permissible Total Wear: ${pump.permissibleTotalWear}'),
-            Text('Medium: ${pump.medium}'),
+            Row(
+              children: [
+                const Text('Measurable Parameter: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
+                Text(pump.measurableParameter)
+              ],
+            ),
+            Row(
+              children: [
+                const Text('Permissible Total Wear: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
+                Text(pump.permissibleTotalWear.toString())
+              ],
+            ),
+            
+            Row(
+              children: [
+                const Text('Type Of Time Entry: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
+                Text(pump.typeOfTimeEntry.replaceAll('per day', '')),
+              ],
+            ),
+            
+             Row(
+              children: [
+                const Text('Medium: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
+                Text(pump.medium)
+              ],
+            ),
+          
           ],
         ),
       ),
