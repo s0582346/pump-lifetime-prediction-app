@@ -9,7 +9,7 @@ import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 class MeasurementService {
 
   /// Save a measurement to the database
-  Future<void> saveMeasurement(Measurement measurement, Pump pump) async {
+  Future<void> saveMeasurement(Measurement newMeasurement, Pump pump) async {
     final db = await DatabaseHelper().database;
     final adjustmentRepo = AdjustmentRepository(db: db);
     final measurementRepo = MeasurementRepository(db: db);   
@@ -23,41 +23,56 @@ class MeasurementService {
 
       Measurement? reference;
       double result = 1.0; // if no reference, qn or pn is 1
-      double? avgOperatingHoursPerDay;
+      double? currentOperatingHours;
       if (measurements != null) {
         reference = Measurement.fromMap(measurements.first);  
 
         // calculate normalized Value
-        result = (pump.measurableParameter == 'volume flow') ? Utils().calculateQn(measurement, reference) : Utils().calculatePn(measurement, reference);
+        result = (pump.measurableParameter == 'volume flow') ? Utils().calculateQn(newMeasurement, reference) : Utils().calculatePn(newMeasurement, reference);
       }
       
       final Qn = (pump.measurableParameter == 'volume flow') ? result : 0;
       final pn = (pump.measurableParameter == 'pressure') ? result : 0;
       
       // compute average operating hours per day
-      if (pump.typeOfTimeEntry == 'current operating hours') {
-        final startDate = measurements != null ? DateTime.parse(measurements.last['date']) : DateTime.now();
-        final startOperatingHours = measurements != null ? measurements.last['currentOperatingHours'] : 0;
-        final currentOperatingHours = int.parse(measurement.currentOperatingHours);
+      if (measurements != null) {
+
+        if (pump.typeOfTimeEntry.contains('average')) {
+        print('Calculating average operating hours per day');
+
+        
+        currentOperatingHours = (measurements.last['currentOperatingHours'] / 100); 
+        final averageOperatingHoursPerDay = int.parse(newMeasurement.averageOperatingHoursPerDay);
+        final currentDate = newMeasurement.date;
+        final startDate = DateTime.parse(measurements.last['date']);
 
         print('startDate: ${startDate}');
-        print('startOperatingHours: ${startOperatingHours}');
-        print('current operating hours ${currentOperatingHours}');
-        print('currentDate: ${measurement.date}');
+        print('current operating hours: ${currentOperatingHours}');
+        print('average operating hours ${averageOperatingHoursPerDay}');
+        print('currentDate: ${currentDate}');
 
-        avgOperatingHoursPerDay = Utils().calculateAverageOperatingHoursPerDay(
-          startOperatingHours: startOperatingHours, 
-          currentOperatingHours: currentOperatingHours, 
-          currentDate: measurement.date, 
-          startDate: startDate
+        currentOperatingHours = Utils().calculateCurrentOperatingHours(
+          currentOperatingHours,
+          averageOperatingHoursPerDay,
+          currentDate,
+          startDate
         );
 
-        print('avg: $avgOperatingHoursPerDay');
+        print('current operating hours: $currentOperatingHours');
+        }
+
+        // compute current operating hours
+        if (pump.typeOfTimeEntry.contains('relative')) {  
+          print("current operating hours ${measurements.last['currentOperatingHours'].runtimeType}");
+          print("current operating hours ${newMeasurement.currentOperatingHours.runtimeType}");
+          currentOperatingHours = double.parse(newMeasurement.currentOperatingHours) + (measurements.last['currentOperatingHours'] / 100).toDouble();
+        }
       }
+      
      
-      final updatedMeasurement = measurement.copyWith(
+      final updatedMeasurement = newMeasurement.copyWith(
         adjustmentId: adjustmentId, 
-        averageOperatingHoursPerDay: avgOperatingHoursPerDay ?? measurements?.last['averageOperatingHoursPerDay'] ?? 0.0, 
+        currentOperatingHours: currentOperatingHours ?? 0, 
         Qn: Qn, 
         pn: pn
       );

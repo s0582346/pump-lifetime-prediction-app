@@ -74,9 +74,19 @@ Future<void> savePrediction(Pump pump) async {
       }
     }
 
-    // ✅ Step 3: Update the existing or new Prediction object
+    //final remainingDaysTillMaintenance = Utils().calculateRemainingDaysTillMaintenance(measurements.last.date, estimatedOperatingHours, currentOperatingHours.last, measurements.last.averageOperatingHoursPerDay);
+
+    // format estimated maintenance date
+    DateTime? estimatedMaintenanceDate;
+    if (estimatedOperatingHours != null)
+    {
+      final remainingHoursTillMaintenance = (estimatedOperatingHours - currentOperatingHours.last).toInt();
+      estimatedMaintenanceDate = Utils().getEstimatedMaintenanceDate(remainingHoursTillMaintenance, DateTime.parse(measurements.last.date));
+    }
+
     prediction = prediction.copyWith(
       estimatedOperatingHours: estimatedOperatingHours,
+      estimatedMaintenanceDate: estimatedMaintenanceDate,
       adjusmentId: adjustment['id'],
       a: model.a,
       b: model.b,

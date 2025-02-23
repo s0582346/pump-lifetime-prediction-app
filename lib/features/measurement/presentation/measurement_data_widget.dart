@@ -19,6 +19,10 @@ class MeasurementDataWidget extends ConsumerWidget {
     final measurementNotifier = ref.read(measurementProvider.notifier);
     final measurementState = ref.watch(measurementProvider);
     final pump = ref.watch(selectedPumpProvider);
+
+    
+    final hLabel = pump?.typeOfTimeEntry.contains('average') ? 'Average Operating Hours Per Day' : pump?.typeOfTimeEntry.contains('relative') ? 'Operating Time (Relative)' : 'Operating Time (Absolute)';
+
     
     return ListView(
       padding: const EdgeInsets.all(40.0),
@@ -30,21 +34,21 @@ class MeasurementDataWidget extends ConsumerWidget {
         ),
 
         InputWidget(
-          label: (pump?.measurableParameter == 'volume flow') ? 'Volumen Flow' : 'Pressure',
+          label: (pump?.measurableParameter == 'volume flow') ? 'Volumen Flow [Q]' : 'Pressure [p]',
           initialValue: (pump?.measurableParameter == 'volume flow') ? measurementState.volumeFlow : measurementState.pressure,	
           onChanged: (value) => (pump?.measurableParameter == 'volume flow') ? measurementNotifier.volumeFlow = value : measurementNotifier.pressure = value,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
         ),
         InputWidget(
-          label: 'Rotational Frequency',
+          label: 'Rotational Frequency [n]',
           initialValue: measurementState.rotationalFrequency,
           onChanged: (value) => measurementNotifier.rotationalFrequency = value,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
         ),
         InputWidget(
-          label: 'Current Operating Hours',
-          initialValue: measurementState.currentOperatingHours,
-          onChanged: (value) => measurementNotifier.currentOperatingHours = value,
+          label: "$hLabel [h]",
+          initialValue: pump?.typeOfTimeEntry.contains('average') ? measurementState.averageOperatingHoursPerDay : measurementState.currentOperatingHours,
+          onChanged: (value) => pump?.typeOfTimeEntry.contains('average') ? measurementNotifier.averageOperatingHoursPerDay = value : measurementNotifier.currentOperatingHours = value,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
         ),
         const SizedBox(height: 20),
@@ -58,6 +62,7 @@ class MeasurementDataWidget extends ConsumerWidget {
             final success = measurementNotifier.saveMeasurement();
 
             if (await success) {
+              FocusManager.instance.primaryFocus?.unfocus();
               Future.microtask(() => ref.read(historyControllerProvider.notifier).refresh());
               Future.microtask(() => ref.read(chartControllerProvider.notifier).refresh());
               ref.read(bottomNavigationProvider.notifier).state = 0; // Navigate to the history screen

@@ -3,17 +3,21 @@ import 'package:flutter_predictive_maintenance_app/components/form_components/pr
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/pump.dart';
+import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 
 class ChartWidget extends ConsumerWidget {
   final estimatedOperatingHours;
+  final estimatedAdjustmentDay;
   final List<Measurement> measurements;
   final List<FlSpot>? regression;
   final String adjustmentId;
+  final Pump pump;
 
-  const ChartWidget({super.key, required this.measurements, required this.adjustmentId, this.regression, this.estimatedOperatingHours});
+  const ChartWidget({super.key, required this.measurements, required this.adjustmentId, this.regression, this.estimatedOperatingHours, this.estimatedAdjustmentDay, required this.pump});
  // adjustmentId = NM045
    
 
@@ -34,7 +38,7 @@ class ChartWidget extends ConsumerWidget {
             padding: const EdgeInsets.all(10),
             child: Align(
               alignment: Alignment.topLeft,
-              child: EstimatedOperatingHours(hours: estimatedOperatingHours, count: count),
+              child: EstimatedOperatingHours(currentOperatingHours: measurements.last.currentOperatingHours, estimatedOperatingHours: estimatedOperatingHours, count: count, maintenanceDate: estimatedAdjustmentDay != null ? Utils().formatDate(estimatedAdjustmentDay) : '-'),
             ),
           ),
           
@@ -48,15 +52,16 @@ class ChartWidget extends ConsumerWidget {
               blueLineSpots: measurements
                   .map((measurement) => FlSpot(
                         measurement.currentOperatingHours,
-                        measurement.Qn,
+                        (pump.measurableParameter == 'volume flow') ? measurement.Qn : measurement.pn,
                       ))
                   .toList(),
               grayLineSpots: regression ?? [],
               xAxisStart: measurements.first.currentOperatingHours,
               xAxisEnd: measurements.last.currentOperatingHours,
+              ),
             ),
           ),
-        ),
+          
           Align(
             alignment: Alignment.center,
             child: PrimaryButton(
@@ -76,9 +81,13 @@ class ChartWidget extends ConsumerWidget {
 }
 
 class EstimatedOperatingHours extends StatelessWidget {
-  final double hours;
+  final double currentOperatingHours;
+  final double estimatedOperatingHours;
+  final String maintenanceDate;
   final count;
-  const EstimatedOperatingHours({super.key, required this.hours, required this.count});
+
+  EstimatedOperatingHours({super.key, required this.currentOperatingHours,required this.estimatedOperatingHours, required this.count, this.maintenanceDate = '-'});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -86,23 +95,70 @@ class EstimatedOperatingHours extends StatelessWidget {
       children: [
         Text("$count - Adjustment",
           style: const TextStyle(fontSize: 23.0 , fontWeight: FontWeight.bold)),
-        SizedBox(height: 10),
-        Text(
-          'Estimated Operating Hours',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: Colors.grey[600],
-          ),
+        SizedBox(height: 15),
+
+        Row(
+          children: [
+            Text(
+              'Current Operating Hours: ',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                color: Colors.grey[600],
+              ),
+            ),
+            Text(
+              "${currentOperatingHours.toStringAsFixed(1)} h",
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 2), // Small spacing between texts
-        Text(
-          hours.toStringAsFixed(2),
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: Colors.black,
-          ),
+
+        SizedBox(height: 10),
+        Row(
+          children: [
+            Text(
+              'Estimated Operating Hours: ',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                color: Colors.grey[600],
+              ),
+            ),
+            Text(
+              "${estimatedOperatingHours.toStringAsFixed(1)} h",
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 10),
+        Row(
+          children: [
+            Text(
+              'Estimated Adjustment Day: ',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                color: Colors.grey[600],
+              ),
+            ),
+            Text(
+              maintenanceDate,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -127,7 +183,7 @@ class CustomLineChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final flSpotStart = FlSpot(xAxisStart, 0.9);
-    final flSpotEnd = FlSpot(xAxisEnd + 50, 0.9);
+    final flSpotEnd = FlSpot(xAxisEnd + 40, 0.9);
 
     final List<FlSpot> redHorizontalSpots = [
       flSpotStart,
@@ -138,7 +194,7 @@ class CustomLineChart extends StatelessWidget {
       LineChartData(
         // Adjust these min/max values dynamically
         minX: xAxisStart,
-        maxX: xAxisEnd + 50,
+        maxX: xAxisEnd + 40,
         minY: 0.8,
         maxY: 1.1,
 
@@ -158,9 +214,9 @@ class CustomLineChart extends StatelessWidget {
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 40,
-          interval: 10, // Ensure bottom titles appear at interval of 10
+          interval: 15, // Ensure bottom titles appear at interval of 10
           getTitlesWidget: (value, meta) {
-            if (value % 10 == 0) {
+            if (value % 15 == 0) {
               return Text(value.toInt().toStringAsFixed(1),
                 style: TextStyle(fontSize: 15, color: Colors.black),);
             }
