@@ -14,16 +14,16 @@ class MeasurementController extends Notifier<Measurement> {
   }
 
   // setters for the different fields in the form
-  /*
-  set date(date) {
   
+  set date(date) {
+    /*
     final regex = RegExp(r'^\d{2}-\d{2}-\d{4}$');
     if (!regex.hasMatch(date)) {
        return;
     }
-    DateFormat format = DateFormat("dd-MM-yyyy"); 
+    DateFormat format = DateFormat("dd-MM-yyyy"); */ 
     state = state.copyWith(date: date);
-  }*/
+  }
 
   set volumeFlow(value) {
     state = state.copyWith(volumeFlow: value);

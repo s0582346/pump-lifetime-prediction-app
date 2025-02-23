@@ -101,7 +101,7 @@ class Utils {
     required DateTime currentDate,
   }) {
 
-  // Ensure we don't have illogical inputs
+    // Ensure we don't have illogical inputs
     if (startOperatingHours >= currentOperatingHours) {
       return null;
     }
@@ -119,15 +119,14 @@ class Utils {
   }
 
 
-  List<FlSpot> generateQuadraticSpots(double a, double b, double c,
-    {double start = 0, double end = 100, double step = 1}) {
-  final List<FlSpot> spots = [];
-  for (double x = start; x <= end; x += step) {
-    final double y = a * x * x + b * x + c; 
-    spots.add(FlSpot(x, y));
+  List<FlSpot> generateQuadraticSpots(double a, double b, double c, {double start = 0, double end = 100, double step = 1}) {
+    final List<FlSpot> spots = [];
+    for (double x = start; x <= end; x += step) {
+      final double y = a * x * x + b * x + c; 
+      spots.add(FlSpot(x, y));
+    }
+    return spots;
   }
-  return spots;
-}
 
   /// Calculate the remaining days till maintenance based on the current date,
   int calculateRemainingDaysTillMaintenance(DateTime? currentDate, hoursTillMaintenance, currentOperatingHours, averageHoursPerDay) 

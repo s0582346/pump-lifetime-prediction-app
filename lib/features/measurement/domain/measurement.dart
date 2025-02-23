@@ -1,7 +1,7 @@
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 
 class Measurement {
-  final date = DateTime.now();
+  final date;
   final adjustmentId;
   final volumeFlow;
   final pressure;
@@ -12,6 +12,7 @@ class Measurement {
   final pn;
 
   Measurement({
+    this.date,
     this.adjustmentId,
     this.volumeFlow,
     this.pressure,
@@ -23,6 +24,7 @@ class Measurement {
   }); 
 
   Measurement copyWith({
+    date,
     adjustmentId,
     volumeFlow,
     pressure,
@@ -33,6 +35,7 @@ class Measurement {
     pn
   }) {
     return Measurement(
+      date: date ?? this.date,
       adjustmentId: adjustmentId ?? this.adjustmentId,
       volumeFlow: volumeFlow ?? this.volumeFlow,
       pressure: pressure ?? this.pressure,
@@ -59,6 +62,7 @@ class Measurement {
 
   factory Measurement.fromMap(Map<String, dynamic> map) {
     return Measurement(
+      date: map['date'],
       adjustmentId: map['adjustmentId'],
       volumeFlow: (map['volumeFlow']).toDouble() / 100,
       pressure: (map['pressure']).toDouble() / 100,
