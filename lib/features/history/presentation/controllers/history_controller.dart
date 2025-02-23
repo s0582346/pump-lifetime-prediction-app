@@ -3,7 +3,6 @@ import 'package:flutter_predictive_maintenance_app/shared/controllers/base_measu
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/application/measurement_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
-import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 
 class HistoryController extends BaseMeasurementController {
   

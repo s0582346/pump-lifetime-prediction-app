@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
+import 'package:intl/intl.dart';
 
 class MeasurementListWidget extends ConsumerWidget {
   final List<Measurement> measurements;
@@ -11,8 +12,8 @@ class MeasurementListWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pump = ref.watch(selectedPumpProvider);
-    final slCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q' : 'p';
-    final lCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q/n' : 'p/n';
+    final slCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q' : 'p'; // slC stands for second last column
+    final lCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q/n' : 'p/n'; // lc stands for last column
     
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
@@ -43,13 +44,13 @@ class MeasurementListWidget extends ConsumerWidget {
             DataColumn(
               label: Text(
                 slCLabel,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
               ),
             ),
             DataColumn(
               label: Text(
                 lCLabel,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
               ),
             ),
           ],
@@ -66,9 +67,10 @@ class MeasurementListWidget extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(lCVal.toStringAsFixed(3)),
+                  const SizedBox(width: 10),
                   IconButton(
                     onPressed: () {},
-                    icon: const Icon(Icons.more_horiz),
+                    icon: const Icon(Icons.edit, color: Colors.grey, size: 20),
                   ),
                 ],
                 )
@@ -80,8 +82,23 @@ class MeasurementListWidget extends ConsumerWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
-    return "${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}";
-    // - ${date.hour}:${date.minute.toString().padLeft(2, '0')}
+String _formatDate(dynamic date) {
+  
+  DateTime parsedDate;
+  
+  if (date is DateTime) {
+    parsedDate = date;
+  } else if (date is String) {
+    // Assuming the string is in the format "dd.MM.yyyy"
+    parsedDate = DateFormat('yyyy-MM-dd').parse(date);
+  } else {
+    throw Exception('Unsupported date format');
   }
+  
+  return "${parsedDate.day.toString().padLeft(2, '0')}"
+         ".${parsedDate.month.toString().padLeft(2, '0')}"
+         ".${parsedDate.year}";
+         
+        
+}
 }

@@ -58,10 +58,12 @@ class PumpFormWidget extends ConsumerWidget {
         const SizedBox(height: 20),
         PrimaryButton(
           onPressed: () async {
-             final success = await pumpDataNotifier.savePumpData();
-             if (success) {
+            final success = await pumpDataNotifier.savePumpData();
+            if (success) {
+              if (context.mounted) {
+                Navigator.of(context).pop();
+              }
               ref.invalidate(pumpsProvider);  // Invalidate the provider to trigger a rebuild
-              Navigator.of(context).pop();  // Handle navigation in the widget
             }
           },
           label: 'Save',

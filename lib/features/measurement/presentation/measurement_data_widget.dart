@@ -5,9 +5,11 @@ import 'package:flutter_predictive_maintenance_app/navigation/navigation_provide
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/measurement_controller.dart';
 import 'package:flutter_predictive_maintenance_app/components/form_components/input_widget.dart';
+import 'package:flutter_predictive_maintenance_app/components/form_components/date_input_widget.dart';
 import 'package:flutter_predictive_maintenance_app/components/form_components/primary_button.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
+import 'package:intl/intl.dart';
 
 class MeasurementDataWidget extends ConsumerWidget {
   const MeasurementDataWidget({super.key});
@@ -21,8 +23,13 @@ class MeasurementDataWidget extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(40.0),
       children: [
-        //TODO implement condition for volume flow
-         InputWidget(
+        DateInputWidget(
+          label: 'Date',
+          initialValue: measurementState.date,
+          onChanged: (value) => measurementNotifier.date = value,
+        ),
+
+        InputWidget(
           label: (pump?.measurableParameter == 'volume flow') ? 'Volumen Flow' : 'Pressure',
           initialValue: (pump?.measurableParameter == 'volume flow') ? measurementState.volumeFlow : measurementState.pressure,	
           onChanged: (value) => (pump?.measurableParameter == 'volume flow') ? measurementNotifier.volumeFlow = value : measurementNotifier.pressure = value,
@@ -43,6 +50,11 @@ class MeasurementDataWidget extends ConsumerWidget {
         const SizedBox(height: 20),
         PrimaryButton(
           onPressed: () async {
+            // if user hasnt picked picked date
+            if (measurementState.date == null) {
+              measurementNotifier.date = DateTime.now();
+            }
+
             final success = measurementNotifier.saveMeasurement();
 
             if (await success) {

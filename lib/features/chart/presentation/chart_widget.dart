@@ -25,29 +25,38 @@ class ChartWidget extends ConsumerWidget {
   
   return Scaffold(
     backgroundColor: Colors.white,
-    body: Padding(
-      padding: const EdgeInsets.all(5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // Ensure alignment starts from the left
+    body: SingleChildScrollView(
+        child: Column(
         children: [
-          SizedBox(height: 10),
-          Align(
-            alignment: Alignment.topLeft, // Align the content to the top left
-            child: EstimatedOperatingHours(hours: estimatedOperatingHours, count: count),
+          const SizedBox(height: 10),
+
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: EstimatedOperatingHours(hours: estimatedOperatingHours, count: count),
+            ),
           ),
-          SizedBox(height: 20),
+          
           SizedBox(
-            height: 250,
+            height: 275,
+            width: double.infinity,
+            child: Padding(
+            // Use reasonable padding values
+            padding: const EdgeInsets.fromLTRB(2, 20, 10, 20),
             child: CustomLineChart(
               blueLineSpots: measurements
-                  .map((measurement) => FlSpot(measurement.currentOperatingHours, measurement.Qn))
+                  .map((measurement) => FlSpot(
+                        measurement.currentOperatingHours,
+                        measurement.Qn,
+                      ))
                   .toList(),
               grayLineSpots: regression ?? [],
               xAxisStart: measurements.first.currentOperatingHours,
               xAxisEnd: measurements.last.currentOperatingHours,
             ),
           ),
-          SizedBox(height: 20),
+        ),
           Align(
             alignment: Alignment.center,
             child: PrimaryButton(
@@ -60,7 +69,7 @@ class ChartWidget extends ConsumerWidget {
           ),
         ],
       ),
-    ),
+  )
   );
 }
 
@@ -107,16 +116,13 @@ class CustomLineChart extends StatelessWidget {
   final List<FlSpot> blueLineSpots;
   final List<FlSpot> grayLineSpots;
   
-  /// This red line is just an example for y = 0.9
-  /// from x = 0 to x = 120. Adjust as needed.
-
   const CustomLineChart({
-    Key? key,
+    super.key,
     required this.blueLineSpots,
     required this.grayLineSpots,
     required this.xAxisStart,
     required this.xAxisEnd
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -129,25 +135,25 @@ class CustomLineChart extends StatelessWidget {
     ];
     
     return LineChart(
-  LineChartData(
-    // Adjust these min/max values dynamically
-    minX: xAxisStart,
-    maxX: xAxisEnd + 50,  // Extend 30 times beyond the last point
-    minY: 0.8,
-    maxY: 1.1,
+      LineChartData(
+        // Adjust these min/max values dynamically
+        minX: xAxisStart,
+        maxX: xAxisEnd + 50,
+        minY: 0.8,
+        maxY: 1.1,
 
-    // Enable touch interactions
-    lineTouchData: LineTouchData(enabled: true),
+        // Enable touch interactions
+        lineTouchData: LineTouchData(enabled: true),
 
-    // Axis Titles and Ticks
-    titlesData: FlTitlesData(
-      leftTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 50,
-          interval: 0.05, // Keep density as required
-        ),
-      ),
+        // Axis Titles and Ticks
+        titlesData: FlTitlesData(
+          leftTitles: const AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 50,
+              interval: 0.05, // Keep density as required
+            ),
+          ),
       bottomTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
@@ -155,7 +161,7 @@ class CustomLineChart extends StatelessWidget {
           interval: 10, // Ensure bottom titles appear at interval of 10
           getTitlesWidget: (value, meta) {
             if (value % 10 == 0) {
-              return Text(value.toInt().toString(),
+              return Text(value.toInt().toStringAsFixed(1),
                 style: TextStyle(fontSize: 15, color: Colors.black),);
             }
             return Container(); // Hide non-matching values
