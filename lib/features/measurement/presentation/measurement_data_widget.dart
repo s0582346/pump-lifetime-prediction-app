@@ -65,7 +65,7 @@ class MeasurementDataWidget extends ConsumerWidget {
               FocusManager.instance.primaryFocus?.unfocus();
               Future.microtask(() => ref.read(historyControllerProvider.notifier).refresh());
               Future.microtask(() => ref.read(chartControllerProvider.notifier).refresh());
-              ref.read(bottomNavigationProvider.notifier).state = 0; // Navigate to the history screen
+              if (context.mounted) Navigator.of(context).pop();
             }
           },
           label: 'Save',

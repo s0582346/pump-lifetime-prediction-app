@@ -21,6 +21,10 @@ class PumpScreen extends ConsumerWidget {
             color: Colors.white,
           ),
         ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(false),
+        ),
       ),
       backgroundColor: Colors.white,
       body: PumpFormWidget(),

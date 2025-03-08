@@ -11,7 +11,22 @@ class FormScreen extends ConsumerWidget {
     //final FormTab currentTab = ref.watch(currentTabProvider);
     //final pumpDataState = ref.watch(pumpDataProvider);
 
-    return const Scaffold(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF007167),
+        title: const Text(
+          "NETZSCH",
+            style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+          ),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(false),
+        ),
+      ),
       backgroundColor: Colors.white,
       body: MeasurementDataWidget(),
     ); 
