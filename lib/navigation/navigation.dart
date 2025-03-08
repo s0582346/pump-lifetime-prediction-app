@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_predictive_maintenance_app/features/dashboard/dashboard_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation_provider.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_screen.dart';
@@ -55,8 +56,8 @@ class _NavigationState extends ConsumerState<Navigation> {
         index: currentIndex,
         children: const [
           HistoryScreen(),
+          DashboardScreen(),
           ChartScreen(),
-          FormScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
