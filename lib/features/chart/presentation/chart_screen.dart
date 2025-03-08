@@ -113,6 +113,8 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
                       adjustmentId: adjustmentId,
                       estimatedOperatingHours: predictionForTab.estimatedOperatingHours,
                       estimatedAdjustmentDay: predictionForTab.estimatedMaintenanceDate,
+
+                      
                       // Either pass the full Prediction...
                       // ... or just pass the regressionSpots if that’s all you need
                       regression: regressionSpots,

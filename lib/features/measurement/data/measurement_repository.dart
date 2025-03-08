@@ -6,7 +6,7 @@ class MeasurementRepository {
 
   MeasurementRepository({required this.db});
 
-  // Save measurement with linked adjustment ID
+  /// Save measurement with linked adjustment ID
   Future<void> saveMeasurement(Measurement measurement) async {
     await db.insert(
       'measurements',
@@ -15,7 +15,7 @@ class MeasurementRepository {
     );
   }
 
-  // Fetch measurements for a given pump
+  /// Fetch measurements for a given pump
   Future<List<Map<String, dynamic>>> fetchMeasurementsByPumpId(String pumpId) async {
     print('Fetching measurements for pump: $pumpId');
 
@@ -32,7 +32,24 @@ class MeasurementRepository {
     return measurements;
   }
 
-  // Fetch measurements for a given adjustment
+  /// Fetch measurements for a given pump
+  Future<List<Map<String, dynamic>>> getCurrentMeasurementsCount(String pumpId) async {
+    print('Fetching measurements for pump: $pumpId');
+
+    final List<Map<String, dynamic>> measurements = await db.rawQuery(
+      '''
+      SELECT count(m.*)
+      FROM measurements m
+      JOIN adjustment a ON m.adjustmentId = a.id
+      WHERE a.pumpId = ?;
+      ''',
+      [pumpId],
+    );
+    
+    return measurements;
+  }
+
+  /// Fetch measurements for a given adjustment
   Future<List<Map<String, dynamic>>?> fetchMeasurementsByAdjustmentId(String adjustmentId) async {
     print('Fetching measurements for adjustment: $adjustmentId');
 

@@ -14,6 +14,8 @@ class MeasurementService {
     final adjustmentRepo = AdjustmentRepository(db: db);
     final measurementRepo = MeasurementRepository(db: db);   
     final predictionService = PredictionService();
+    final measurableParameter = pump.measurableParameter;
+    final typeOfTimeEntry = pump.typeOfTimeEntry;
 
     try {
       // Get or create adjustment
@@ -28,19 +30,19 @@ class MeasurementService {
         reference = Measurement.fromMap(measurements.first);  
 
         // calculate normalized Value
-        result = (pump.measurableParameter == 'volume flow') ? Utils().calculateQn(newMeasurement, reference) : Utils().calculatePn(newMeasurement, reference);
+        result = (measurableParameter == 'volume flow') ? Utils().calculateQn(newMeasurement, reference) : Utils().calculatePn(newMeasurement, reference);
       }
       
-      final Qn = (pump.measurableParameter == 'volume flow') ? result : 0;
-      final pn = (pump.measurableParameter == 'pressure') ? result : 0;
+      final Qn = (measurableParameter == 'volume flow') ? result : 0;
+      final pn = (measurableParameter == 'pressure') ? result : 0;
       
       // compute average operating hours per day
       if (measurements != null) {
 
-        if (pump.typeOfTimeEntry.contains('average')) {
+        if (typeOfTimeEntry.contains('average')) {
         print('Calculating average operating hours per day');
 
-        
+        // cumulative 
         currentOperatingHours = (measurements.last['currentOperatingHours'] / 100); 
         final averageOperatingHoursPerDay = int.parse(newMeasurement.averageOperatingHoursPerDay);
         final currentDate = newMeasurement.date;
@@ -62,7 +64,7 @@ class MeasurementService {
         }
 
         // compute current operating hours
-        if (pump.typeOfTimeEntry.contains('relative')) {  
+        if (typeOfTimeEntry.contains('relative')) {  
           print("current operating hours ${measurements.last['currentOperatingHours'].runtimeType}");
           print("current operating hours ${newMeasurement.currentOperatingHours.runtimeType}");
           currentOperatingHours = double.parse(newMeasurement.currentOperatingHours) + (measurements.last['currentOperatingHours'] / 100).toDouble();
@@ -78,7 +80,7 @@ class MeasurementService {
       );
 
       await measurementRepo.saveMeasurement(updatedMeasurement);      
-      await predictionService.savePrediction(pump);
+      await predictionService.savePrediction(adjustmentId, measurableParameter);
       
     } catch (e) {
       // Handle errors appropriately

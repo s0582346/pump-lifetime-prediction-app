@@ -38,7 +38,12 @@ class ChartWidget extends ConsumerWidget {
             padding: const EdgeInsets.all(10),
             child: Align(
               alignment: Alignment.topLeft,
-              child: EstimatedOperatingHours(currentOperatingHours: measurements.last.currentOperatingHours, estimatedOperatingHours: estimatedOperatingHours, count: count, maintenanceDate: estimatedAdjustmentDay != null ? Utils().formatDate(estimatedAdjustmentDay) : '-'),
+              child: InfoBlock(
+                currentOperatingHours: measurements.last.currentOperatingHours, 
+                estimatedOperatingHours: estimatedOperatingHours, 
+                count: count, 
+                maintenanceDate: estimatedAdjustmentDay != null ? Utils().formatDate(estimatedAdjustmentDay) : '-'
+                ),
             ),
           ),
           
@@ -80,13 +85,13 @@ class ChartWidget extends ConsumerWidget {
 
 }
 
-class EstimatedOperatingHours extends StatelessWidget {
+class InfoBlock extends StatelessWidget {
   final double currentOperatingHours;
   final double estimatedOperatingHours;
   final String maintenanceDate;
   final count;
 
-  EstimatedOperatingHours({super.key, required this.currentOperatingHours,required this.estimatedOperatingHours, required this.count, this.maintenanceDate = '-'});
+  InfoBlock({super.key, required this.currentOperatingHours,required this.estimatedOperatingHours, required this.count, this.maintenanceDate = '-'});
 
   @override
   Widget build(BuildContext context) {
