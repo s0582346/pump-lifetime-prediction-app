@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter_predictive_maintenance_app/database/database_helper.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/application/adjustment_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
@@ -9,6 +10,10 @@ import 'package:flutter_predictive_maintenance_app/features/measurement/applicat
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
+import 'package:scidart/numdart.dart';
+import 'package:scidart/scidart.dart';
+
+
 
 class PredictionService {
 
@@ -26,28 +31,30 @@ class PredictionService {
   }
 }
 
-Future<void> savePrediction(Pump pump) async {
-  print('Saving prediction for pump ${pump.id}');
+Future<void> savePrediction(String adjustmentId, String measurableParameter) async {
+  print('Saving prediction for adjustment $adjustmentId');
 
   final db = await DatabaseHelper().database;
   final predictionService = PredictionRepository(db: db);
   final measurementService = MeasurementService();
-  final adjustmentService = AdjustmentService();
-  final adjustment = await adjustmentService.getOpenAdjustment(pump.id);
+  
+  //final adjustmentService = AdjustmentService();
+  //final adjustment = await adjustmentService.getOpenAdjustment(pump.id);
 
+  /*
   if (adjustment == null || adjustment['id'] == null) {
     print('Error: Adjustment ID is null.');
     return;
-  }
+  }*/
 
   // Check if an existing prediction already exists
-  Prediction? existingPrediction = await predictionService.getPredictionByAdjustmentId(adjustment['id']);
+  Prediction? existingPrediction = await predictionService.getPredictionByAdjustmentId(adjustmentId);
 
   // If an existing prediction is found, use it; otherwise, create a new one
   Prediction prediction = existingPrediction ?? Prediction();
 
-  if (pump.measurableParameter == 'volume flow') {
-    final measurements = await measurementService.fetchMeasurementsByAdjustmentId(adjustment['id']);
+  if (measurableParameter == 'volume flow') {
+    final measurements = await measurementService.fetchMeasurementsByAdjustmentId(adjustmentId);
 
     if (measurements == null || measurements.length < 5) {
       print('Not enough measurements. Skipping prediction.');
@@ -87,7 +94,7 @@ Future<void> savePrediction(Pump pump) async {
     prediction = prediction.copyWith(
       estimatedOperatingHours: estimatedOperatingHours,
       estimatedMaintenanceDate: estimatedMaintenanceDate,
-      adjusmentId: adjustment['id'],
+      adjusmentId: adjustmentId,
       a: model.a,
       b: model.b,
       c: model.c,
@@ -96,12 +103,12 @@ Future<void> savePrediction(Pump pump) async {
 
   print('Estimated Operating hours: ${prediction.estimatedOperatingHours}');
 
-  // ✅ Step 4: Save the updated prediction (Update if exists, Insert if new)
+  // Save the updated prediction (Update if exists, Insert if new)
   if (existingPrediction != null) {
     await predictionService.updatePrediction(prediction);
     print('Updated existing prediction');
   } else {
-    await predictionService.savePrediction(prediction, adjustment['id']);
+    await predictionService.savePrediction(prediction, adjustmentId);
     print('Inserted new prediction');
   }
 }
