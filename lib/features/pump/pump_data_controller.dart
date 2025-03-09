@@ -72,11 +72,6 @@ class PumpDataController extends Notifier<Pump> {
 
 final pumpFormProvider = NotifierProvider<PumpDataController, Pump>(() => PumpDataController());
 
-final pumpServiceProvider = Provider<PumpService>((ref) {
-  return PumpService();
-});
-
 final pumpsProvider = FutureProvider<List<Pump>>((ref) async {
-  final repo = ref.read(pumpServiceProvider);
-  return await repo.getPumps();
+  return await ref.read(pumpServiceProvider).getPumps();
 });

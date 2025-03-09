@@ -10,6 +10,8 @@ class Measurement {
   final averageOperatingHoursPerDay;
   final Qn;
   final pn;
+  final QnTotal;
+  final pnTotal;
 
   Measurement({
     this.date,
@@ -20,7 +22,9 @@ class Measurement {
     this.currentOperatingHours,
     this.averageOperatingHoursPerDay,
     this.Qn,
-    this.pn
+    this.pn,
+    this.QnTotal,
+    this.pnTotal 
   }); 
 
   Measurement copyWith({
@@ -32,7 +36,9 @@ class Measurement {
     currentOperatingHours,
     averageOperatingHoursPerDay,
     Qn,
-    pn
+    pn,
+    QnTotal,
+    pnTotal
   }) {
     return Measurement(
       date: date ?? this.date,
@@ -43,7 +49,9 @@ class Measurement {
       currentOperatingHours: currentOperatingHours ?? this.currentOperatingHours,
       averageOperatingHoursPerDay: averageOperatingHoursPerDay ?? this.averageOperatingHoursPerDay,
       Qn: Qn ?? this.Qn,
-      pn: pn ?? this.pn
+      pn: pn ?? this.pn,
+      QnTotal: QnTotal ?? this.QnTotal,
+      pnTotal: pnTotal ?? this.pnTotal
     );}
 
   Map<String, dynamic> toMap() {
@@ -57,6 +65,8 @@ class Measurement {
     'averageOperatingHoursPerDay': Utils().convertToInt(averageOperatingHoursPerDay),
     'Qn': Utils().convertToInt(Qn, factor: 1000),
     'pn': Utils().convertToInt(pn, factor: 1000) ,
+    'QnTotal': Utils().convertToInt(QnTotal, factor: 1000),
+    'pnTotal': Utils().convertToInt(pnTotal, factor: 1000),
     };
   }
 
@@ -71,6 +81,8 @@ class Measurement {
       averageOperatingHoursPerDay: (map['averageOperatingHoursPerDay'] ?? 0) / 100,
       Qn: (map['Qn'] ?? 0).toDouble() / 1000,
       pn: (map['pn'] ?? 0).toDouble() / 1000,
+      QnTotal: (map['QnTotal'] ?? 0).toDouble() / 1000,
+      pnTotal: (map['pnTotal'] ?? 0).toDouble() / 1000,
     );
   }
 }

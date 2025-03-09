@@ -12,7 +12,8 @@ class HistoryScreen extends ConsumerStatefulWidget {
 }
 
 class _HistoryScreenState extends ConsumerState<HistoryScreen> with TickerProviderStateMixin {
-  late TabController _tabController;
+  TabController? _tabController;
+  int _currentTabIndex = 0;
 
   @override
   void initState() {
@@ -23,19 +24,28 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> with TickerProvid
 
   @override
   Widget build(BuildContext context) {
-    final measurementState = ref.watch(historyControllerProvider);
+    final historyState = ref.watch(historyControllerProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: measurementState.when(
+      body: historyState.when(
         loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primaryColor, backgroundColor: Colors.grey)), // TODO make a custom loading widget
         error: (e, _) => Center(child: Text("Error: $e")),
-        data: (groupedMeasurements) {
-          if (groupedMeasurements.isEmpty) {
-            return const Center(child: Text("No history available", style: TextStyle(fontSize: 20)));
-          }
+        data: (data) {
+          final groupedMeasurements = data.groupedMeasurements;
+          final adjustments = data.adjustments;
 
-          _tabController = TabController(length: groupedMeasurements.length, vsync: this);
+
+          final newIndex = adjustments.length - 1;
+          if (_tabController == null || _tabController!.length != adjustments.length) {
+            _currentTabIndex = newIndex;
+            _tabController?.removeListener(_onTabChanged);
+            _tabController = TabController(
+              length: adjustments.length, 
+              vsync: this,
+              initialIndex: _currentTabIndex,
+              )..addListener(_onTabChanged);
+          }
 
           return Column(
             children: [
@@ -46,13 +56,13 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> with TickerProvid
                 labelColor: AppColors.primaryColor,
                 dividerHeight: 3,
                 controller: _tabController,
-                tabs: groupedMeasurements.keys.map((id) => Tab(text: id)).toList(),
+                tabs: adjustments.map((a) => Tab(text: a.id)).toList(),
               ),
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
-                  children: groupedMeasurements.keys.map((id) {
-                    return MeasurementListWidget(measurements: groupedMeasurements[id]!);
+                  children: adjustments.map((a) {
+                    return MeasurementListWidget(measurements: groupedMeasurements[a.id], adjustment: a);
                   }).toList(),
                 ),
               ),
@@ -63,10 +73,19 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> with TickerProvid
     );
   }
 
+  _onTabChanged() {
+    setState(() {
+      _currentTabIndex = _tabController!.index;
+    });
+  }
+
   /// Dispose the tab controller when the widget is removed
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController?.removeListener(_onTabChanged);
+    _tabController?.dispose();
     super.dispose();
   }
+
+
 }

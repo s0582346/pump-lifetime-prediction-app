@@ -15,14 +15,13 @@ class ChartScreen extends ConsumerStatefulWidget {
   _ChartScreenState createState() => _ChartScreenState();
 }
 
-class _ChartScreenState extends ConsumerState<ChartScreen>
-    with TickerProviderStateMixin {
-  late TabController _tabController;
+class _ChartScreenState extends ConsumerState<ChartScreen> with TickerProviderStateMixin {
+  TabController? _tabController;
+  int _currentTabIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    // Load measurements & predictions
     Future.microtask(() => ref.read(chartControllerProvider.notifier).refresh());
   }
 
@@ -42,81 +41,74 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
         ),
         error: (e, _) => Center(child: Text("Error: $e")),
         data: (data) {
-          final groupedMeasurements = data.groupedMeasurements;
-          final predictions = data.predictions;
+          final adjustments = data.adjustments ?? [];
+          final groupedMeasurements = data.groupedMeasurements ?? {};
+          final predictions = data.predictions ?? [];
 
-          if (groupedMeasurements.isEmpty) {
-            return const Center(
-              child: Text(
-                "No history available",
-                style: TextStyle(fontSize: 20),
-              ),
-            );
+          // If no adjustments are available, show a message
+          if (adjustments.isEmpty) {
+            return const Center(child: Text("No adjustments available."));
           }
 
-          // Create a TabController for as many adjustmentIds as we have
-          _tabController = TabController(
-            length: groupedMeasurements.length,
-            vsync: this,
-          );
+          // Set the initial tab index to adjustments.length - 1
+          final newIndex = adjustments.length - 1;
+          if (_tabController == null || _tabController!.length != adjustments.length) {
+            _currentTabIndex = newIndex;
+            _tabController?.removeListener(_onTabChanged);
+            _tabController = TabController(
+              length: adjustments.length,
+              vsync: this,
+              initialIndex: _currentTabIndex,
+            )..addListener(_onTabChanged);
+          }
 
           return Column(
             children: [
               TabBar(
-                // tabAlignment is only available in newer Flutter versions;
-                // remove it if you get an error.
                 tabAlignment: TabAlignment.start,
                 isScrollable: true,
                 indicatorColor: AppColors.primaryColor,
-                labelColor: AppColors.primaryColor,
                 dividerHeight: 3,
+                labelColor: AppColors.primaryColor,
                 controller: _tabController,
-                tabs: groupedMeasurements.keys
-                    .map((adjustmentId) => Tab(text: adjustmentId))
-                    .toList(),
+                tabs: adjustments.map((a) => Tab(text: a.id)).toList(),
               ),
+
+              // Display the chart for each adjustment
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
-                  children: groupedMeasurements.keys.map((adjustmentId) {
-                    // Find the matching Prediction for this adjustmentId
+                  children: adjustments.map((a) {
+                   final adjustmentId = a.id;
                     final predictionForTab = predictions.firstWhere(
                       (p) => p.adjusmentId == adjustmentId,
                       orElse: () => Prediction(
                         adjusmentId: adjustmentId,
                         estimatedOperatingHours: 0,
-                        a: 0,
-                        b: 0,
-                        c: 0,
+                        a: 0.0,
+                        b: 0.0,
+                        c: 0.0,
                       ),
                     );
 
-                    // If a, b, c are non-null, generate regression spots
-                    final List<FlSpot> regressionSpots;
-                    if (predictionForTab.a != null &&
-                        predictionForTab.b != null &&
-                        predictionForTab.c != null) {
-                      regressionSpots = Utils().generateQuadraticSpots(
-                        predictionForTab.a!,
-                        predictionForTab.b!,
-                        predictionForTab.c!,
-                        start: groupedMeasurements[adjustmentId]!.first.currentOperatingHours,
-                        end: groupedMeasurements[adjustmentId]!.last.currentOperatingHours,
-                      );
-                    } else {
-                      regressionSpots = [];
+                    List<FlSpot> regressionSpots = [];
+                    if (predictionForTab.a != 0 || predictionForTab.b != 0 || predictionForTab.c != 0) {
+                      final measurementList = groupedMeasurements[adjustmentId] ?? [];
+                      if (measurementList.isNotEmpty) {
+                        regressionSpots = Utils().generateQuadraticSpots(
+                          predictionForTab.a!,
+                          predictionForTab.b!,
+                          predictionForTab.c!,
+                          start: measurementList.first.currentOperatingHours,
+                          end: measurementList.last.currentOperatingHours,
+                        );
+                      }
                     }
 
-                    // Pass everything to your ChartWidget
                     return ChartWidget(
-                      measurements: groupedMeasurements[adjustmentId]!,
-                      adjustmentId: adjustmentId,
-                      estimatedOperatingHours: predictionForTab.estimatedOperatingHours,
-                      estimatedAdjustmentDay: predictionForTab.estimatedMaintenanceDate,
-
-                      
-                      // Either pass the full Prediction...
-                      // ... or just pass the regressionSpots if that’s all you need
+                      measurements: groupedMeasurements[adjustmentId] ?? [],
+                      adjustment: a,
+                      prediction: predictionForTab,
                       regression: regressionSpots,
                       pump: pump!,
                     );
@@ -130,9 +122,16 @@ class _ChartScreenState extends ConsumerState<ChartScreen>
     );
   }
 
+  void _onTabChanged() {
+    setState(() {
+      _currentTabIndex = _tabController!.index;
+    });
+  }
+
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController?.removeListener(_onTabChanged);
+    _tabController?.dispose();
     super.dispose();
   }
 }

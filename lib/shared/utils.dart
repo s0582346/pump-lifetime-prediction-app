@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:intl/intl.dart';
@@ -98,7 +100,7 @@ class Utils {
   /// average operating hours per day, current date and last date
   /// TO USE
   /// - when type of time entry = 'average operating hours per day'
-  double? calculateCurrentOperatingHours(double? startOperatingHours, int? averageOperatingHoursPerDay, DateTime? currentDate, DateTime? lastDate) {
+  double calculateCurrentOperatingHours(double? startOperatingHours, int? averageOperatingHoursPerDay, DateTime? currentDate, DateTime? lastDate) {
     if (startOperatingHours == null || averageOperatingHoursPerDay == null || currentDate == null || lastDate == null) {
       return 0;
     }
@@ -107,7 +109,7 @@ class Utils {
     print("dayDiff: $dayDiff");
     
     if (dayDiff <= 0) {
-      return null;
+      return 0;
     }
 
     final currentOperatingHours = startOperatingHours + (averageOperatingHoursPerDay * dayDiff);
@@ -146,15 +148,54 @@ class Utils {
     return average; 
   }
 
-
-  List<FlSpot> generateQuadraticSpots(double a, double b, double c, {double start = 0, double end = 100, double step = 1}) {
+  // Generate a list of FlSpot objects based on a quadratic function
+  List<FlSpot> generateQuadraticSpots(double a, double b, double c, {double start = 0, double end = 50, double step = 1}) {
     final List<FlSpot> spots = [];
+    double newEnd = calculateXIntercept(a, b, c) ?? end;
+    end = newEnd;
+
     for (double x = start; x <= end; x += step) {
-      final double y = a * x * x + b * x + c; 
-      spots.add(FlSpot(x, y));
+      final double y = a * x * x + b * x + c;
+      if (y >= 0.8) {
+        spots.add(FlSpot(x, y));
+      }
     }
     return spots;
   }
+
+  
+/// Computes the x-axis intercept for the quadratic equation.
+/// Returns the new end value if it is greater than the current end; otherwise, returns currentEnd.
+double? calculateXIntercept(double a, double b, double c) {
+  /*
+  if (a == 0) {
+    // Handle linear case: y = b*x + c => x = -c / b (if b != 0)
+    return b != 0 ? (-c / b) : currentEnd;
+  }*/
+  
+  final double discriminant = (b * b) - (4 * a * c);
+  if (discriminant < 0) {
+    // No real roots; return the current end.
+    return null;
+  }
+  
+  final double sqrtDiscriminant = sqrt(discriminant);
+  final double root1 = (-b + sqrtDiscriminant) / (2 * a);
+  final double root2 = (-b - sqrtDiscriminant) / (2 * a);
+  
+  // Choose the root that is greater than currentEnd.
+  double newEnd = root1 > root2 ? root1 : root2;
+  
+  /*
+  if (root1 > currentEnd) {
+    newEnd = root1;
+  } else if (root2 > currentEnd) {
+    newEnd = root2;
+  }*/
+  
+    return newEnd;
+  }
+  
 
   /// Calculate the remaining days till maintenance based on the current date,
   int calculateRemainingDaysTillMaintenance(DateTime? currentDate, hoursTillMaintenance, currentOperatingHours, averageHoursPerDay) 
@@ -189,4 +230,21 @@ class Utils {
     //return formatter.format(maintenanceDate);
     return maintenanceDate;
   }
+
+   Map<String, List<Measurement>> groupMeasurements(List<Measurement>? measurements) {
+    final groupedMeasurements = <String, List<Measurement>>{};
+    
+    if (measurements == null) {
+      return groupedMeasurements;
+    }
+
+    for (var measurement in measurements) {
+      groupedMeasurements
+          .putIfAbsent(measurement.adjustmentId, () => [])
+          .add(measurement);
+    }
+    return groupedMeasurements;
+  }
+
+
 }
