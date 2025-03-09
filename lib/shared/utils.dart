@@ -195,6 +195,43 @@ double? calculateXIntercept(double a, double b, double c) {
   
     return newEnd;
   }
+
+  /// Returns all real solutions x for the equation:
+/// a*x^2 + b*x + (c - targetY) = 0.
+///
+/// Typically you'll either get 0, 1, or 2 real solutions.
+/// You can decide which solution(s) make physical sense (e.g., x >= 0).
+List<double> findXForY(double a, double b, double c, double targetY) {
+  final c_ = c - targetY; // shift so that we solve a*x^2 + b*x + c_ = 0
+
+  // Edge case: If 'a' ~ 0, we have a linear equation:
+  /*
+  if (a.abs() < 1e-12) {
+    // b*x + c_ = 0 => x = -c_/b
+    if (b.abs() < 1e-12) {
+      return []; // No solution if b also ~ 0
+    }
+    return [-c_ / b];
+  }*/
+
+  // Solve discriminant
+  final discriminant = b * b - 4 * a * c_;
+  if (discriminant < 0) {
+    // No real solutions
+    return [];
+  } else if (discriminant == 0) {
+    // One real solution
+    final x = -b / (2 * a);
+    return [x];
+  } else {
+    // Two real solutions
+    final sqrtD = sqrt(discriminant);
+    final x1 = (-b + sqrtD) / (2 * a);
+    final x2 = (-b - sqrtD) / (2 * a);
+    return [x1, x2];
+  }
+}
+
   
 
   /// Calculate the remaining days till maintenance based on the current date,

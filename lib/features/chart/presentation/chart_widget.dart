@@ -32,8 +32,8 @@ class ChartWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    double limit = 0.9;
-    double? yIntercept = 0.0;
+    double limit = 0.900;
+    double? yIntercept = prediction.estimatedOperatingHours; // set to the estimated operating hours as default, if no solution is found
 
     // Extract the count from the adjustmentId => NM045-0
     RegExp regex = RegExp(r'\d$');
@@ -44,8 +44,16 @@ class ChartWidget extends ConsumerWidget {
     final firstMeasurement = hasMeasurements ? measurements.first : null;
     final lastMeasurement = hasMeasurements ? measurements.last : null;
     
-    debugPrint('prediction: $prediction');
-    yIntercept = Utils().calculateXIntercept(prediction.a, prediction.b, (prediction.c - limit));
+  
+    final solutions = Utils().findXForY(prediction.a, prediction.b, prediction.c, limit); // normally two solutions
+
+    for (var solution in solutions) {
+      if (solution > 0 && solution > yIntercept!) {
+        yIntercept = solution;
+        break;
+      }
+    }
+
     debugPrint('intercept: $yIntercept');
    
 
