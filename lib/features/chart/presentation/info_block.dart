@@ -22,7 +22,7 @@ class InfoBlock extends StatelessWidget {
         Text("Adjustment - $count", style: const TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold)),
         const SizedBox(height: 15),
         _infoRow('Current Operating Hours: ', "${currentOperatingHours.toStringAsFixed(1)} h"),
-        _infoRow('Estimated Operating Hours: ', "${estimatedOperatingHours.toStringAsFixed(1)} h"),
+        _infoRow('Estimated Operating Hours: ', "${estimatedOperatingHours.toStringAsFixed(0)} h"),
         _infoRow('Estimated Adjustment Day: ', maintenanceDate),
       ],
     );

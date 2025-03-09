@@ -11,6 +11,7 @@ import 'package:flutter_predictive_maintenance_app/features/measurement/domain/m
 import 'package:flutter_predictive_maintenance_app/features/pump/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart';
 import 'package:scidart/numdart.dart';
 import 'package:scidart/scidart.dart';
 
@@ -58,15 +59,29 @@ Future<void> savePrediction(String adjustmentId, String measurableParameter) asy
   if (measurableParameter == 'volume flow') {
     final measurements = await measurementService.fetchMeasurementsByAdjustmentId(adjustmentId);
 
-    if (measurements == null || measurements.length < 5) {
+    if (measurements == null || measurements.length < 3) {
       print('Not enough measurements. Skipping prediction.');
       return;
     }
 
-    final currentOperatingHours = measurements.map((m) => m.currentOperatingHours).toList();
-    final qn = measurements.map((m) => m.Qn).toList();
+    final List<double> currentOperatingHours = [];
+    final List<double> qn = [];
 
-    final model = fitQuadratic(currentOperatingHours, qn);
+    for (final m in measurements) {
+      final double? hours = m.currentOperatingHours;
+      final double? flow = m.Qn;
+
+      if (hours != null && flow != null) {
+      currentOperatingHours.add(hours);
+      qn.add(flow);
+    }
+}
+
+    //final model = fitQuadratic(currentOperatingHours, qn);
+    final result = PolyFit(Array(currentOperatingHours), Array(qn), 2); 
+
+    QuadraticModel model = QuadraticModel(result.coefficients()[0], result.coefficients()[1], result.coefficients()[2]);
+
     print('Fitted Model => $model');
 
     final solutions = findXForY(model, 0.900);
@@ -89,7 +104,7 @@ Future<void> savePrediction(String adjustmentId, String measurableParameter) asy
     DateTime? estimatedMaintenanceDate;
     if (estimatedOperatingHours != null)
     {
-      final remainingHoursTillMaintenance = (estimatedOperatingHours - currentOperatingHours.last).toInt();
+      final remainingHoursTillMaintenance = ((estimatedOperatingHours - currentOperatingHours.last).abs()).toInt();
       estimatedMaintenanceDate = Utils().getEstimatedMaintenanceDate(remainingHoursTillMaintenance, DateTime.parse(measurements.last.date));
     }
 

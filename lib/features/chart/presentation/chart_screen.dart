@@ -79,7 +79,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> with TickerProviderSt
                 child: TabBarView(
                   controller: _tabController,
                   children: adjustments.map((a) {
-                   final adjustmentId = a.id;
+                    final adjustmentId = a.id;
                     final predictionForTab = predictions.firstWhere(
                       (p) => p.adjusmentId == adjustmentId,
                       orElse: () => Prediction(
