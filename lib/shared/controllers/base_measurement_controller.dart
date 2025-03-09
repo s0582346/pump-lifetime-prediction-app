@@ -6,6 +6,7 @@ import 'package:flutter_predictive_maintenance_app/features/measurement/applicat
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 
+/*
 abstract class BaseMeasurementController extends AsyncNotifier<Map<String, List<Measurement>>> {
   late final MeasurementService _measurementService;
 
@@ -43,12 +44,9 @@ abstract class BaseMeasurementController extends AsyncNotifier<Map<String, List<
     state = await AsyncValue.guard(() => _fetchMeasurements());
   }
 
-  // Optional: Add hooks for subclasses to override
-  void onMeasurementsUpdated(Map<String, List<Measurement>> measurements) {
-    // Hook for subclasses
-  }
 }
 
 
 /// MeasurementService Provider
 final measurementServiceProvider = Provider((ref) => MeasurementService());
+*/

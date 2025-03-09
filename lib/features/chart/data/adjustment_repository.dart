@@ -23,7 +23,7 @@ class AdjustmentRepository {
       // if no open adjustment found, get adjustment count
       final count = await _getAdjustmentCount(pumpId);
 
-      final String adjustmentId = Utils().formatAdjustmentId(pumpId, count);
+      final adjustmentId = Utils().formatAdjustmentId(pumpId, count);
 
       // If no open adjustment found, create a new one
       await db.rawInsert(
@@ -40,6 +40,37 @@ class AdjustmentRepository {
     } catch (e) {
       throw Exception('Failed to get or create adjustment: $e');
     }
+  }
+
+
+  Future<void> createAdjustment(String pumpId) async {
+    try {
+      // if no open adjustment found, get adjustment count
+      final count = await _getAdjustmentCount(pumpId);
+      final adjustmentId = Utils().formatAdjustmentId(pumpId, count);
+
+
+      // Get the current adjustment ID for the pump
+      await db.rawInsert(
+        'INSERT INTO adjustment (id, status, pumpId, date) VALUES (?, ?, ?, ?)',
+        [    
+          adjustmentId,
+          'open',
+          pumpId,  // Using passed pumpId
+          DateTime.now().toIso8601String(),
+        ],
+      );
+      
+    } catch (e) {
+      throw Exception('Failed to create adjustment: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchAdjustmentsByPumpId(String pumpId) {
+    return db.rawQuery(
+      'SELECT * FROM adjustment WHERE pumpId = ?',
+      [pumpId],
+    );
   }
 
 

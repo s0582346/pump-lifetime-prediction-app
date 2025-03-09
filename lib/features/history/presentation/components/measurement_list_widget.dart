@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
+import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/form_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
@@ -7,9 +8,10 @@ import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 import 'package:intl/intl.dart';
 
 class MeasurementListWidget extends ConsumerWidget {
-  final List<Measurement> measurements;
+  final List<Measurement>? measurements;
+  final Adjustment? adjustment;
 
-  const MeasurementListWidget({super.key, required this.measurements});
+  const MeasurementListWidget({super.key, required this.measurements, required this.adjustment});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -59,27 +61,23 @@ class MeasurementListWidget extends ConsumerWidget {
                     lCLabel,
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
-                  const SizedBox(width: 25),
-                  CircleAvatar(
-                    backgroundColor: AppColors.primaryColor, // Change as needed
-                    radius: 15,
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const FormScreen(),
+                  const SizedBox(width: 20),
+                  adjustment!.status == 'open'
+                      ? CircleAvatar(
+                          backgroundColor: AppColors.primaryColor,
+                          radius: 15,
+                          child: IconButton(
+                            onPressed: () => _navigateToFormScreen(context),
+                            icon: const Icon(Icons.add, color: Colors.white, size: 18),
+                            padding: EdgeInsets.zero,
                           ),
-                        ); 
-                      },
-                      icon: const Icon(Icons.add, color: Colors.white, size: 18),
-                      padding: EdgeInsets.zero,
-                    ),
-                  ),
+                        )
+                      : Container()
                 ],
               ),
             ),
           ],
-          rows: measurements.map((data) {
+          rows: (measurements ?? []).map((data) {
             final slCVal = (pump?.measurableParameter == 'volume flow') ? data.volumeFlow : data.pressure;
             final lCVal = (pump?.measurableParameter == 'volume flow') ? data.Qn : data.pn;
 
@@ -93,13 +91,15 @@ class MeasurementListWidget extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(lCVal.toStringAsFixed(3)),
-                    const SizedBox(width: 7),
-                    IconButton(
-                      onPressed: () {
-                        // Define the edit action
-                      },
-                      icon: const Icon(Icons.edit, color: Colors.grey, size: 20),
-                    ),
+                    const SizedBox(width: 5),
+                    adjustment!.status == 'open'
+                        ? IconButton(
+                            onPressed: () {
+                              // Define the edit action
+                            },
+                            icon: const Icon(Icons.edit, color: Colors.grey, size: 20),
+                          )
+                        : Container()
                   ],
                 ),
               ),
@@ -110,20 +110,25 @@ class MeasurementListWidget extends ConsumerWidget {
     );
   }
 
+  void _navigateToFormScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const FormScreen(),
+      ),
+    );
+  }
+
   String _formatDate(dynamic date) {
-    DateTime parsedDate;
+    try {
+      DateTime parsedDate = date is String
+          ? DateFormat('yyyy-MM-dd').parse(date)
+          : date as DateTime;
 
-    if (date is DateTime) {
-      parsedDate = date;
-    } else if (date is String) {
-      // Assuming the string is in the format "dd.MM.yyyy"
-      parsedDate = DateFormat('yyyy-MM-dd').parse(date);
-    } else {
-      throw Exception('Unsupported date format');
+      return "${parsedDate.day.toString().padLeft(2, '0')}"
+          ".${parsedDate.month.toString().padLeft(2, '0')}"
+          ".${parsedDate.year}";
+    } catch (e) {
+      return "Invalid Date"; // Fallback if parsing fails
     }
-
-    return "${parsedDate.day.toString().padLeft(2, '0')}"
-        ".${parsedDate.month.toString().padLeft(2, '0')}"
-        ".${parsedDate.year}";
   }
 }

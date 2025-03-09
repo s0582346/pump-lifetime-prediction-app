@@ -67,6 +67,8 @@ class DatabaseHelper {
         rotationalFrequency INTEGER NOT NULL,
         Qn INTEGER,
         pn INTEGER,
+        QnTotal INTEGER,
+        pnTotal INTEGER,
         currentOperatingHours INTEGER,  
         averageOperatingHoursPerDay INTEGER,
         FOREIGN KEY (adjustmentId) REFERENCES adjustment(id)

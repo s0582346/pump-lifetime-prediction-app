@@ -30,4 +30,11 @@ class Adjustment {
     };
   } 
 
+  factory Adjustment.fromMap(Map<String, dynamic> map) {
+    return Adjustment(
+      id: map['id'],
+      status: map['status'],
+      pumpId: map['pumpId']
+    );
+  }
 }

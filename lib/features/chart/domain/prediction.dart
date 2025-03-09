@@ -1,8 +1,8 @@
 class Prediction {
   final id;
-  final double? a;  // Quadratic coefficient
-  final double? b;  // Quadratic coefficient
-  final double? c;  // Quadratic coefficient
+  final a;  // Quadratic coefficient
+  final b;  // Quadratic coefficient
+  final c;  // Quadratic coefficient
 
   final double? residualWear;
   final double? estimatedOperatingHours;

@@ -15,7 +15,7 @@ class MeasurementRepository {
     );
   }
 
-  /// Fetch measurements for a given pump
+  /// Fetch all measurements for a given pump
   Future<List<Map<String, dynamic>>> fetchMeasurementsByPumpId(String pumpId) async {
     print('Fetching measurements for pump: $pumpId');
 
@@ -25,6 +25,8 @@ class MeasurementRepository {
       FROM measurements m
       JOIN adjustment a ON m.adjustmentId = a.id
       WHERE a.pumpId = ?;
+      ORDER BY m.currentOperatingHours ASC;
+      
       ''',
       [pumpId],
     );

@@ -5,93 +5,106 @@ import 'package:flutter_predictive_maintenance_app/features/chart/data/adjustmen
 import 'package:flutter_predictive_maintenance_app/features/measurement/data/measurement_repository.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
+
+final measurementServiceProvider = Provider((ref) => MeasurementService());
 
 class MeasurementService {
 
   /// Save a measurement to the database
   Future<void> saveMeasurement(Measurement newMeasurement, Pump pump) async {
+  try {
+    // Initialize dependencies
     final db = await DatabaseHelper().database;
     final adjustmentRepo = AdjustmentRepository(db: db);
-    final measurementRepo = MeasurementRepository(db: db);   
+    final measurementRepo = MeasurementRepository(db: db);
     final predictionService = PredictionService();
-    final measurableParameter = pump.measurableParameter;
-    final typeOfTimeEntry = pump.typeOfTimeEntry;
 
-    try {
-      // Get or create adjustment
-      final adjustmentId = await adjustmentRepo.getCurrentAdjustmentId(pump.id); 
+    // Fetch necessary data
+    final adjustmentId = await adjustmentRepo.getCurrentAdjustmentId(pump.id);
+    final measurements = await measurementRepo.fetchMeasurementsByAdjustmentId(adjustmentId) ?? [];
+    final measurementsTotal = await measurementRepo.fetchMeasurementsByPumpId(pump.id) ?? [];
 
-      final measurements = await measurementRepo.fetchMeasurementsByAdjustmentId(adjustmentId);
+    // Initialize variables with default values
+    Measurement? reference, referenceTotal;
+    double Qn = 1, pn = 1, QnTotal = 1, pnTotal = 1;
+    double? currentOperatingHours = double.tryParse(newMeasurement.currentOperatingHours); // default current operating hours from the new measurement
+    
+    final isVolumeFlow = pump.measurableParameter == 'volume flow';
 
-      Measurement? reference;
-      double result = 1.0; // if no reference, qn or pn is 1
-      double? currentOperatingHours;
-      if (measurements != null) {
-        reference = Measurement.fromMap(measurements.first);  
+    if (measurementsTotal.isNotEmpty) {
+      referenceTotal = Measurement.fromMap(measurementsTotal.first);
+      final resultTotal = isVolumeFlow ? Utils().calculateQn(newMeasurement, referenceTotal) : Utils().calculatePn(newMeasurement, referenceTotal);
+      QnTotal = isVolumeFlow ? resultTotal : 0;
+      pnTotal = isVolumeFlow ? 0 : resultTotal;
+    }
 
-        // calculate normalized Value
-        result = (measurableParameter == 'volume flow') ? Utils().calculateQn(newMeasurement, reference) : Utils().calculatePn(newMeasurement, reference);
-      }
-      
-      final Qn = (measurableParameter == 'volume flow') ? result : 0;
-      final pn = (measurableParameter == 'pressure') ? result : 0;
-      
-      // compute average operating hours per day
-      if (measurements != null) {
+    // Compute reference values if measurements exist
+    if (measurements.isNotEmpty) {
+      reference = Measurement.fromMap(measurements.first);
+      final result = isVolumeFlow
+          ? Utils().calculateQn(newMeasurement, reference)
+          : Utils().calculatePn(newMeasurement, reference);
 
-        if (typeOfTimeEntry.contains('average')) {
-        print('Calculating average operating hours per day');
+      Qn = isVolumeFlow ? result : 0;
+      pn = isVolumeFlow ? 0 : result;
+    }
 
-        // cumulative 
-        currentOperatingHours = (measurements.last['currentOperatingHours'] / 100); 
-        final averageOperatingHoursPerDay = int.parse(newMeasurement.averageOperatingHoursPerDay);
+    // Compute current operating hours based on time entry type
+    if (measurements.isNotEmpty) {
+      final lastMeasurement = measurements.last;
+      final lastOperatingHours = (lastMeasurement['currentOperatingHours'] as num) / 100;
+
+      if (pump.typeOfTimeEntry.contains('average')) {
+        debugPrint('Calculating average operating hours per day');
+        final averageOperatingHoursPerDay = int.tryParse(newMeasurement.averageOperatingHoursPerDay) ?? 0;
         final currentDate = newMeasurement.date;
-        final startDate = DateTime.parse(measurements.last['date']);
+        final startDate = DateTime.tryParse(lastMeasurement['date']) ?? DateTime.now();
 
-        print('startDate: ${startDate}');
-        print('current operating hours: ${currentOperatingHours}');
-        print('average operating hours ${averageOperatingHoursPerDay}');
-        print('currentDate: ${currentDate}');
+        debugPrint('Start Date: $startDate, Current Operating Hours: $lastOperatingHours');
+        debugPrint('Average Operating Hours Per Day: $averageOperatingHoursPerDay, Current Date: $currentDate');
 
         currentOperatingHours = Utils().calculateCurrentOperatingHours(
-          currentOperatingHours,
+          lastOperatingHours,
           averageOperatingHoursPerDay,
           currentDate,
-          startDate
+          startDate,
         );
 
-        print('current operating hours: $currentOperatingHours');
-        }
-
-        // compute current operating hours
-        if (typeOfTimeEntry.contains('relative')) {  
-          print("current operating hours ${measurements.last['currentOperatingHours'].runtimeType}");
-          print("current operating hours ${newMeasurement.currentOperatingHours.runtimeType}");
-          currentOperatingHours = double.parse(newMeasurement.currentOperatingHours) + (measurements.last['currentOperatingHours'] / 100).toDouble();
-        }
+        debugPrint('Updated Current Operating Hours: $currentOperatingHours');
       }
-      
-     
-      final updatedMeasurement = newMeasurement.copyWith(
-        adjustmentId: adjustmentId, 
-        currentOperatingHours: currentOperatingHours ?? 0, 
-        Qn: Qn, 
-        pn: pn
-      );
 
-      await measurementRepo.saveMeasurement(updatedMeasurement);      
-      await predictionService.savePrediction(adjustmentId, measurableParameter);
-      
-    } catch (e) {
-      // Handle errors appropriately
-      print('Error saving: $e');
+      if (pump.typeOfTimeEntry.contains('relative')) {
+        debugPrint("Calculating relative current operating hours");
+        final newHours = double.tryParse(newMeasurement.currentOperatingHours) ?? 0;
+        currentOperatingHours = newHours + lastOperatingHours;
+      }
     }
-    	
+
+    // Create the updated measurement
+    final updatedMeasurement = newMeasurement.copyWith(
+      adjustmentId: adjustmentId,
+      currentOperatingHours: currentOperatingHours,
+      Qn: Qn,
+      pn: pn,
+      QnTotal: QnTotal,
+      pnTotal: pnTotal,
+    );
+
+    // Save measurement and prediction
+    await measurementRepo.saveMeasurement(updatedMeasurement);
+    await predictionService.savePrediction(adjustmentId, pump.measurableParameter);
+  } catch (e, stackTrace) {
+    debugPrint('Error saving measurement: $e');
+    debugPrint(stackTrace.toString());
   }
+}
+
 
   /// Fetch measurements for a given pump
   /// [pumpId] The pump ID to fetch measurements for
-  Future<List<Measurement>> fetchMeasurementsByPumpId(pumpId) async {
+  Future<List<Measurement>?> fetchMeasurementsByPumpId(pumpId) async {
     print('Fetching measurements for pump: $pumpId');
 
     final db = await DatabaseHelper().database;
