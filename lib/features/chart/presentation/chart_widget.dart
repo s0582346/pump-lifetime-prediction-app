@@ -45,7 +45,7 @@ class ChartWidget extends ConsumerWidget {
     final lastMeasurement = hasMeasurements ? measurements.last : null;
     
     debugPrint('prediction: $prediction');
-    yIntercept = Utils().calculateXIntercept(prediction.a, prediction.b, (prediction.c - 0.9));
+    yIntercept = Utils().calculateXIntercept(prediction.a, prediction.b, (prediction.c - limit));
     debugPrint('intercept: $yIntercept');
    
 
