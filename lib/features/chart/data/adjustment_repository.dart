@@ -97,6 +97,23 @@ Future<void> closeAdjustment(Database db, String adjustmentId) async {
     print('Failed to close adjustment: $e');
   }
 }
+
+  /// Closes the adjustment by setting its status to "closed" and recording the closing time.
+Future<void> openAdjustment(Database db, String adjustmentId) async {
+  try {
+    await db.update(
+      'adjustment',
+      {
+        'status': 'open',
+      },
+      where: 'id = ?',
+      whereArgs: [adjustmentId],
+    );
+    print('Adjustment $adjustmentId successfully opened.');
+  } catch (e) {
+    print('Failed to open adjustment: $e');
+  }
+}
   
   /// Get the count of adjustments for a given pump
   /// If no adjustments are found, return 0

@@ -36,6 +36,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> with TickerProvid
           final adjustments = data.adjustments;
 
 
+
           final newIndex = adjustments.length - 1;
           if (_tabController == null || _tabController!.length != adjustments.length) {
             _currentTabIndex = newIndex;

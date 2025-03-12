@@ -62,7 +62,7 @@ class MeasurementListWidget extends ConsumerWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
                   const SizedBox(width: 20),
-                  adjustment!.status == 'open'
+                  (adjustment!.status == 'open')
                       ? CircleAvatar(
                           backgroundColor: AppColors.primaryColor,
                           radius: 15,
@@ -92,7 +92,7 @@ class MeasurementListWidget extends ConsumerWidget {
                   children: [
                     Text(lCVal.toStringAsFixed(3)),
                     const SizedBox(width: 5),
-                    adjustment!.status == 'open'
+                    (adjustment!.status == 'open') 
                         ? IconButton(
                             onPressed: () {
                               // Define the edit action

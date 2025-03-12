@@ -20,6 +20,7 @@ class ChartWidget extends ConsumerWidget {
   final List<FlSpot>? regression;
   final Adjustment adjustment;
   final Pump pump;
+  final bool isLast;
 
   const ChartWidget({
     super.key,
@@ -28,6 +29,7 @@ class ChartWidget extends ConsumerWidget {
     this.regression,
     required this.prediction,
     required this.pump,
+    this.isLast = false,
   });
 
   @override
@@ -40,11 +42,12 @@ class ChartWidget extends ConsumerWidget {
     Match? match = regex.firstMatch(adjustment.id);
     final count = match?[0] ?? '0';
 
+    final residualWear = pump.permissibleTotalWear - ((int.tryParse(count) ?? 0) * 10);
+
     final hasMeasurements = measurements.isNotEmpty;
     final firstMeasurement = hasMeasurements ? measurements.first : null;
     final lastMeasurement = hasMeasurements ? measurements.last : null;
     
-  
     final solutions = Utils().findXForY(prediction.a, prediction.b, prediction.c, limit); // normally two solutions
 
     for (var solution in solutions) {
@@ -81,6 +84,10 @@ class ChartWidget extends ConsumerWidget {
                   maintenanceDate: prediction.estimatedMaintenanceDate != null
                       ? Utils().formatDate(prediction.estimatedMaintenanceDate)
                       : '-',
+                  residualWear: residualWear,
+                  adjustment: adjustment,
+                  pump: pump,
+                  isLast: isLast
                 ),
               ),
             ),
@@ -106,19 +113,6 @@ class ChartWidget extends ConsumerWidget {
                 ),
               ),
             ),
-
-             (adjustment.status == 'open') ?
-              Align(
-                alignment: Alignment.center,
-                child: PrimaryButton(
-                  label: 'Close ${adjustment.id}',
-                  buttonColor: AppColors.greyColor,
-                  onPressed: () {
-                    ref.read(chartControllerProvider.notifier).closeAdjustment(adjustment.id);
-                  },
-                ),
-              ) : Container(),
-           
           ],
         ),
         ),
