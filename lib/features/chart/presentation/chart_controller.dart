@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/application/adjustment_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/application/prediction_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 
 final chartControllerProvider = AsyncNotifierProvider<ChartController, ChartState>(ChartController.new);
 final tabIndexProvider = StateProvider<int>((ref) => 0);
+final settingsOverlayProvider  = StateProvider<OverlayEntry?>((ref) => null);
 
 class ChartController extends AsyncNotifier<ChartState> {
 
@@ -54,14 +56,32 @@ class ChartController extends AsyncNotifier<ChartState> {
   }
 
   Future<void> closeAdjustment(String adjustmentId) async {
-  final pump = ref.read(selectedPumpProvider);
+    final pump = ref.read(selectedPumpProvider);
     if (pump == null) return;
 
     await _adjustmentService.closeAdjustment(adjustmentId);
+    refresh();
+    ref.read(historyControllerProvider.notifier).refresh();
+  }
+
+   Future<void> openAdjustment(String adjustmentId) async {
+    final pump = ref.read(selectedPumpProvider);
+    if (pump == null) return;
+    print('Opening adjustment $adjustmentId');
+    await _adjustmentService.openAdjustment(adjustmentId);
+    refresh();
+    ref.read(historyControllerProvider.notifier).refresh();
+  }
+
+  Future<void> createAdjustment(String adjustmentId) async {
+    final pump = ref.read(selectedPumpProvider);
+    if (pump == null) return;
+
     await _adjustmentService.createAdjustment(pump.id);
     refresh();
     ref.read(historyControllerProvider.notifier).refresh();
   }
+
 }
 
 

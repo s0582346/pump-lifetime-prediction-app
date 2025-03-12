@@ -9,7 +9,7 @@ import 'package:flutter_predictive_maintenance_app/features/chart/presentation/c
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_widget.dart';
 
 class ChartScreen extends ConsumerStatefulWidget {
-  const ChartScreen({Key? key}) : super(key: key);
+  const ChartScreen({super.key});
 
   @override
   _ChartScreenState createState() => _ChartScreenState();
@@ -80,6 +80,8 @@ class _ChartScreenState extends ConsumerState<ChartScreen> with TickerProviderSt
                   controller: _tabController,
                   children: adjustments.map((a) {
                     final adjustmentId = a.id;
+
+                    // Get the prediction for the current tab
                     final predictionForTab = predictions.firstWhere(
                       (p) => p.adjusmentId == adjustmentId,
                       orElse: () => Prediction(
@@ -104,13 +106,14 @@ class _ChartScreenState extends ConsumerState<ChartScreen> with TickerProviderSt
                         );
                       }
                     }
-
+                    print(a.id == adjustments.last.id);
                     return ChartWidget(
                       measurements: groupedMeasurements[adjustmentId] ?? [],
                       adjustment: a,
                       prediction: predictionForTab,
                       regression: regressionSpots,
                       pump: pump!,
+                      isLast: a.id == adjustments.last.id,
                     );
                   }).toList(),
                 ),

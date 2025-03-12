@@ -27,6 +27,12 @@ class AdjustmentService {
     await adjustmentRepo.closeAdjustment(db, adjustmentId);
   }
 
+  Future<void> openAdjustment(String adjustmentId) async {
+    final db = await DatabaseHelper().database;
+    final adjustmentRepo = AdjustmentRepository(db: db);
+    await adjustmentRepo.openAdjustment(db, adjustmentId);
+  }
+
   Future<List<Adjustment>?> fetchAdjustmentsByPumpId(pumpId) async {
     final db = await DatabaseHelper().database;
     final adjustmentRepo = AdjustmentRepository(db: db);
