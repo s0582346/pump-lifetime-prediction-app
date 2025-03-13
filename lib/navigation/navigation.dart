@@ -3,26 +3,22 @@ import 'package:flutter_predictive_maintenance_app/features/dashboard/dashboard_
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation_provider.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_screen.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/form_screen.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_screen.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/pump.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/custom_bottom_navigation_bar_item.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/custom_app_bar.dart';
 
 
-/* 
-  This acts like a global state container 
-  Any widget in your app tree can access it by watching or reading it
-*/
+
+/// This acts like a global state container <br/>
+/// Any widget in the app tree can access it by watching or reading it
 final selectedPumpProvider = StateProvider<Pump?>((ref) => null);
 
 
-/* 
-  Navigation widget is used to display the screens based on the index of the bottom navigation bar
-  It uses IndexedStack to maintain the state of the screen
-  It uses CustomAppBar to display the app bar
-  It uses CustomBottomNavigationBarItem to display the bottom navigation bar items
-*/
+/// Navigation widget is used to display the screens based on the index of the bottom navigation bar <br/>
+/// It uses IndexedStack to maintain the state of the screen <br/>
+/// It uses CustomAppBar to display the app bar <br/>
+/// It uses CustomBottomNavigationBarItem to display the bottom navigation bar items 
 class Navigation extends ConsumerStatefulWidget {
   final Pump selectedPump;
   

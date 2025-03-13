@@ -17,11 +17,29 @@ class PumpFormWidget extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(40.0),
       children: [
+        InputWidget(
+          label: 'Name',
+          initialValue: pumpDataState.name,
+          onChanged: (value) => pumpDataNotifier.name = value,
+          keyboardType: TextInputType.text,
+        ),
         SelectWidget(
           label: 'Pump Type',
           selectedValue: pumpDataState.type,
           onChanged: (value) => pumpDataNotifier.pumpType = value,
           items: const ['NM045', 'NM063', 'NM070', 'NM090', 'NM100', 'NM150'],
+        ),
+        SelectWidget(
+          label: 'Rotor Geometry',
+          selectedValue: pumpDataState.rotorGeometry,
+          onChanged: (value) => pumpDataNotifier.rotorGeometry = value,
+          items: const ['S', 'L', 'D', 'P'],
+        ),
+        SelectWidget(
+          label: 'Number of Stages',
+          selectedValue: pumpDataState.numberOfStages,
+          onChanged: (value) => pumpDataNotifier.numberOfStages = value,
+          items: const ['1', '2'],
         ),
         InputWidget(
           label: 'Medium',

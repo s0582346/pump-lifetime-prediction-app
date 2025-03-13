@@ -7,31 +7,35 @@ class PumpDataController extends Notifier<Pump> {
   // initialize the state of the controller
   @override
   Pump build() {
-    return Pump(type: '');
+    return Pump(type: '', id: '');
   }
 
-  set pumpType(String? type) {
-    state = state.copyWith(type: type);
+  set name(String? value) {
+    state = state.copyWith(name: value);
   }
 
-  set rotorGeometry(String rotorGeometry) {
-    state = state.copyWith(rotorGeometry: rotorGeometry);
+  set pumpType(String? value) {
+    state = state.copyWith(type: value);
   }
 
-  set statorGeometry(String statorGeometry) {
-    state = state.copyWith(statorGeometry: statorGeometry);
+  set rotorGeometry(String? value) {
+    state = state.copyWith(rotorGeometry: value);
   }
 
-  set speedChange(String speedChange) {
-    state = state.copyWith(speedChange: speedChange);
+  set numberOfStages(String? value) {
+    state = state.copyWith(numberOfStages: value);
   }
 
-  set medium(String medium) {
-    state = state.copyWith(medium: medium);
+  set speedChange(String? value) {
+    state = state.copyWith(speedChange: value);
   }
 
-  set measurableParameter(String? measurableParameter) {
-    state = state.copyWith(measurableParameter: measurableParameter);
+  set medium(String? value) {
+    state = state.copyWith(medium: value);
+  }
+
+  set measurableParameter(String? value) {
+    state = state.copyWith(measurableParameter: value);
   }
 
   set permissibleTotalWear(String permissibleTotalWear) {
@@ -48,8 +52,6 @@ class PumpDataController extends Notifier<Pump> {
 
 
   Future<bool> savePumpData() async {
-
-    // TODO: add all the fields
     final convertedState = state.copyWith(
       solidConcentration: state.solidConcentration,
       type: state.type,
@@ -69,7 +71,6 @@ class PumpDataController extends Notifier<Pump> {
 }
 
 ///  Providers
-
 final pumpFormProvider = NotifierProvider<PumpDataController, Pump>(() => PumpDataController());
 
 final pumpsProvider = FutureProvider<List<Pump>>((ref) async {

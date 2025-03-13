@@ -1,8 +1,12 @@
+import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
+
 class Pump {
   final DateTime date;
+  final String id;
   final String type;
+  final name;
   final rotorGeometry;
-  final statorGeometry;
+  final numberOfStages;
   final speedChange; // Drehzahländerung
   final medium;
   final measurableParameter; // volume flow or pressure
@@ -12,8 +16,10 @@ class Pump {
 
   Pump({
     required this.type,
+    required this.id,
+    this.name,
     this.rotorGeometry,
-    this.statorGeometry,
+    this.numberOfStages,
     this.speedChange,
     this.medium,
     this.measurableParameter,
@@ -22,14 +28,12 @@ class Pump {
     this.typeOfTimeEntry,
   }) : date = DateTime.now();
 
-  // This getter makes pump.id always equal pump.type.
-  String get id => type;
-
-  // Updated copyWith without id parameter since id is derived from type.
   Pump copyWith({
-    String? type,
+    id,
+    type,
+    name,
     rotorGeometry,
-    statorGeometry,
+    numberOfStages,
     speedChange,
     medium,
     measurableParameter,
@@ -38,9 +42,11 @@ class Pump {
     typeOfTimeEntry,
   }) {
     return Pump(
+      id: id ?? this.id,
       type: type ?? this.type,
+      name: name ?? this.name,
       rotorGeometry: rotorGeometry ?? this.rotorGeometry,
-      statorGeometry: statorGeometry ?? this.statorGeometry,
+      numberOfStages: numberOfStages ?? this.numberOfStages,
       speedChange: speedChange ?? this.speedChange,
       medium: medium ?? this.medium,
       measurableParameter: measurableParameter ?? this.measurableParameter,
@@ -54,13 +60,14 @@ class Pump {
     return {
       'date': date.toIso8601String(),
       'id': id,
+      'name': name,
       'type': type,
       'rotorGeometry': rotorGeometry,
-      'statorGeometry': statorGeometry,
+      'numberOfStages': numberOfStages,
       'speedChange': speedChange,
       'medium': medium,
       'measurableParameter': measurableParameter,
-      'permissibleTotalWear': permissibleTotalWear,
+      'permissibleTotalWear': Utils().convertToInt(permissibleTotalWear, factor: 100),
       'solidConcentration': solidConcentration,
       'typeOfTimeEntry': typeOfTimeEntry,
     };
@@ -68,13 +75,15 @@ class Pump {
 
   factory Pump.fromMap(Map<String, dynamic> map) {
     return Pump(
+      id: map['id'],
       type: map['type'],
+      name: map['name'],
       rotorGeometry: map['rotorGeometry'],
-      statorGeometry: map['statorGeometry'],
+      numberOfStages: map['numberOfStages'],
       speedChange: map['speedChange'],
       medium: map['medium'],
       measurableParameter: map['measurableParameter'],
-      permissibleTotalWear: map['permissibleTotalWear'],
+      permissibleTotalWear: (map['permissibleTotalWear']).toInt() / 100,
       solidConcentration: map['solidConcentration'],
       typeOfTimeEntry: map['typeOfTimeEntry'],
     );
