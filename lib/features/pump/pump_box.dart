@@ -39,13 +39,19 @@ class PumpBox extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              pump.id,
+              pump.name,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),
             ),
             const SizedBox(height: 4),
+             Row(
+              children: [
+                const Text('Pump Type: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
+                Text(pump.type)
+              ],
+            ),
             Row(
               children: [
                 const Text('Measurable Parameter: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),

@@ -39,14 +39,15 @@ class DatabaseHelper {
   Future<void> _createTables(Database db, int version) async {
     // create the tables
 
-    // create pump table
+    // create pumps table
     await db.execute('''
-      CREATE TABLE pump (
+      CREATE TABLE pumps (
         date TEXT NOT NULL,
         id TEXT PRIMARY KEY NOT NULL,
         type TEXT NOT NULL,
+        name TEXT,
         rotorGeometry TEXT,
-        statorGeometry TEXT,
+        numberOfStages TEXT,
         speedChange TEXT,
         medium TEXT,
         measurableParameter TEXT NOT NULL,
@@ -56,7 +57,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // create measurement table
+    // create measurements table
     await db.execute('''
       CREATE TABLE measurements (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -75,10 +76,10 @@ class DatabaseHelper {
       )
     ''');
 
-    // create adjustment table
+    // create adjustments table
     await db.execute(
       '''
-      CREATE TABLE adjustment (
+      CREATE TABLE adjustments (
         id TEXT PRIMARY KEY NOT NULL,
         status TEXT NOT NULL,
         date TEXT NOT NULL,
@@ -88,9 +89,9 @@ class DatabaseHelper {
       '''
     );
 
-    // create prediction table
+    // create predictions table
     await db.execute('''
-      CREATE TABLE prediction (
+      CREATE TABLE predictions (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         adjustmentId TEXT NOT NULL,
         date TEXT NOT NULL,
