@@ -61,7 +61,7 @@ class PumpBox extends StatelessWidget {
             Row(
               children: [
                 const Text('Permissible Total Wear: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
-                Text(pump.permissibleTotalWear.toString())
+                Text("${pump.permissibleTotalWear.toStringAsFixed(0)} %")
               ],
             ),
             

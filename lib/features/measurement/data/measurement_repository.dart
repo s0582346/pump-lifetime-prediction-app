@@ -23,7 +23,7 @@ class MeasurementRepository {
       '''
       SELECT m.*
       FROM measurements m
-      JOIN adjustment a ON m.adjustmentId = a.id
+      JOIN adjustments a ON m.adjustmentId = a.id
       WHERE a.pumpId = ?;
       ORDER BY m.currentOperatingHours ASC;
       
@@ -42,7 +42,7 @@ class MeasurementRepository {
       '''
       SELECT count(m.*)
       FROM measurements m
-      JOIN adjustment a ON m.adjustmentId = a.id
+      JOIN adjustments a ON m.adjustmentId = a.id
       WHERE a.pumpId = ?;
       ''',
       [pumpId],

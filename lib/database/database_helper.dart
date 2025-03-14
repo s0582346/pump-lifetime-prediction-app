@@ -72,7 +72,7 @@ class DatabaseHelper {
         pnTotal INTEGER,
         currentOperatingHours INTEGER,  
         averageOperatingHoursPerDay INTEGER,
-        FOREIGN KEY (adjustmentId) REFERENCES adjustment(id)
+        FOREIGN KEY (adjustmentId) REFERENCES adjustments(id)
       )
     ''');
 
@@ -84,7 +84,7 @@ class DatabaseHelper {
         status TEXT NOT NULL,
         date TEXT NOT NULL,
         pumpId TEXT NOT NULL,
-        FOREIGN KEY (pumpId) REFERENCES pump(id)
+        FOREIGN KEY (pumpId) REFERENCES pumps(id)
       )
       '''
     );
@@ -101,7 +101,7 @@ class DatabaseHelper {
         a REAL,
         b REAL,
         c REAL,
-        FOREIGN KEY (adjustmentId) REFERENCES adjustment(id)
+        FOREIGN KEY (adjustmentId) REFERENCES adjustments(id)
         )
       ''');
 

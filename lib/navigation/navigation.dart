@@ -63,9 +63,9 @@ class _NavigationState extends ConsumerState<Navigation> {
           ref.read(bottomNavigationProvider.notifier).state = index;
         },
         items: [
-          CustomBottomNavigationBarItem(assetPath: 'assets/nav/database.png'),
-          CustomBottomNavigationBarItem(assetPath: 'assets/nav/chart.png'),
           CustomBottomNavigationBarItem(assetPath: 'assets/nav/form.png'),
+          CustomBottomNavigationBarItem(assetPath: 'assets/nav/netzsch.png'),
+          CustomBottomNavigationBarItem(assetPath: 'assets/nav/chart.png'),
         ],
       ),
     );
