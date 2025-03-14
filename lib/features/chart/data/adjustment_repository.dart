@@ -27,7 +27,7 @@ class AdjustmentRepository {
 
       // If no open adjustment found, create a new one
       await db.rawInsert(
-        'INSERT INTO adjustment (id, status, pumpId, date) VALUES (?, ?, ?, ?)',
+        'INSERT INTO adjustments (id, status, pumpId, date) VALUES (?, ?, ?, ?)',
         [    
           adjustmentId,
           'open',
@@ -52,7 +52,7 @@ class AdjustmentRepository {
 
       // Get the current adjustment ID for the pump
       await db.rawInsert(
-        'INSERT INTO adjustment (id, status, pumpId, date) VALUES (?, ?, ?, ?)',
+        'INSERT INTO adjustments (id, status, pumpId, date) VALUES (?, ?, ?, ?)',
         [    
           adjustmentId,
           'open',
@@ -68,7 +68,7 @@ class AdjustmentRepository {
 
   Future<List<Map<String, dynamic>>> fetchAdjustmentsByPumpId(String pumpId) {
     return db.rawQuery(
-      'SELECT * FROM adjustment WHERE pumpId = ?',
+      'SELECT * FROM adjustments WHERE pumpId = ?',
       [pumpId],
     );
   }
@@ -76,7 +76,7 @@ class AdjustmentRepository {
 
   Future<List<Map<String, dynamic>>> getOpenAdjustment(pumpId) {
     return db.rawQuery(
-      'SELECT * FROM adjustment WHERE status = ? AND pumpId = ? LIMIT 1',
+      'SELECT * FROM adjustments WHERE status = ? AND pumpId = ? LIMIT 1',
       ['open', pumpId],
     );
   }
@@ -102,7 +102,7 @@ Future<void> closeAdjustment(Database db, String adjustmentId) async {
 Future<void> openAdjustment(Database db, String adjustmentId) async {
   try {
     await db.update(
-      'adjustment',
+      'adjustments',
       {
         'status': 'open',
       },
@@ -121,7 +121,7 @@ Future<void> openAdjustment(Database db, String adjustmentId) async {
   Future<int> _getAdjustmentCount(String pumpId) async {
   try {
     final List<Map<String, dynamic>> result = await db.rawQuery(
-      'SELECT COUNT(*) as count FROM adjustment WHERE pumpId = ?',
+      'SELECT COUNT(*) as count FROM adjustments WHERE pumpId = ?',
       [pumpId],
     );
     

@@ -44,7 +44,10 @@ class Utils {
   }
 
   dynamic formatAdjustmentId(String pumpId, int adjustmentCount) {
-    return '$pumpId-$adjustmentCount';
+    RegExp regExp = new RegExp(r'^[^-]+');
+    String? result = regExp.firstMatch(pumpId)?.group(0);
+
+    return '$result-$adjustmentCount';
   }
 
   double calculateQn(Measurement actual, Measurement reference) {

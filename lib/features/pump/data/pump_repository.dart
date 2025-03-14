@@ -7,7 +7,7 @@ class PumpRepository {
 
   Future<List<Map<String, dynamic>>> getPumps() async {
     final List<Map<String, dynamic>> pumps = await db.rawQuery(
-      'SELECT * FROM pump',
+      'SELECT * FROM pumps',
     );
     return pumps;
   }

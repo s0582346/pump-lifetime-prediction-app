@@ -13,10 +13,10 @@ class PumpService{
       final db = await DatabaseHelper().database;
       final adjustmentService = AdjustmentService();
 
-      final pumpId = generatePumpId(pump.type);
+      final pumpId = generatePumpId(pump.type); // Generate a unique pump ID
       pump = pump.copyWith(id: pumpId);
 
-      await db.insert('pump', pump.toMap());
+      await db.insert('pumps', pump.toMap());
       // create an open adjustment for the pump
       await adjustmentService.createAdjustment(pump.id);
 

@@ -15,8 +15,8 @@ class PredictionRepository {
   Future<List<Map<String, dynamic>>> getPredictions(String pumpId) async {
     try {
       final List<Map<String, dynamic>> predictions = await db.rawQuery(
-        '''SELECT p.* FROM prediction p
-        JOIN adjustment a ON p.adjustmentId = a.id
+        '''SELECT p.* FROM predictions p
+        JOIN adjustments a ON p.adjustmentId = a.id
         WHERE a.pumpId = ?''',
         [pumpId],
       );
@@ -27,12 +27,12 @@ class PredictionRepository {
   }
 
   Future<void> savePrediction(Prediction prediction, adjustmentId) async {
-    await db.insert('prediction', prediction.toMap(), conflictAlgorithm: ConflictAlgorithm.replace,);
+    await db.insert('predictions', prediction.toMap(), conflictAlgorithm: ConflictAlgorithm.replace,);
   }
 
   Future<void> updatePrediction(Prediction prediction) async {
     await db.update(
-      'prediction',
+      'predictions',
       prediction.toMap(),
       where: 'adjustmentId = ?',
       whereArgs: [prediction.adjusmentId],
@@ -41,7 +41,7 @@ class PredictionRepository {
 
    Future<Prediction?> getPredictionByAdjustmentId(String adjustmentId) async {
     final List<Map<String, dynamic>> maps = await db.query(
-      'prediction',
+      'predictions',
       where: 'adjustmentId = ?',
       whereArgs: [adjustmentId],
     );
