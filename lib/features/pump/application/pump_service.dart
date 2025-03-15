@@ -42,6 +42,11 @@ class PumpService{
     return pumps.map((pump) => Pump.fromMap(pump)).toList();
   }
 
+  Future<void> deletePump(String id) async {
+    final db = await DatabaseHelper().database;
+    final PumpRepository pumpRepository = PumpRepository(db: db);
+    await pumpRepository.deletePump(id);
+  }
 
 }
 

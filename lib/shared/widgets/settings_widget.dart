@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class ChartSettingsWidget extends StatelessWidget {
+class SettingsWidget extends StatelessWidget {
   final List<SettingsOption?> options;
 
-  const ChartSettingsWidget({super.key, required this.options});
+  const SettingsWidget({super.key, required this.options});
 
   @override
   Widget build(BuildContext context) {

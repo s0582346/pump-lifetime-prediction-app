@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
-import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_settings_widget.dart';
+import 'package:flutter_predictive_maintenance_app/shared/widgets/settings_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/widgets/alert_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -74,7 +74,7 @@ class InfoBlock extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text("Adjustment - $count", style: const TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold)),
-            (adjustment.status != 'close' || isLast) ? ChartSettingsWidget(options: options) : Container(),
+            (adjustment.status != 'close' || isLast) ? SettingsWidget(options: options) : Container(),
           ],
         ),
         const SizedBox(height: 15),
