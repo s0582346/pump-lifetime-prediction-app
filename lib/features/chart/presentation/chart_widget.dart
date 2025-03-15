@@ -9,7 +9,7 @@ import 'package:flutter_predictive_maintenance_app/features/chart/presentation/c
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/custom_line_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/info_block.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
-import 'package:flutter_predictive_maintenance_app/features/pump/pump.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
