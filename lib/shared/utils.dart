@@ -152,7 +152,7 @@ class Utils {
   }
 
   // Generate a list of FlSpot objects based on a quadratic function
-  List<FlSpot> generateQuadraticSpots(double a, double b, double c, {double start = 0, double end = 50, double step = 1, double targetY = 0.8}) {
+  List<FlSpot> generateQuadraticSpots(double a, double b, double c, {double start = 0, double end = 50, double step = 1, double targetY = 0.9}) {
     final List<FlSpot> spots = [];
     double newEnd = calculateXIntercept(a, b, c) ?? end;
     end = newEnd;
