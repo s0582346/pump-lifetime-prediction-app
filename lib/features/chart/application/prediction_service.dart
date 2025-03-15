@@ -1,19 +1,12 @@
-import 'dart:math';
-
-import 'package:flutter/gestures.dart';
 import 'package:flutter_predictive_maintenance_app/database/database_helper.dart';
-import 'package:flutter_predictive_maintenance_app/features/chart/application/adjustment_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/data/prediction_repository.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/quadratic_fit_result.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/application/measurement_service.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path/path.dart';
 import 'package:scidart/numdart.dart';
-import 'package:scidart/scidart.dart';
 
 
 final predictionServiceProvider = Provider((ref) => PredictionService());
@@ -24,9 +17,7 @@ class PredictionService {
   try {
     final db = await DatabaseHelper().database;
     final predictionService = PredictionRepository(db: db);
-    print('Fetching predictions for pump ${pump.id}');
     final predictionsMapList = await predictionService.getPredictions(pump.id);
-     print("${predictionsMapList.length} predictions fetched");
 
     return predictionsMapList.map((map) => Prediction.fromMap(map)).toList();
   } catch (e, stackTrace) {
