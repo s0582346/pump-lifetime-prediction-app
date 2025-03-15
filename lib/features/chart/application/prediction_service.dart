@@ -8,7 +8,7 @@ import 'package:flutter_predictive_maintenance_app/features/chart/data/predictio
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/quadratic_fit_result.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/application/measurement_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
-import 'package:flutter_predictive_maintenance_app/features/pump/pump.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart';

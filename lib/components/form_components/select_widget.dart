@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 
@@ -6,13 +7,17 @@ class SelectWidget extends StatefulWidget {
   final String label;
   final ValueChanged<String?>? onChanged;
   final List<String> items;
+  final validator;
+  final isSubmitting;
    
   const SelectWidget({
     super.key, 
     this.selectedValue, 
     this.label = '', 
     required this.onChanged, 
-    required this.items
+    required this.items,
+    this.validator,
+    this.isSubmitting = false,
   });
 
   @override
@@ -38,9 +43,10 @@ class _SelectWidgetState extends State<SelectWidget> {
             ),
           ),
           SizedBox(
-            height: 40,
-            child: DropdownButtonFormField<String>(
-              dropdownColor: Colors.white,
+            height: (widget.isSubmitting && (widget.selectedValue == null || widget.selectedValue!.isEmpty)) ? 60 : 40,
+            child: DropdownButtonFormField2<String>(
+              //validator: widget.validator,
+              alignment: Alignment.bottomLeft,
               value: (widget.selectedValue != null && widget.selectedValue!.isNotEmpty) ? widget.selectedValue : null,
               onChanged: widget.onChanged,
               hint: const Text(
@@ -50,7 +56,16 @@ class _SelectWidgetState extends State<SelectWidget> {
                   color: Colors.grey,
                 ),
               ),
+              dropdownStyleData: DropdownStyleData(
+                elevation: 8,
+                direction: DropdownDirection.left,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
               decoration: InputDecoration(
+                errorText: widget.validator,
                 border: OutlineInputBorder(
                   borderSide: const BorderSide(
                     color: Colors.grey,
@@ -65,14 +80,14 @@ class _SelectWidgetState extends State<SelectWidget> {
                   ),
                   borderRadius: BorderRadius.circular(3),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                contentPadding: const EdgeInsets.symmetric(),
               ),
               items: widget.items.map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(
                     value,
-                    style: const TextStyle(fontSize: 14),
+                    style: const TextStyle(fontSize: 14, color: Colors.black),
                   ),
                 );
               }).toList(),

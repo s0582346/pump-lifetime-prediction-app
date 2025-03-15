@@ -7,6 +7,8 @@ class InputWidget extends StatefulWidget {
   final String label;
   final String placeholder;
   final TextInputType keyboardType;
+  final validator;
+  final isSubmitting;
 
   const InputWidget({
     super.key,
@@ -14,7 +16,9 @@ class InputWidget extends StatefulWidget {
     this.label = '',
     this.placeholder = '',
     required this.onChanged,
-    required this.keyboardType
+    this.keyboardType = TextInputType.text,
+    this.validator,
+    this.isSubmitting = false,
   });
 
   @override
@@ -66,9 +70,11 @@ class _InputWidgetState extends State<InputWidget> {
           ),
           SizedBox(
             height: 40,
-            child: TextFormField(
+            child:
+              TextFormField(
               controller: _controller,
               onChanged: widget.onChanged,
+              //validator: (value) => widget.validator,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 hintText: widget.placeholder,
@@ -76,27 +82,34 @@ class _InputWidgetState extends State<InputWidget> {
                   fontSize: 14,
                   color: Colors.grey,
                 ),
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                    color: Colors.grey,        
-                    width: 1,                  
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: (widget.validator != null) ? AppColors.errorMessageColor : Colors.grey,        
+                    width: 1, 
+                    style: BorderStyle.solid                
                   ),
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(3),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                    color: AppColors.primaryColor,
+                  borderSide: BorderSide(
+                    color: (widget.validator != null) ? AppColors.errorMessageColor : AppColors.primaryColor,
                     width: 1,
                   ),
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(3),
                 ),
               ),
-              style: const TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 14, color: Colors.black),
               keyboardType: widget.keyboardType,
-            )
-          )
+            ),
+          ),
+
+          (widget.validator != null && widget.isSubmitting) ? 
+            Text(
+              widget.validator,
+              style: const TextStyle(color: AppColors.errorMessageColor, fontSize: 12),
+            ) : Container()
         ],
-      )
+      ),
     );
   }
 }

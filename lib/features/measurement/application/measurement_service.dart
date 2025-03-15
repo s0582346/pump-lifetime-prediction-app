@@ -3,7 +3,7 @@ import 'package:flutter_predictive_maintenance_app/features/chart/application/pr
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/data/adjustment_repository.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/data/measurement_repository.dart';
-import 'package:flutter_predictive_maintenance_app/features/pump/pump.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
