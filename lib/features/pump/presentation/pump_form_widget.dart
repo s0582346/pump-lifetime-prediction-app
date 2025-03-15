@@ -90,8 +90,6 @@ class PumpFormWidget extends ConsumerWidget {
           onPressed: () async {
             ref.read(isSubmittingProvider.notifier).state = true;
             final success = ref.read(pumpValidationProvider);
-            print('is submitting: ${ref.watch(isSubmittingProvider)}');
-            print('success: ${success.isFormValid}');
 
             if (success.isFormValid) {
               if (context.mounted) {
