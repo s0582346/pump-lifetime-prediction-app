@@ -24,8 +24,10 @@ class PredictionService {
   try {
     final db = await DatabaseHelper().database;
     final predictionService = PredictionRepository(db: db);
-
+    print('Fetching predictions for pump ${pump.id}');
     final predictionsMapList = await predictionService.getPredictions(pump.id);
+     print("${predictionsMapList.length} predictions fetched");
+
     return predictionsMapList.map((map) => Prediction.fromMap(map)).toList();
   } catch (e, stackTrace) {
     // Log the error and return an empty list as a fallback

@@ -92,14 +92,13 @@ class PumpBox extends ConsumerWidget {
                 Text(pump.typeOfTimeEntry.replaceAll('per day', '')),
               ],
             ),
-
-            (pump.medium ?? false) ?
+            (pump.medium != null && pump.medium!.isNotEmpty) ?
               Row(
                 children: [
                   const Text('Medium: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
                   Text(pump.medium)
                 ],
-              ) : Container(),
+            ) : Container(),
           ],
         ),
       ),
