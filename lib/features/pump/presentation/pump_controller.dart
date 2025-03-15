@@ -1,4 +1,5 @@
 import 'package:flutter_predictive_maintenance_app/features/pump/application/pump_service.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/presentation/pump_validation_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 
@@ -81,29 +82,6 @@ final pumpsProvider = FutureProvider<List<Pump>>((ref) async {
   return await ref.read(pumpServiceProvider).getPumps();
 });
 
-class PumpValidationState {
-  final String? nameError;
-  final String? pumpTypeError;
-  final String? measurableParameterError;
-  final String? persmissibleTotalWearError;
-  final String? typeOfTimeEntryError;
-  
-
-  const PumpValidationState({
-    this.nameError,
-    this.pumpTypeError,
-    this.measurableParameterError,
-    this.persmissibleTotalWearError,
-    this.typeOfTimeEntryError
-  });
-
-  bool get isFormValid {
-    // If all error fields are null, it means everything is valid
-    return nameError == null && pumpTypeError == null 
-      && measurableParameterError == null && persmissibleTotalWearError == null
-      && typeOfTimeEntryError == null;
-  }
-}
 
 final isSubmittingProvider = StateProvider<bool>((ref) => false);
 
@@ -151,6 +129,10 @@ final pumpValidationProvider = Provider<PumpValidationState>((ref) {
 
     if (intValue < 10 || intValue > 100) {
       return 'Please enter a value between 10 and 100';
+    }
+
+    if (intValue % 10 != 0) {
+      return 'Please enter a value that is a multiple of 10';
     }
   
     return null;
