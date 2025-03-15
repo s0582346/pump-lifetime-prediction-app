@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 
 
-class PumpDataController extends Notifier<Pump> {
+class PumpController extends Notifier<Pump> {
   // initialize the state of the controller
   @override
   Pump build() {
@@ -68,10 +68,14 @@ class PumpDataController extends Notifier<Pump> {
       return false;  // failure
     }
   }
+
+  Future<void> deletePump(String id) async {
+    await PumpService().deletePump(id);
+  }
 }
 
 ///  Providers
-final pumpFormProvider = NotifierProvider<PumpDataController, Pump>(() => PumpDataController());
+final pumpFormProvider = NotifierProvider<PumpController, Pump>(() => PumpController());
 
 final pumpsProvider = FutureProvider<List<Pump>>((ref) async {
   return await ref.read(pumpServiceProvider).getPumps();

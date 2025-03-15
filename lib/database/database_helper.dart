@@ -37,7 +37,6 @@ class DatabaseHelper {
   }
 
   Future<void> _createTables(Database db, int version) async {
-    // create the tables
 
     // create pumps table
     await db.execute('''
@@ -72,7 +71,7 @@ class DatabaseHelper {
         pnTotal INTEGER,
         currentOperatingHours INTEGER,  
         averageOperatingHoursPerDay INTEGER,
-        FOREIGN KEY (adjustmentId) REFERENCES adjustments(id)
+        FOREIGN KEY (adjustmentId) REFERENCES adjustments(id) ON DELETE CASCADE
       )
     ''');
 
@@ -84,7 +83,7 @@ class DatabaseHelper {
         status TEXT NOT NULL,
         date TEXT NOT NULL,
         pumpId TEXT NOT NULL,
-        FOREIGN KEY (pumpId) REFERENCES pumps(id)
+        FOREIGN KEY (pumpId) REFERENCES pumps(id) ON DELETE CASCADE
       )
       '''
     );
@@ -101,7 +100,7 @@ class DatabaseHelper {
         a REAL,
         b REAL,
         c REAL,
-        FOREIGN KEY (adjustmentId) REFERENCES adjustments(id)
+        FOREIGN KEY (adjustmentId) REFERENCES adjustments(id) ON DELETE CASCADE
         )
       ''');
 

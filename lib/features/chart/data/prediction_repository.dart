@@ -15,9 +15,9 @@ class PredictionRepository {
   Future<List<Map<String, dynamic>>> getPredictions(String pumpId) async {
     try {
       final List<Map<String, dynamic>> predictions = await db.rawQuery(
-        '''SELECT p.* FROM predictions p
+        ''' SELECT p.* FROM predictions p
         JOIN adjustments a ON p.adjustmentId = a.id
-        WHERE a.pumpId = ?''',
+        WHERE id = ? ''',
         [pumpId],
       );
       return predictions;

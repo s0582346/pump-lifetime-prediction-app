@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_predictive_maintenance_app/features/pump/presentation/pump_data_controller.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/presentation/pump_controller.dart';
 import 'package:flutter_predictive_maintenance_app/components/form_components/input_widget.dart';
 import 'package:flutter_predictive_maintenance_app/components/form_components/select_widget.dart';
 import 'package:flutter_predictive_maintenance_app/components/form_components/primary_button.dart';
@@ -15,8 +15,6 @@ class PumpFormWidget extends ConsumerWidget {
     final pumpDataState = ref.watch(pumpFormProvider);
     final validation = ref.watch(pumpValidationProvider);
     final isSubmitting = ref.watch(isSubmittingProvider);
-
-    print('error: ${validation.persmissibleTotalWearError}');
 
     return ListView(
       padding: const EdgeInsets.all(40.0),
@@ -97,11 +95,11 @@ class PumpFormWidget extends ConsumerWidget {
 
             if (success.isFormValid) {
               if (context.mounted) {
-                //Navigator.of(context).pop();
-                //await pumpDataNotifier.savePumpData();
+                Navigator.of(context).pop();
+                await pumpDataNotifier.savePumpData();
+                ref.invalidate(pumpsProvider);  // Invalidate the provider to trigger a rebuild
+                ref.read(isSubmittingProvider.notifier).state = false;
               }
-              ref.invalidate(pumpsProvider);  // Invalidate the provider to trigger a rebuild
-              ref.read(isSubmittingProvider.notifier).state = false;
             }
           },
           label: 'Save',

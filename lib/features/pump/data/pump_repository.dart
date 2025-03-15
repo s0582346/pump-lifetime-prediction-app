@@ -11,4 +11,8 @@ class PumpRepository {
     );
     return pumps;
   }
+
+  Future<void> deletePump(String id) async {
+    await db.delete('pumps', where: 'id = ?', whereArgs: [id]);
+  }
 }
