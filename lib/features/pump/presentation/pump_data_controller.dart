@@ -39,7 +39,6 @@ class PumpDataController extends Notifier<Pump> {
   }
 
   set permissibleTotalWear(String value) {
-    print('value: ${value.runtimeType}');
     state = state.copyWith(permissibleTotalWear: value);
   }
   
