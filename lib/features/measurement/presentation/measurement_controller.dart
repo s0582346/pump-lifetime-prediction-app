@@ -1,3 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/presentation/controllers/history_controller.dart';
+import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/measurement_validation_state.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/application/measurement_service.dart';
@@ -46,27 +51,83 @@ class MeasurementController extends Notifier<Measurement> {
   }
  
 
-  /// Save the measurement data to the database
-  Future<bool> saveMeasurement() async {
-    try {
-      final pump = ref.watch(selectedPumpProvider);
-
-      if (pump == null) {
-        return false;
-      }
-
-      await _measurementService.saveMeasurement(state, pump);
-      state = build(); // reset the form
-      return true;
-    } catch (e) {
-      // Handle errors appropriately
-      print('Error saving measurement: $e');
-      return false;
-    }
+  Future<void> saveMeasurement(BuildContext context, isValid) async {
+  final ref = this.ref;
+  final pump = ref.watch(selectedPumpProvider);
+  ref.read(isSubmittingProvider.notifier).state = true;
+  
+  if (pump == null) {
+    ref.read(isSubmittingProvider.notifier).state = false;
+    return;
   }
+  
+  // Use internal state directly
+  if (state.date == null) {
+    state = state.copyWith(date: DateTime.now());
+  }
+
+  if (context.mounted && isValid) {
+    await _measurementService.saveMeasurement(state, pump);
+    state = build(); // Reset state after save
+    FocusManager.instance.primaryFocus?.unfocus(); // Close keyboard
+    ref.read(historyControllerProvider.notifier).refresh();
+    ref.read(chartControllerProvider.notifier).refresh();
+
+    if (context.mounted) Navigator.of(context).pop();
+    ref.read(isSubmittingProvider.notifier).state = false;
+  }
+}
 }
 
 final measurementProvider = NotifierProvider<MeasurementController, Measurement>(() => MeasurementController());
 
+final isSubmittingProvider = StateProvider<bool>((ref) => false);
 
-final measurementServiceProvider = Provider((ref) => MeasurementService());
+MeasurementValidationState validateMeasurement(
+  Measurement measurement,
+  Pump? pump
+) {
+  final isVolumeFlow = pump?.measurableParameter == 'volume flow';
+  final isAverage = pump?.typeOfTimeEntry.contains('average');
+  const errorEmptyMessage = 'This field is required.';
+  const validNumberMessage = 'Please enter a valid number.';
+
+  String? validateRotationalFrequency(value) {
+    if (value == null || value.trim().isEmpty) return errorEmptyMessage;
+    final formatted = double.tryParse(value);
+    if (formatted == null || formatted <= 0.0) return validNumberMessage;
+    return null;
+  }
+
+  String? validateOperatingHours(value) {
+    if (value == null || value.trim().isEmpty) return errorEmptyMessage;
+    final formatted = int.tryParse(value);
+    if (formatted == null || formatted < 0) return validNumberMessage;
+    return null;
+  }
+
+  String? validateValue(value) {
+    if (value == null || value.trim().isEmpty) return errorEmptyMessage;
+    final formatted = double.tryParse(value);
+    if (formatted == null || formatted <= 0.0) return validNumberMessage;
+    return null;
+  }
+  
+  return MeasurementValidationState(
+    dateError: null,
+    volumeFlowError: isVolumeFlow ? validateValue(measurement.volumeFlow) : null,
+    pressureError: !isVolumeFlow ? validateValue(measurement.pressure) : null,
+    rotationalFrequencyError: validateRotationalFrequency(measurement.rotationalFrequency),
+    currentOperatingHoursError: !isAverage ? validateOperatingHours(measurement.currentOperatingHours) : null,
+    averageOperatingHoursPerDayError: isAverage ? validateOperatingHours(measurement.averageOperatingHoursPerDay) : null,
+  );
+}
+
+
+final measurementValidationProvider = Provider<MeasurementValidationState>((ref) {
+  final measurement = ref.watch(measurementProvider);
+  final pump = ref.watch(selectedPumpProvider);
+  //final isSubmitting = ref.watch(isSubmittingProvider);
+
+  return validateMeasurement(measurement, pump);
+});

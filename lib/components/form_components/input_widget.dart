@@ -98,12 +98,12 @@ class _InputWidgetState extends State<InputWidget> {
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
-              style: const TextStyle(fontSize: 14, color: Colors.black),
+              style: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold),
               keyboardType: widget.keyboardType,
             ),
           ),
 
-          (widget.validator != null && widget.isSubmitting) ? 
+          (widget.validator != null) ? 
             Text(
               widget.validator,
               style: const TextStyle(color: AppColors.errorMessageColor, fontSize: 12),
