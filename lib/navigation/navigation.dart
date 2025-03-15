@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation_provider.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_screen.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_screen.dart';
-import 'package:flutter_predictive_maintenance_app/features/pump/pump.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/custom_bottom_navigation_bar_item.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/custom_app_bar.dart';
 

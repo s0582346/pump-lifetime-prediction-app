@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_predictive_maintenance_app/features/pump/pump.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 
 class PumpBox extends StatelessWidget {

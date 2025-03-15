@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_predictive_maintenance_app/features/pump/pump_data_controller.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/presentation/pump_data_controller.dart';
 import 'package:flutter_predictive_maintenance_app/components/form_components/input_widget.dart';
 import 'package:flutter_predictive_maintenance_app/components/form_components/select_widget.dart';
 import 'package:flutter_predictive_maintenance_app/components/form_components/primary_button.dart';
@@ -13,6 +13,10 @@ class PumpFormWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pumpDataNotifier = ref.read(pumpFormProvider.notifier);
     final pumpDataState = ref.watch(pumpFormProvider);
+    final validation = ref.watch(pumpValidationProvider);
+    final isSubmitting = ref.watch(isSubmittingProvider);
+
+    print('error: ${validation.persmissibleTotalWearError}');
 
     return ListView(
       padding: const EdgeInsets.all(40.0),
@@ -22,12 +26,16 @@ class PumpFormWidget extends ConsumerWidget {
           initialValue: pumpDataState.name,
           onChanged: (value) => pumpDataNotifier.name = value,
           keyboardType: TextInputType.text,
+          validator: validation.nameError,
+          isSubmitting: isSubmitting,
         ),
         SelectWidget(
           label: 'Pump Type',
           selectedValue: pumpDataState.type,
           onChanged: (value) => pumpDataNotifier.pumpType = value,
           items: const ['NM045', 'NM063', 'NM070', 'NM090', 'NM100', 'NM150'],
+          validator: validation.pumpTypeError,
+          isSubmitting: isSubmitting,
         ),
         SelectWidget(
           label: 'Rotor Geometry',
@@ -59,29 +67,41 @@ class PumpFormWidget extends ConsumerWidget {
           placeholder: 'z.B. 70%',
           initialValue: pumpDataState.permissibleTotalWear,
           onChanged: (value) => pumpDataNotifier.permissibleTotalWear = value,
-          keyboardType: TextInputType.number,
+          validator: validation.persmissibleTotalWearError,
+          isSubmitting: isSubmitting,
+          //keyboardType: TextInputType.number,
         ),
         SelectWidget(
           label: 'Measurable Parameter',
           selectedValue: pumpDataState.measurableParameter,
           onChanged: (value) => pumpDataNotifier.measurableParameter = value,
           items: const ['volume flow', 'pressure'],
+          validator: validation.measurableParameterError,
+          isSubmitting: isSubmitting,
         ),
         SelectWidget(
           label: 'Type of Time Entry',
           selectedValue: pumpDataState.typeOfTimeEntry,
           onChanged: (value) => pumpDataNotifier.typeOfTimeEntry = value,
           items: const ['operating time (absolute)', 'operating time (relative)', 'average operating time per day'],
+          validator: validation.typeOfTimeEntryError,
+          isSubmitting: isSubmitting,
         ),
         const SizedBox(height: 20),
         PrimaryButton(
           onPressed: () async {
-            final success = await pumpDataNotifier.savePumpData();
-            if (success) {
+            ref.read(isSubmittingProvider.notifier).state = true;
+            final success = ref.read(pumpValidationProvider);
+            print('is submitting: ${ref.watch(isSubmittingProvider)}');
+            print('success: ${success.isFormValid}');
+
+            if (success.isFormValid) {
               if (context.mounted) {
-                Navigator.of(context).pop();
+                //Navigator.of(context).pop();
+                //await pumpDataNotifier.savePumpData();
               }
               ref.invalidate(pumpsProvider);  // Invalidate the provider to trigger a rebuild
+              ref.read(isSubmittingProvider.notifier).state = false;
             }
           },
           label: 'Save',
