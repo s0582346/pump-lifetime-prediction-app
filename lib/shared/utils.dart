@@ -50,6 +50,22 @@ class Utils {
     return '$result-$adjustmentCount';
   }
 
+  double normalize(String measurableParameter, Measurement reference, Measurement newMeasurement) {
+    final double param = _toDouble((measurableParameter == 'volume flow') ? newMeasurement.volumeFlow : newMeasurement.pressure);
+    final double n = _toDouble(newMeasurement.rotationalFrequency);
+    final double refQ = _toDouble(reference.volumeFlow);
+    final double refN = _toDouble(reference.rotationalFrequency);
+  
+    if (refN == 0 || refQ == 0) {
+      throw ArgumentError("nStart and QStart must not be zero to avoid division by zero.");
+    }
+  
+    double ratio = (param / n) / (refQ / refN);
+    return double.parse(ratio.toStringAsFixed(3));
+  }
+
+
+
   double calculateQn(Measurement actual, Measurement reference) {
     // Safely convert any numeric-like field to double
     final double actualQ = _toDouble(actual.volumeFlow);
@@ -77,11 +93,6 @@ class Utils {
     final double actualN = _toDouble(actual.rotationalFrequency);
     final double refP = _toDouble(reference.pressure);
     final double refN = _toDouble(reference.rotationalFrequency);
-
-    print("actualQ: ${actualP}");
-    print("actualN: ${actualN}");
-    print("refQ: ${refP}");
-    print("refN: ${refN}");
   
     if (refN == 0 || refP == 0) {
       throw ArgumentError("nStart and QStart must not be zero to avoid division by zero.");

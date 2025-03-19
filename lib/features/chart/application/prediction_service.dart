@@ -48,30 +48,50 @@ Future<void> savePrediction(String adjustmentId, String measurableParameter) asy
 
   // If an existing prediction is found, use it; otherwise, create a new one
   Prediction prediction = existingPrediction ?? Prediction();
+  
+    final List<double> currentOperatingHours = [];
+    final List<double> Qn = [];
+    final List<double> pn = [];
+    final PolyFit result;
 
-  if (measurableParameter == 'volume flow') {
+
     final measurements = await measurementService.fetchMeasurementsByAdjustmentId(adjustmentId);
 
     if (measurements == null || measurements.length < 3) {
       print('Not enough measurements. Skipping prediction.');
       return;
     }
-
-    final List<double> currentOperatingHours = [];
-    final List<double> qn = [];
-
+  
+  if (measurableParameter == 'volume flow') {
     for (final m in measurements) {
       final double? hours = m.currentOperatingHours;
       final double? flow = m.Qn;
 
       if (hours != null && flow != null) {
-      currentOperatingHours.add(hours);
-      qn.add(flow);
+        currentOperatingHours.add(hours);
+        pn.add(flow);
+      }
     }
-}
+    
+    result = PolyFit(Array(currentOperatingHours), Array(Qn), 2); 
+  } else {
+    print('Predicting for Pressure');
+     for (final m in measurements) {
+      final double? hours = m.currentOperatingHours;
+      final double? flow = m.pn;
+
+      if (hours != null && flow != null) {
+        currentOperatingHours.add(hours);
+        pn.add(flow);
+      }
+    }
+
+    result = PolyFit(Array(currentOperatingHours), Array(pn), 2); 
+    print('result: $result');
+  }
 
     //final model = fitQuadratic(currentOperatingHours, qn);
-    final result = PolyFit(Array(currentOperatingHours), Array(qn), 2); 
+   
 
     QuadraticModel model = QuadraticModel(result.coefficients()[0], result.coefficients()[1], result.coefficients()[2]);
 
@@ -90,6 +110,7 @@ Future<void> savePrediction(String adjustmentId, String measurableParameter) asy
         }
       }
     }
+  
 
     //final remainingDaysTillMaintenance = Utils().calculateRemainingDaysTillMaintenance(measurements.last.date, estimatedOperatingHours, currentOperatingHours.last, measurements.last.averageOperatingHoursPerDay);
 
@@ -109,7 +130,7 @@ Future<void> savePrediction(String adjustmentId, String measurableParameter) asy
       b: model.b,
       c: model.c,
     );
-  }
+  
 
   print('Estimated Operating hours: ${prediction.estimatedOperatingHours}');
 

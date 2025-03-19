@@ -85,7 +85,7 @@ class AdjustmentRepository {
 Future<void> closeAdjustment(Database db, String adjustmentId) async {
   try {
     await db.update(
-      'adjustment',
+      'adjustments',
       {
         'status': 'close',
       },
