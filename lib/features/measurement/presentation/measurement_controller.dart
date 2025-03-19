@@ -3,6 +3,8 @@ import 'package:flutter_predictive_maintenance_app/features/chart/presentation/c
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/controllers/history_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/measurement_validation_state.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
+import 'package:flutter_predictive_maintenance_app/shared/result_info.dart';
+import 'package:flutter_predictive_maintenance_app/shared/widgets/alert_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/application/measurement_service.dart';
@@ -52,31 +54,42 @@ class MeasurementController extends Notifier<Measurement> {
  
 
   Future<void> saveMeasurement(BuildContext context, isValid) async {
-  final ref = this.ref;
-  final pump = ref.watch(selectedPumpProvider);
-  ref.read(isSubmittingProvider.notifier).state = true;
-  
-  if (pump == null) {
-    ref.read(isSubmittingProvider.notifier).state = false;
-    return;
-  }
-  
-  // Use internal state directly
-  if (state.date == null) {
-    state = state.copyWith(date: DateTime.now());
-  }
-
-  if (context.mounted && isValid) {
-    await _measurementService.saveMeasurement(state, pump);
-    state = build(); // Reset state after save
+    final ref = this.ref;
+    final pump = ref.watch(selectedPumpProvider);
+    ref.read(isSubmittingProvider.notifier).state = true;
     FocusManager.instance.primaryFocus?.unfocus(); // Close keyboard
-    ref.read(historyControllerProvider.notifier).refresh();
-    ref.read(chartControllerProvider.notifier).refresh();
+    ResultInfo? result;
+  
+    // Use internal state directly
+    if (state.date == null) {
+      state = state.copyWith(date: DateTime.now());
+    }
 
-    if (context.mounted) Navigator.of(context).pop();
-    ref.read(isSubmittingProvider.notifier).state = false;
+    if (context.mounted && isValid && pump != null) {
+      result = await _measurementService.saveMeasurement(state, pump);
+
+      if (result.success) { // if successful
+        state = build(); // Reset state after save
+        ref.read(historyControllerProvider.notifier).refresh();
+        ref.read(chartControllerProvider.notifier).refresh();
+
+        if (context.mounted) Navigator.of(context).pop();
+        ref.read(isSubmittingProvider.notifier).state = false;
+      } else {
+        if (context.mounted) {
+          final ratio = pump.measurableParameter == 'volume flow' ? 'Q/n' : 'p/n';
+
+          showDialog(
+            context: context,
+            builder: (context) => AlertWidget(
+              body: "The calculated $ratio exceeds the max. permissble loss. Do you still want to proceed?",
+              onTap: () async => _measurementService.saveMeasurement(state, pump, forceSave: true), 
+            )
+          );
+        }
+      }
+    }
   }
-}
 }
 
 final measurementProvider = NotifierProvider<MeasurementController, Measurement>(() => MeasurementController());

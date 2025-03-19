@@ -48,12 +48,12 @@ class InfoBlock extends ConsumerWidget {
             context: context, // Make sure context is available here
             builder: (BuildContext dialogContext) {
               return AlertWidget(
-              text: 'The current adjustment is still open. Do you still want to proceed?',
-              onTap: () {
-                ref.read(chartControllerProvider.notifier).createAdjustment(adjustment.id);
-              },
-            );
-          },
+                body: 'The current adjustment is still open. Do you still want to proceed?',
+                onTap: () {
+                  ref.read(chartControllerProvider.notifier).createAdjustment(adjustment.id);
+                },
+              );
+            },
         )
         } else {
           ref.read(chartControllerProvider.notifier).createAdjustment(adjustment.id)

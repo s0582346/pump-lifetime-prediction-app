@@ -16,7 +16,7 @@ class MeasurementDataWidget extends ConsumerWidget {
     final measurementState = ref.watch(measurementProvider);
     final pump = ref.watch(selectedPumpProvider);
     final measurementValidationState = ref.watch(measurementValidationProvider);
-    final isVolumenFlow = pump?.measurableParameter == 'volume flow';
+    final isVolumeFlow = pump?.measurableParameter == 'volume flow';
     final isAverage = pump?.typeOfTimeEntry.contains('average');
     final isSubmitting = ref.watch(isSubmittingProvider);
 
@@ -32,11 +32,11 @@ class MeasurementDataWidget extends ConsumerWidget {
         ),
 
         InputWidget(
-          label: (isVolumenFlow) ? 'Volumen Flow [Q]' : 'Pressure [p]',
-          initialValue: (isVolumenFlow) ? measurementState.volumeFlow : measurementState.pressure,	
-          onChanged: (value) => (isVolumenFlow) ? measurementNotifier.volumeFlow = value : measurementNotifier.pressure = value,
+          label: (isVolumeFlow) ? 'Volume Flow [Q]' : 'Pressure [p]',
+          initialValue: (isVolumeFlow) ? measurementState.volumeFlow : measurementState.pressure,	
+          onChanged: (value) => (isVolumeFlow) ? measurementNotifier.volumeFlow = value : measurementNotifier.pressure = value,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          validator: (isSubmitting) ? (isVolumenFlow) ? measurementValidationState.volumeFlowError : measurementValidationState.pressureError : null,
+          validator: (isSubmitting) ? (isVolumeFlow) ? measurementValidationState.volumeFlowError : measurementValidationState.pressureError : null,
           //isSubmitting: isSubmitting,
         ),
 
@@ -44,7 +44,7 @@ class MeasurementDataWidget extends ConsumerWidget {
           label: 'Rotational Frequency [n]',
           initialValue: measurementState.rotationalFrequency,
           onChanged: (value) => measurementNotifier.rotationalFrequency = value,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          //keyboardType: const TextInputType.numberWithOptions(decimal: true),
           validator: isSubmitting ? measurementValidationState.rotationalFrequencyError : null,
         ),
 

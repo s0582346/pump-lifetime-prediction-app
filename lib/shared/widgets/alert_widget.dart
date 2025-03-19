@@ -4,10 +4,10 @@ import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 
 class AlertWidget extends StatelessWidget {
   final String title;
-  final String text;
+  final String body;
   final VoidCallback? onTap;
 
-  const AlertWidget({super.key, required this.text, this.onTap, this.title = 'Attention'});
+  const AlertWidget({super.key, this.title = 'Attention', required this.body, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class AlertWidget extends StatelessWidget {
       backgroundColor: Colors.grey[100],
       title: Text(title, style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold)),
       content: Text(
-        text,
+        body,
         style: const TextStyle(
           fontSize: 16,
           color: Colors.black,

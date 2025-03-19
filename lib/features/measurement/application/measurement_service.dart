@@ -4,6 +4,7 @@ import 'package:flutter_predictive_maintenance_app/features/measurement/domain/m
 import 'package:flutter_predictive_maintenance_app/features/chart/data/adjustment_repository.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/data/measurement_repository.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
+import 'package:flutter_predictive_maintenance_app/shared/result_info.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
@@ -12,8 +13,12 @@ final measurementServiceProvider = Provider((ref) => MeasurementService());
 
 class MeasurementService {
 
+  Future<double?> calculateRatios(String measurableParameter, Measurement reference, Measurement newMeasurement) async {
+    return Utils().normalize(measurableParameter, reference, newMeasurement);
+  }
+
   /// Save a measurement to the database
-  Future<void> saveMeasurement(Measurement newMeasurement, Pump pump) async {
+  Future<ResultInfo> saveMeasurement(Measurement newMeasurement, Pump pump, {forceSave = false, wearLimit = 0.9}) async {
   try {
     // Initialize dependencies
     final db = await DatabaseHelper().database;
@@ -23,34 +28,40 @@ class MeasurementService {
 
     // Fetch necessary data
     final adjustmentId = await adjustmentRepo.getCurrentAdjustmentId(pump.id);
-    final measurements = await measurementRepo.fetchMeasurementsByAdjustmentId(adjustmentId) ?? [];
-    final measurementsTotal = await measurementRepo.fetchMeasurementsByPumpId(pump.id) ?? [];
+    final measurements = await measurementRepo.fetchMeasurementsByAdjustmentId(adjustmentId) ?? []; // measurements for the current adjustment
+    final measurementsTotal = await measurementRepo.fetchMeasurementsByPumpId(pump.id) ?? []; // total measurements for the pump
 
     // Initialize variables with default values
     Measurement? reference, referenceTotal;
-    double Qn = 1, pn = 1, QnTotal = 1, pnTotal = 1;
+    double Qn = 1, pn = 1, QnTotal = 1, pnTotal = 1, limit = 0.9;
+
     double? currentOperatingHours = double.tryParse(newMeasurement.currentOperatingHours); // default current operating hours from the new measurement
     
     final isVolumeFlow = pump.measurableParameter == 'volume flow';
 
-    if (measurementsTotal.isNotEmpty) {
-      referenceTotal = Measurement.fromMap(measurementsTotal.first);
-      final resultTotal = isVolumeFlow ? Utils().calculateQn(newMeasurement, referenceTotal) : Utils().calculatePn(newMeasurement, referenceTotal);
-      QnTotal = isVolumeFlow ? resultTotal : 0;
-      pnTotal = isVolumeFlow ? 0 : resultTotal;
-    }
-
+    
     // Compute reference values if measurements exist
     if (measurements.isNotEmpty) {
       reference = Measurement.fromMap(measurements.first);
-      final result = isVolumeFlow
-          ? Utils().calculateQn(newMeasurement, reference)
-          : Utils().calculatePn(newMeasurement, reference);
+      final result = Utils().normalize(pump.measurableParameter, reference, newMeasurement);
 
-      Qn = isVolumeFlow ? result : 0;
-      pn = isVolumeFlow ? 0 : result;
+      if (result < wearLimit && !forceSave) {
+        return ResultInfo.error(result); // return if the wear limit is exceeded
+      }
+      
+      referenceTotal = Measurement.fromMap(measurementsTotal.first);
+      final resultTotal = Utils().normalize(pump.measurableParameter, referenceTotal, newMeasurement);
+
+      if (isVolumeFlow) {
+        Qn = result;
+        QnTotal = resultTotal;
+      } else {
+        pn = result;
+        pnTotal = resultTotal;
+      }
     }
 
+  
     // Compute current operating hours based on time entry type
     if (measurements.isNotEmpty) {
       final lastMeasurement = measurements.last;
@@ -95,9 +106,14 @@ class MeasurementService {
     // Save measurement and prediction
     await measurementRepo.saveMeasurement(updatedMeasurement);
     await predictionService.savePrediction(adjustmentId, pump.measurableParameter);
+  
+    return ResultInfo.success();
   } catch (e, stackTrace) {
+    // TODO use logError
     debugPrint('Error saving measurement: $e');
     debugPrint(stackTrace.toString());
+
+    return ResultInfo.error(stackTrace.toString());
   }
 }
 

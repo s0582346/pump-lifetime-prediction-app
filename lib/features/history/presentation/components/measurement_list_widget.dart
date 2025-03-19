@@ -17,7 +17,7 @@ class MeasurementListWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pump = ref.watch(selectedPumpProvider);
     final slCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q  ' : 'p  '; // Second last column
-    final lCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q/n  ' : 'p/n  '; // Last column
+    final lCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q/n' : 'p/n'; // Last column
 
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
@@ -55,15 +55,17 @@ class MeasurementListWidget extends ConsumerWidget {
             ),
             DataColumn(
               label: Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     lCLabel,
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
-                  const SizedBox(width: 20),
+                  //const SizedBox(width: 10),
                   (adjustment!.status == 'open')
-                      ? CircleAvatar(
+                      ? Padding(padding: const EdgeInsets.only(left: 20.0), 
+                       child: CircleAvatar(
                           backgroundColor: AppColors.primaryColor,
                           radius: 15,
                           child: IconButton(
@@ -71,7 +73,7 @@ class MeasurementListWidget extends ConsumerWidget {
                             icon: const Icon(Icons.add, color: Colors.white, size: 18),
                             padding: EdgeInsets.zero,
                           ),
-                        )
+                        ))
                       : Container()
                 ],
               ),
@@ -88,10 +90,10 @@ class MeasurementListWidget extends ConsumerWidget {
               DataCell(Text(slCVal.toStringAsFixed(2))),
               DataCell(
                 Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(lCVal.toStringAsFixed(3)),
-                    const SizedBox(width: 5),
+                    //const SizedBox(width: 5),
                     (adjustment!.status == 'open') 
                         ? IconButton(
                             onPressed: () {
