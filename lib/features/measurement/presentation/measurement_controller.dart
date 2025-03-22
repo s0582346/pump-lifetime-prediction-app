@@ -20,38 +20,25 @@ class MeasurementController extends Notifier<Measurement> {
     return Measurement();
   }
 
-  // setters for the different fields in the form
+  set date(date) => state = state.copyWith(date: date);
+  set volumeFlow(value) => state = state.copyWith(volumeFlow: value);
+  set pressure(value) => state = state.copyWith(pressure: value);
+  set rotationalFrequency(value) => state = state.copyWith(rotationalFrequency: value);
+  set currentOperatingHours(value) => state = state.copyWith(currentOperatingHours: value);
+  set averageOperatingHoursPerDay(value) => state = state.copyWith(averageOperatingHoursPerDay: value);
   
-  set date(date) {
-    /*
-    final regex = RegExp(r'^\d{2}-\d{2}-\d{4}$');
-    if (!regex.hasMatch(date)) {
-       return;
-    }
-    DateFormat format = DateFormat("dd-MM-yyyy"); */ 
-    state = state.copyWith(date: date);
-  }
-
-  set volumeFlow(value) {
-    state = state.copyWith(volumeFlow: value);
-  }
-
-  set pressure(value) {
-    state = state.copyWith(pressure: value);
-  }
-
-  set rotationalFrequency(value) {
-    state = state.copyWith(rotationalFrequency: value);
-  }
-
-  set currentOperatingHours(value) {
-    state = state.copyWith(currentOperatingHours: value);
-  }
-
-  set averageOperatingHoursPerDay(value) {
-    state = state.copyWith(averageOperatingHoursPerDay: value);
-  }
- 
+  
+  void loadMeasurement(Measurement measurement) {
+    ref.read(isEditingProvider.notifier).state = true;
+    state = measurement.copyWith(
+      date: DateTime.tryParse(measurement.date),
+      volumeFlow: measurement.volumeFlow?.toString(),
+      pressure: measurement.pressure?.toString(),
+      rotationalFrequency: measurement.rotationalFrequency?.toString(),
+      currentOperatingHours: measurement.currentOperatingHours?.toString(),
+      averageOperatingHoursPerDay: measurement.averageOperatingHoursPerDay?.toString(),
+    );
+}
 
   Future<void> saveMeasurement(BuildContext context, isValid) async {
     final ref = this.ref;
@@ -65,16 +52,16 @@ class MeasurementController extends Notifier<Measurement> {
       state = state.copyWith(date: DateTime.now());
     }
 
+    print('ID: ${state.id}');
     if (context.mounted && isValid && pump != null) {
       result = await _measurementService.saveMeasurement(state, pump);
 
-      if (result.success) { // if successful
+      if (result.success) { // ratio is within permissible loss
         state = build(); // Reset state after save
         ref.read(historyControllerProvider.notifier).refresh();
         ref.read(chartControllerProvider.notifier).refresh();
 
         if (context.mounted) Navigator.of(context).pop();
-        ref.read(isSubmittingProvider.notifier).state = false;
       } else {
         if (context.mounted) {
           final ratio = pump.measurableParameter == 'volume flow' ? 'Q/n' : 'p/n';
@@ -83,18 +70,31 @@ class MeasurementController extends Notifier<Measurement> {
             context: context,
             builder: (context) => AlertWidget(
               body: "The calculated $ratio exceeds the max. permissble loss. Do you still want to proceed?",
-              onTap: () async => _measurementService.saveMeasurement(state, pump, forceSave: true), 
+              onTap: () async {
+                result = await _measurementService.saveMeasurement(state, pump, forceSave: true);
+                ref.read(historyControllerProvider.notifier).refresh();
+                ref.read(chartControllerProvider.notifier).refresh();
+                if (context.mounted) Navigator.of(context).pop();
+              }  
             )
           );
         }
       }
+      ref.read(isSubmittingProvider.notifier).state = false;
+      ref.read(isEditingProvider.notifier).state = false;
     }
+  }
+
+  void reset() {
+    state = build();
   }
 }
 
 final measurementProvider = NotifierProvider<MeasurementController, Measurement>(() => MeasurementController());
 
 final isSubmittingProvider = StateProvider<bool>((ref) => false);
+final isEditingProvider = StateProvider<bool>((ref) => false);
+
 
 MeasurementValidationState validateMeasurement(
   Measurement measurement,
@@ -106,21 +106,22 @@ MeasurementValidationState validateMeasurement(
   const validNumberMessage = 'Please enter a valid number.';
 
   String? validateRotationalFrequency(value) {
-    if (value == null || value.trim().isEmpty) return errorEmptyMessage;
+    if (value == null || value.toString().trim().isEmpty) return errorEmptyMessage;
     final formatted = double.tryParse(value);
     if (formatted == null || formatted <= 0.0) return validNumberMessage;
     return null;
   }
 
   String? validateOperatingHours(value) {
-    if (value == null || value.trim().isEmpty) return errorEmptyMessage;
+    if (value == null || value.toString().trim().isEmpty) return errorEmptyMessage;
     final formatted = int.tryParse(value);
     if (formatted == null || formatted < 0) return validNumberMessage;
     return null;
   }
 
   String? validateValue(value) {
-    if (value == null || value.trim().isEmpty) return errorEmptyMessage;
+    if (value == null || value.toString().trim().isEmpty) return errorEmptyMessage;
+
     final formatted = double.tryParse(value);
     if (formatted == null || formatted <= 0.0) return validNumberMessage;
     return null;
@@ -144,3 +145,5 @@ final measurementValidationProvider = Provider<MeasurementValidationState>((ref)
 
   return validateMeasurement(measurement, pump);
 });
+
+

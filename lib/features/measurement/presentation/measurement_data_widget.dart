@@ -44,7 +44,7 @@ class MeasurementDataWidget extends ConsumerWidget {
           label: 'Rotational Frequency [n]',
           initialValue: measurementState.rotationalFrequency,
           onChanged: (value) => measurementNotifier.rotationalFrequency = value,
-          //keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
           validator: isSubmitting ? measurementValidationState.rotationalFrequencyError : null,
         ),
 

@@ -52,7 +52,7 @@ class AdjustmentRepository {
 
       // Get the current adjustment ID for the pump
       await db.rawInsert(
-        'INSERT INTO adjustments (id, status, pumpId, date) VALUES (?, ?, ?, ?)',
+        'INSERT OR IGNORE INTO adjustments (id, status, pumpId, date) VALUES (?, ?, ?, ?)',
         [    
           adjustmentId,
           'open',

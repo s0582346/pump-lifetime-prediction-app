@@ -32,7 +32,6 @@ class AlertWidget extends StatelessWidget {
         const SizedBox(width: 10),
         PrimaryButton(
           onPressed: () => {
-            Navigator.of(context).pop(),
             onTap
           },
           label: 'Proceed',

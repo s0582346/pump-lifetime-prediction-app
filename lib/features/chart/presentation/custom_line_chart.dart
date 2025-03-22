@@ -23,7 +23,7 @@ class CustomLineChart extends StatelessWidget {
     
     final List<FlSpot> threshold = [
       FlSpot(xAxisStart, 0.9),
-      FlSpot(xAxisEnd + 40, 0.9),
+      FlSpot(xAxisEnd + 20, 0.9),
     ];
 
     List<FlSpot> yInterceptLine = [const FlSpot(0, 0)];
@@ -37,7 +37,7 @@ class CustomLineChart extends StatelessWidget {
     return LineChart(
       LineChartData(
         minX: xAxisStart,
-        maxX: xAxisEnd + 40,
+        maxX: xAxisEnd + 20,
         minY: 0.8,
         maxY: 1.1,
         lineTouchData: const LineTouchData(enabled: true),
@@ -56,7 +56,7 @@ class CustomLineChart extends StatelessWidget {
               getTitlesWidget: (value, meta) {
                 if (value % 20 == 0) {
                   return Text(value.toInt().toStringAsFixed(1),
-                    style: TextStyle(fontSize: 15, color: Colors.black),);
+                    style: TextStyle(fontSize: 15, color: Colors.black));
                 }
                 return Container(); // Hide non-matching values
               },

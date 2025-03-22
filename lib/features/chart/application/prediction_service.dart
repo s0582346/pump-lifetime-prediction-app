@@ -27,21 +27,13 @@ class PredictionService {
   }
 }
 
-Future<void> savePrediction(String adjustmentId, String measurableParameter) async {
+Future<void> savePrediction(String adjustmentId, Pump pump) async {
   print('Saving prediction for adjustment $adjustmentId');
 
   final db = await DatabaseHelper().database;
   final predictionService = PredictionRepository(db: db);
   final measurementService = MeasurementService();
   
-  //final adjustmentService = AdjustmentService();
-  //final adjustment = await adjustmentService.getOpenAdjustment(pump.id);
-
-  /*
-  if (adjustment == null || adjustment['id'] == null) {
-    print('Error: Adjustment ID is null.');
-    return;
-  }*/
 
   // Check if an existing prediction already exists
   Prediction? existingPrediction = await predictionService.getPredictionByAdjustmentId(adjustmentId);
@@ -55,47 +47,47 @@ Future<void> savePrediction(String adjustmentId, String measurableParameter) asy
     final PolyFit result;
 
 
-    final measurements = await measurementService.fetchMeasurementsByAdjustmentId(adjustmentId);
+    final measurements = await measurementService.fetchMeasurementsFromAdjustment(adjustmentId, pump.id);
 
     if (measurements == null || measurements.length < 3) {
       print('Not enough measurements. Skipping prediction.');
       return;
     }
   
-  if (measurableParameter == 'volume flow') {
-    for (final m in measurements) {
-      final double? hours = m.currentOperatingHours;
-      final double? flow = m.Qn;
+    if (pump.measurableParameter == 'volume flow') {
+      for (final m in measurements) {
+        final double? hours = m.currentOperatingHours.toDouble();
+        final double? flow = m.Qn;
 
-      if (hours != null && flow != null) {
-        currentOperatingHours.add(hours);
-        pn.add(flow);
+        if (hours != null && flow != null) {
+          currentOperatingHours.add(hours);
+          Qn.add(flow);
+        }
       }
-    }
     
-    result = PolyFit(Array(currentOperatingHours), Array(Qn), 2); 
-  } else {
-    print('Predicting for Pressure');
-     for (final m in measurements) {
-      final double? hours = m.currentOperatingHours;
-      final double? flow = m.pn;
+      result = PolyFit(Array(currentOperatingHours), Array(Qn), 2); 
+    } else {
+      for (final m in measurements) {
+        final double? hours = m.currentOperatingHours;
+        final double? flow = m.pn;
 
-      if (hours != null && flow != null) {
-        currentOperatingHours.add(hours);
-        pn.add(flow);
+        if (hours != null && flow != null) {
+          currentOperatingHours.add(hours);
+          pn.add(flow);
+        }
       }
-    }
 
-    result = PolyFit(Array(currentOperatingHours), Array(pn), 2); 
-    print('result: $result');
+      result = PolyFit(Array(currentOperatingHours), Array(pn), 2); 
   }
 
     //final model = fitQuadratic(currentOperatingHours, qn);
    
-
+    print('Fitted Model => $result');
+    if (result.coefficients().length != 3) {
+      print('Error: Quadratic fit failed.');
+      return;
+    }
     QuadraticModel model = QuadraticModel(result.coefficients()[0], result.coefficients()[1], result.coefficients()[2]);
-
-    print('Fitted Model => $model');
 
     final solutions = findXForY(model, 0.900);
 
