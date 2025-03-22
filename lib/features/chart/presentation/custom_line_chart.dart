@@ -1,6 +1,13 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
+
+
+// Source: ChatGPT: ChatGPT o4, 22-03-2025
+// Prompt: I need to build a custom line chart widget with flutter which works with Riverpod. 
+// This chart needs to be built as a component since ill be reusing it depending on how many tabs there are. 
+// This means each chart will have different outputs and it should retains its state when the user navigates to other widgets. 
+// It should receive a list which contains the points to be plotted. It should be required.
+
 
 class CustomLineChart extends StatelessWidget {
   final double xAxisStart;
