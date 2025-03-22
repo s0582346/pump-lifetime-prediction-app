@@ -101,14 +101,14 @@ class ChartWidget extends ConsumerWidget {
                   blueLineSpots: hasMeasurements
                       ? measurements
                           .map((m) => FlSpot(
-                                m.currentOperatingHours,
+                                m.currentOperatingHours.toDouble(),
                                 (pump.measurableParameter == 'volume flow') ? m.Qn : m.pn,
                               ))
                           .toList()
                       : [const FlSpot(0, 0)],
                   grayLineSpots: regression ?? [],
-                  xAxisStart: firstMeasurement?.currentOperatingHours ?? 0,
-                  xAxisEnd: lastMeasurement?.currentOperatingHours ?? 1,
+                  xAxisStart: firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
+                  xAxisEnd:  prediction.estimatedOperatingHours ?? firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
                   yIntercept: yIntercept ?? 0.0,
                 ),
               ),

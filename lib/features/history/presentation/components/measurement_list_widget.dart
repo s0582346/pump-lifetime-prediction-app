@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/form_screen.dart';
+import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/measurement_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
@@ -16,7 +17,7 @@ class MeasurementListWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pump = ref.watch(selectedPumpProvider);
-    final slCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q  ' : 'p  '; // Second last column
+    final slCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q' : 'p'; // Second last column
     final lCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q/n' : 'p/n'; // Last column
 
     return SingleChildScrollView(
@@ -27,12 +28,14 @@ class MeasurementListWidget extends ConsumerWidget {
           headingRowHeight: 50.0,
           columns: [
             const DataColumn(
+              headingRowAlignment: MainAxisAlignment.start,
               label: Text(
                 "Datum",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
               ),
             ),
             const DataColumn(
+              headingRowAlignment: MainAxisAlignment.center,
               label: Padding(
                 padding: EdgeInsets.only(right: 10.0),
                 child: Text(
@@ -42,21 +45,22 @@ class MeasurementListWidget extends ConsumerWidget {
               ),
             ),
             const DataColumn(
+              headingRowAlignment: MainAxisAlignment.center,
               label: Text(
-                "n  ",
+                "n",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
               ),
             ),
             DataColumn(
+              headingRowAlignment: MainAxisAlignment.center,
               label: Text(
                 slCLabel,
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
               ),
             ),
             DataColumn(
+              headingRowAlignment: MainAxisAlignment.center,
               label: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     lCLabel,
@@ -95,13 +99,14 @@ class MeasurementListWidget extends ConsumerWidget {
                     Text(lCVal.toStringAsFixed(3)),
                     //const SizedBox(width: 5),
                     (adjustment!.status == 'open') 
-                        ? IconButton(
-                            onPressed: () {
-                              // Define the edit action
-                            },
-                            icon: const Icon(Icons.edit, color: Colors.grey, size: 20),
-                          )
-                        : Container()
+                      ? IconButton(
+                        onPressed: () {
+                          ref.read(measurementProvider.notifier).loadMeasurement(data);
+                          _navigateToFormScreen(context);
+                        },
+                        icon: const Icon(Icons.edit, color: Colors.grey, size: 20),
+                      )
+                      : Container()
                   ],
                 ),
               ),

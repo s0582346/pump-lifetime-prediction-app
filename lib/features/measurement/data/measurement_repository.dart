@@ -17,16 +17,13 @@ class MeasurementRepository {
 
   /// Fetch all measurements for a given pump
   Future<List<Map<String, dynamic>>> fetchMeasurementsByPumpId(String pumpId) async {
-    print('Fetching measurements for pump: $pumpId');
-
     final List<Map<String, dynamic>> measurements = await db.rawQuery(
       '''
       SELECT m.*
       FROM measurements m
       JOIN adjustments a ON m.adjustmentId = a.id
-      WHERE a.pumpId = ?;
-      ORDER BY m.currentOperatingHours ASC;
-      
+      WHERE a.pumpId = ?
+      ORDER BY m.currentOperatingHours ASC, m.date ASC
       ''',
       [pumpId],
     );
@@ -36,14 +33,12 @@ class MeasurementRepository {
 
   /// Fetch measurements for a given pump
   Future<List<Map<String, dynamic>>> getCurrentMeasurementsCount(String pumpId) async {
-    print('Fetching measurements for pump: $pumpId');
-
     final List<Map<String, dynamic>> measurements = await db.rawQuery(
       '''
       SELECT count(m.*)
       FROM measurements m
       JOIN adjustments a ON m.adjustmentId = a.id
-      WHERE a.pumpId = ?;
+      WHERE a.pumpId = ?
       ''',
       [pumpId],
     );
@@ -52,16 +47,16 @@ class MeasurementRepository {
   }
 
   /// Fetch measurements for a given adjustment
-  Future<List<Map<String, dynamic>>?> fetchMeasurementsByAdjustmentId(String adjustmentId) async {
-    print('Fetching measurements for adjustment: $adjustmentId');
-
+  Future<List<Map<String, dynamic>>?> fetchMeasurementsFromAdjustment(String adjustmentId, String pumpId) async {
     final List<Map<String, dynamic>> measurements = await db.rawQuery(
       '''
-      SELECT *
-      FROM measurements
-      WHERE adjustmentId = ?;
+      SELECT m.*
+      FROM measurements m
+      JOIN adjustments a ON m.adjustmentId = a.id
+      WHERE a.id = ? AND a.pumpId = ?
+      ORDER BY m.currentOperatingHours ASC, m.date ASC
       ''',
-      [adjustmentId],
+      [adjustmentId, pumpId],
     );
 
     if (measurements.isEmpty) {

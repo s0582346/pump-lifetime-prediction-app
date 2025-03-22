@@ -98,7 +98,7 @@ class _InputWidgetState extends State<InputWidget> {
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
-              style: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 14, color: Colors.black),
               keyboardType: widget.keyboardType,
             ),
           ),

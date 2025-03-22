@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/measurement_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/measurement_data_widget.dart';
 
@@ -8,9 +9,6 @@ class FormScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //final FormTab currentTab = ref.watch(currentTabProvider);
-    //final pumpDataState = ref.watch(pumpDataProvider);
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF007167),
@@ -23,32 +21,18 @@ class FormScreen extends ConsumerWidget {
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(false),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          onPressed: () {
+            if (ref.watch(isEditingProvider) == true) {
+              ref.read(measurementProvider.notifier).reset();
+              ref.read(isEditingProvider.notifier).state = false;
+            }
+            Navigator.of(context).pop(false);
+          },
         ),
       ),
       backgroundColor: Colors.white,
       body: MeasurementDataWidget(),
     ); 
-  	
-    /*
-    Widget buildContent() {
-      switch (currentTab) {
-        case FormTab.pumpData:
-          return const PumpDataWidget();
-        case FormTab.measurement:
-          return const MeasurementDataWidget();
-      }
-    }
-
-    return Column(
-      children: [
-        const FormTabs(),
-        Expanded( // Expanded is used to take the remaining space
-          child: buildContent(),
-        ),
-      ],
-    );
-    */
   }
 }

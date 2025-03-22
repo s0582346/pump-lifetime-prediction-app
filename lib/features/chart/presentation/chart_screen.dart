@@ -101,12 +101,12 @@ class _ChartScreenState extends ConsumerState<ChartScreen> with TickerProviderSt
                           predictionForTab.a!,
                           predictionForTab.b!,
                           predictionForTab.c!,
-                          start: measurementList.first.currentOperatingHours,
-                          end: measurementList.last.currentOperatingHours,
+                          start: measurementList.first.currentOperatingHours.toDouble(),
+                          end: measurementList.last.currentOperatingHours.toDouble(),
                         );
                       }
                     }
-                    print(a.id == adjustments.last.id);
+                   
                     return ChartWidget(
                       measurements: groupedMeasurements[adjustmentId] ?? [],
                       adjustment: a,

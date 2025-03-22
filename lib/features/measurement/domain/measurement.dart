@@ -2,6 +2,7 @@ import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 
 class Measurement {
   final date;
+  final id;
   final adjustmentId;
   final volumeFlow;
   final pressure;
@@ -15,6 +16,7 @@ class Measurement {
 
   Measurement({
     this.date,
+    this.id,
     this.adjustmentId,
     this.volumeFlow,
     this.pressure,
@@ -29,6 +31,7 @@ class Measurement {
 
   Measurement copyWith({
     date,
+    id,
     adjustmentId,
     volumeFlow,
     pressure,
@@ -42,6 +45,7 @@ class Measurement {
   }) {
     return Measurement(
       date: date ?? this.date,
+      id: id ?? this.id,
       adjustmentId: adjustmentId ?? this.adjustmentId,
       volumeFlow: volumeFlow ?? this.volumeFlow,
       pressure: pressure ?? this.pressure,
@@ -56,6 +60,7 @@ class Measurement {
 
   Map<String, dynamic> toMap() {
     return {
+    'id': id,
     'adjustmentId': adjustmentId?.toString(),
     'date': date.toIso8601String(),
     'volumeFlow': Utils().convertToInt(volumeFlow),
@@ -73,11 +78,12 @@ class Measurement {
   factory Measurement.fromMap(Map<String, dynamic> map) {
     return Measurement(
       date: map['date'],
+      id: map['id'],
       adjustmentId: map['adjustmentId'],
       volumeFlow: (map['volumeFlow']).toDouble() / 100,
       pressure: (map['pressure']).toDouble() / 100,
       rotationalFrequency: (map['rotationalFrequency']).toDouble() / 100,
-      currentOperatingHours: (map['currentOperatingHours'] ?? 0) / 100,
+      currentOperatingHours: ((map['currentOperatingHours'] ?? 0) ~/ 100), // interger division
       averageOperatingHoursPerDay: (map['averageOperatingHoursPerDay'] ?? 0) / 100,
       Qn: (map['Qn'] ?? 0).toDouble() / 1000,
       pn: (map['pn'] ?? 0).toDouble() / 1000,

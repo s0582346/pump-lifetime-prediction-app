@@ -91,13 +91,11 @@ class PumpFormWidget extends ConsumerWidget {
             ref.read(isSubmittingProvider.notifier).state = true;
             final success = ref.read(pumpValidationProvider);
 
-            if (success.isFormValid) {
-              if (context.mounted) {
+            if (context.mounted && success.isFormValid) {
                 Navigator.of(context).pop();
                 await pumpDataNotifier.savePumpData();
                 ref.invalidate(pumpsProvider);  // Invalidate the provider to trigger a rebuild
                 ref.read(isSubmittingProvider.notifier).state = false;
-              }
             }
           },
           label: 'Save',

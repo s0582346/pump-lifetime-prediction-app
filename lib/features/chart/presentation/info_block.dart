@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
 import 'package:flutter_predictive_maintenance_app/shared/widgets/settings_widget.dart';
@@ -7,7 +8,7 @@ import 'package:flutter_predictive_maintenance_app/shared/widgets/alert_widget.d
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class InfoBlock extends ConsumerWidget {
-  final double currentOperatingHours;
+  final currentOperatingHours;
   final double estimatedOperatingHours;
   final String maintenanceDate;
   final String count;
@@ -40,6 +41,7 @@ class InfoBlock extends ConsumerWidget {
         ? ref.read(chartControllerProvider.notifier).closeAdjustment(adjustment.id)
         : ref.read(chartControllerProvider.notifier).openAdjustment(adjustment.id),
     );
+
     final SettingsOption createOption = SettingsOption(
       label: 'New adjustment',
       onTap: () => {
@@ -73,12 +75,12 @@ class InfoBlock extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Adjustment - $count", style: const TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold)),
+            Text("Adjustment - $count", style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold, color: isOpen ? Colors.black : AppColors.errorMessageColor)),
             (adjustment.status != 'close' || isLast) ? SettingsWidget(options: options) : Container(),
           ],
         ),
         const SizedBox(height: 15),
-        _infoRow('Current Operating Hours: ', "${currentOperatingHours.toStringAsFixed(1)} h"),
+        _infoRow('Current Operating Hours: ', "$currentOperatingHours h"),
         _infoRow('Estimated Operating Hours: ', "${estimatedOperatingHours.toStringAsFixed(0)} h"),
         _infoRow('Estimated Adjustment Day: ', maintenanceDate),
         _infoRow('Residual Wear: ', '${residualWear.toString()} %'),

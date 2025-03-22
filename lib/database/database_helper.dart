@@ -59,7 +59,7 @@ class DatabaseHelper {
     // create measurements table
     await db.execute('''
       CREATE TABLE measurements (
-        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        id TEXT PRIMARY KEY NOT NULL,
         adjustmentId TEXT NOT NULL,
         date TEXT NOT NULL,
         volumeFlow INTEGER,
