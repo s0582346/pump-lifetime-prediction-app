@@ -31,8 +31,8 @@ class AlertWidget extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         PrimaryButton(
-          onPressed: () => {
-            onTap
+          onPressed: () {
+            if (onTap != null) onTap!();
           },
           label: 'Proceed',
           buttonColor: AppColors.primaryColor,

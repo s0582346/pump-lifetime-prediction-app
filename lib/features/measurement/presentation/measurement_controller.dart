@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/controllers/history_controller.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_screen.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/measurement_validation_state.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/result_info.dart';
@@ -38,7 +39,7 @@ class MeasurementController extends Notifier<Measurement> {
       currentOperatingHours: measurement.currentOperatingHours?.toString(),
       averageOperatingHoursPerDay: measurement.averageOperatingHoursPerDay?.toString(),
     );
-}
+  }
 
   Future<void> saveMeasurement(BuildContext context, isValid) async {
     final ref = this.ref;
@@ -51,16 +52,14 @@ class MeasurementController extends Notifier<Measurement> {
     if (state.date == null) {
       state = state.copyWith(date: DateTime.now());
     }
-
-    print('ID: ${state.id}');
+    
     if (context.mounted && isValid && pump != null) {
       result = await _measurementService.saveMeasurement(state, pump);
 
       if (result.success) { // ratio is within permissible loss
-        state = build(); // Reset state after save
+        reset(); // Reset state after save
         ref.read(historyControllerProvider.notifier).refresh();
         ref.read(chartControllerProvider.notifier).refresh();
-
         if (context.mounted) Navigator.of(context).pop();
       } else {
         if (context.mounted) {
@@ -72,9 +71,10 @@ class MeasurementController extends Notifier<Measurement> {
               body: "The calculated $ratio exceeds the max. permissble loss. Do you still want to proceed?",
               onTap: () async {
                 result = await _measurementService.saveMeasurement(state, pump, forceSave: true);
+                reset();
                 ref.read(historyControllerProvider.notifier).refresh();
                 ref.read(chartControllerProvider.notifier).refresh();
-                if (context.mounted) Navigator.of(context).pop();
+                if (context.mounted) Navigator.of(context).popUntil((route) => route.isFirst); 
               }  
             )
           );
@@ -91,7 +91,6 @@ class MeasurementController extends Notifier<Measurement> {
 }
 
 final measurementProvider = NotifierProvider<MeasurementController, Measurement>(() => MeasurementController());
-
 final isSubmittingProvider = StateProvider<bool>((ref) => false);
 final isEditingProvider = StateProvider<bool>((ref) => false);
 

@@ -20,6 +20,8 @@ class MeasurementDataWidget extends ConsumerWidget {
     final isAverage = pump?.typeOfTimeEntry.contains('average');
     final isSubmitting = ref.watch(isSubmittingProvider);
 
+    print('is submitting: $isSubmitting');
+
     final hLabel = pump?.typeOfTimeEntry.contains('average') ? 'Average Operating Hours Per Day' : pump?.typeOfTimeEntry.contains('relative') ? 'Operating Time (Relative)' : 'Operating Time (Absolute)';
 
     return ListView(
@@ -36,7 +38,7 @@ class MeasurementDataWidget extends ConsumerWidget {
           initialValue: (isVolumeFlow) ? measurementState.volumeFlow : measurementState.pressure,	
           onChanged: (value) => (isVolumeFlow) ? measurementNotifier.volumeFlow = value : measurementNotifier.pressure = value,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          validator: (isSubmitting) ? (isVolumeFlow) ? measurementValidationState.volumeFlowError : measurementValidationState.pressureError : null,
+          validator: (isSubmitting) ? ((isVolumeFlow) ? measurementValidationState.volumeFlowError : measurementValidationState.pressureError) : null,
           //isSubmitting: isSubmitting,
         ),
 
@@ -45,7 +47,7 @@ class MeasurementDataWidget extends ConsumerWidget {
           initialValue: measurementState.rotationalFrequency,
           onChanged: (value) => measurementNotifier.rotationalFrequency = value,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          validator: isSubmitting ? measurementValidationState.rotationalFrequencyError : null,
+          validator: (isSubmitting) ? measurementValidationState.rotationalFrequencyError : null,
         ),
 
         InputWidget(
