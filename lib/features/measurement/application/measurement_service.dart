@@ -17,25 +17,24 @@ class MeasurementService {
 
   /// Save a measurement to the database
   Future<ResultInfo> saveMeasurement(Measurement newMeasurement, Pump pump, {forceSave = false, wearLimit = 0.9}) async {
-    print('Saving measurement: $newMeasurement');
     try {
-    // Initialize dependencies
-    final db = await DatabaseHelper().database;
-    final adjustmentRepo = AdjustmentRepository(db: db);
-    final measurementRepo = MeasurementRepository(db: db);
-    final predictionService = PredictionService();
+      // Initialize dependencies
+      final db = await DatabaseHelper().database;
+      final adjustmentRepo = AdjustmentRepository(db: db);
+      final measurementRepo = MeasurementRepository(db: db);
+      final predictionService = PredictionService();
 
-    // Fetch necessary data
-    final adjustmentId = await adjustmentRepo.getCurrentAdjustmentId(pump.id);
-    final measurements = await fetchMeasurementsFromAdjustment(adjustmentId, pump.id) ?? []; // measurements for the current adjustment
-    final measurementsTotal = await fetchMeasurementsByPumpId(pump.id) ?? []; // total measurements for the pump
-    final isEditing = newMeasurement.id != null;
+      // Fetch necessary data
+      final adjustmentId = await adjustmentRepo.getCurrentAdjustmentId(pump.id);
+      final measurements = await fetchMeasurementsFromAdjustment(adjustmentId, pump.id) ?? []; // measurements for the current adjustment
+      final measurementsTotal = await fetchMeasurementsByPumpId(pump.id) ?? []; // total measurements for the pump
+      final isEditing = newMeasurement.id != null;
 
-    // Initialize variables with default values
-    Measurement? reference, referenceTotal;
-    double Qn = 1, pn = 1, QnTotal = 1, pnTotal = 1;
-    double? currentOperatingHours = double.tryParse(newMeasurement.currentOperatingHours); // default current operating hours from the new measurement
-    final isVolumeFlow = pump.measurableParameter == 'volume flow';
+      // Initialize variables with default values
+      Measurement? reference, referenceTotal;
+      double Qn = 1, pn = 1, QnTotal = 1, pnTotal = 1;
+      double? currentOperatingHours = double.tryParse(newMeasurement.currentOperatingHours); // default current operating hours from the new measurement
+      final isVolumeFlow = pump.measurableParameter == 'volume flow';
     
 
       // Compute reference values if measurements exist
@@ -59,10 +58,6 @@ class MeasurementService {
         }
       }
 
-
-      // editing 
-      // measurements is one
-  
       // Compute current operating hours based on time entry type
       if (measurements.isNotEmpty) {
         final lastMeasurement = measurements.last;

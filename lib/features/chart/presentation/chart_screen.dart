@@ -97,11 +97,13 @@ class _ChartScreenState extends ConsumerState<ChartScreen> with TickerProviderSt
                     if (predictionForTab.a != 0 || predictionForTab.b != 0 || predictionForTab.c != 0) {
                       final measurementList = groupedMeasurements[adjustmentId] ?? [];
                       if (measurementList.isNotEmpty) {
+                        final xOffset = measurementList.first.currentOperatingHours.toDouble() ?? 0.0;
+
                         regressionSpots = Utils().generateQuadraticSpots(
                           predictionForTab.a!,
                           predictionForTab.b!,
                           predictionForTab.c!,
-                          start: measurementList.first.currentOperatingHours.toDouble(),
+                          start: xOffset,
                           end: measurementList.last.currentOperatingHours.toDouble(),
                         );
                       }

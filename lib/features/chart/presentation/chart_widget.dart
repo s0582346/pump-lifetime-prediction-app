@@ -8,6 +8,7 @@ import 'package:flutter_predictive_maintenance_app/features/chart/domain/predict
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/custom_line_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/info_block.dart';
+import 'package:flutter_predictive_maintenance_app/features/chart/presentation/legend_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
@@ -57,8 +58,20 @@ class ChartWidget extends ConsumerWidget {
       }
     }
 
-    debugPrint('intercept: $yIntercept');
-   
+    final xOffset = firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0;
+    List<FlSpot> blueSpots = measurements.map((m) {
+      return FlSpot(m.currentOperatingHours - xOffset, 
+        (pump.measurableParameter == 'volume flow') ? m.Qn : m.pn);
+    }).toList();
+
+      final legendItems = [
+              LegendItem(label: 'Blue Line', color: Colors.blue, isLine: true),
+              LegendItem(label: 'Gray Line', color: Colors.grey, isLine: true),
+              LegendItem(
+                label: 'Threshold', color: Colors.red, isLine: true, isDashed: true),
+              LegendItem(
+                label: 'Y-Intercept', color: Colors.black, isLine: true, isDashed: true),
+            ];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -96,16 +109,9 @@ class ChartWidget extends ConsumerWidget {
               height: 275,
               width: double.infinity,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(2, 20, 10, 20),
+                padding: const EdgeInsets.fromLTRB(2, 20, 20, 20),
                 child: CustomLineChart(
-                  blueLineSpots: hasMeasurements
-                      ? measurements
-                          .map((m) => FlSpot(
-                                m.currentOperatingHours.toDouble(),
-                                (pump.measurableParameter == 'volume flow') ? m.Qn : m.pn,
-                              ))
-                          .toList()
-                      : [const FlSpot(0, 0)],
+                  blueLineSpots: blueSpots,
                   grayLineSpots: regression ?? [],
                   xAxisStart: firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
                   xAxisEnd:  prediction.estimatedOperatingHours ?? firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
@@ -113,6 +119,8 @@ class ChartWidget extends ConsumerWidget {
                 ),
               ),
             ),
+
+            LegendWidget(legendItems: legendItems),
           ],
         ),
         ),

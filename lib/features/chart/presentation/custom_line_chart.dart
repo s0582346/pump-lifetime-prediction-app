@@ -15,48 +15,60 @@ class CustomLineChart extends StatelessWidget {
     required this.grayLineSpots,
     required this.xAxisStart,
     required this.xAxisEnd,
-    this.yIntercept = 0, // TODO make it dinamically, this should not always start at 0
+    this.yIntercept = 0,
   });
 
   @override
   Widget build(BuildContext context) {
-    
-    final List<FlSpot> threshold = [
-      FlSpot(xAxisStart, 0.9),
-      FlSpot(xAxisEnd + 20, 0.9),
-    ];
-
     List<FlSpot> yInterceptLine = [const FlSpot(0, 0)];
     if (yIntercept != 0) {
       yInterceptLine = [
-      FlSpot(yIntercept, 0.9),
-      FlSpot(yIntercept, 0.8),
-    ];
+        // subtract the x-axis start from the y-intercept to get the correct x value
+        FlSpot(yIntercept - xAxisStart, 0.9), 
+        FlSpot(yIntercept - xAxisStart, 0.8),
+      ];
     }
+    
+    final double interval = ((xAxisEnd - xAxisStart) > 100) ? 20 : 10;
+    final double adjustedMaxX = ((xAxisEnd - xAxisStart) < 50 ? 50 : (xAxisEnd - xAxisStart) + 10);
+
+    final List<FlSpot> threshold = [
+      const FlSpot(0, 0.9),
+      FlSpot(adjustedMaxX, 0.9),
+    ];
 
     return LineChart(
       LineChartData(
-        minX: xAxisStart,
-        maxX: xAxisEnd + 20,
+        minX: 0,
+        maxX: adjustedMaxX,
         minY: 0.8,
         maxY: 1.1,
         lineTouchData: const LineTouchData(enabled: true),
         titlesData: FlTitlesData(
-          leftTitles: const AxisTitles(
+          leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 40, 
               interval: 0.05,
-              ),
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  value.toStringAsFixed(2),
+                  style: const TextStyle(fontSize: 15, color: Colors.grey),
+                );
+              }
+            ),
           ),
-           bottomTitles: AxisTitles(
+          bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              interval: 20,
+              interval: interval,
               getTitlesWidget: (value, meta) {
-                if (value % 20 == 0) {
-                  return Text(value.toInt().toStringAsFixed(1),
-                    style: TextStyle(fontSize: 15, color: Colors.black));
+                if (value % interval == 0) {
+                  final originalValue = value + xAxisStart;
+                  return Text(
+                    originalValue.toInt().toString(),
+                    style: const TextStyle(fontSize: 15, color: Colors.grey),
+                  );
                 }
                 return Container(); // Hide non-matching values
               },
@@ -66,7 +78,7 @@ class CustomLineChart extends StatelessWidget {
           rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
 
-        gridData: const FlGridData(show: true, drawVerticalLine: false, drawHorizontalLine: true, verticalInterval: 10, horizontalInterval: 0.05),
+        gridData: const FlGridData(show: true, drawVerticalLine: false, drawHorizontalLine: true, horizontalInterval: 0.05),
         
         // Borders
         borderData: FlBorderData(
@@ -99,7 +111,7 @@ class CustomLineChart extends StatelessWidget {
             ),  
           ),
           
-            // Gray Line Data
+          // Gray Line Data
           LineChartBarData(
           spots: grayLineSpots,
           isCurved: true,
@@ -108,8 +120,7 @@ class CustomLineChart extends StatelessWidget {
           dotData: FlDotData(show: false),
           ),
 
-
-          //LineChartBarData(spots: redHorizontalSpots, isCurved: false, color: Colors.red, barWidth: 2, dashArray: [5, 5]),
+          // Threshold Line Data
           LineChartBarData(
             spots: threshold, 
             isCurved: false, 
@@ -118,6 +129,7 @@ class CustomLineChart extends StatelessWidget {
             dashArray: [5, 5]
           ),
 
+          // Y-Intercept Line Data
           LineChartBarData(
             spots: yInterceptLine, 
             isCurved: false,

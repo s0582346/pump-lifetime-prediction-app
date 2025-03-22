@@ -169,9 +169,9 @@ class Utils {
     end = newEnd;
 
     for (double x = start; x <= end; x += step) {
-      final double y = a * x * x + b * x + c;
+      final double y = a * x * x + b * x + c; // y = ax^2 + bx + c
       if (y >= targetY) {
-        spots.add(FlSpot(x, y));
+        spots.add(FlSpot(x - start, y));
       }
     }
     return spots;
