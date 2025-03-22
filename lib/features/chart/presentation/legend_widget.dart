@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
  
 // Source: ChatGPT: ChatGPT o3-mini.high, 22-03-2025
-//  Prompt: Can you create a custom legend widget for a line and bar chart in Flutter? 
+// Prompt: Can you create a custom legend widget for a line and bar chart in Flutter? 
 //          There are more for items, so arrange the first two at the top and the remaining 
 //          ones at the bottom. The legend box is placed inside a SingleChildScrollView > ConstrainedBox, 
 //          which should provide basic responsiveness. However, if you think additional layout adjustments 
