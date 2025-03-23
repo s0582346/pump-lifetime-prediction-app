@@ -1,28 +1,29 @@
-import 'dart:async';
+
+
 import 'package:flutter_predictive_maintenance_app/features/chart/application/adjustment_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
-import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
-import 'package:flutter_predictive_maintenance_app/shared/controllers/base_measurement_controller.dart';
-import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/application/measurement_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
+import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final historyControllerProvider = AsyncNotifierProvider<HistoryController, HistoryState>(HistoryController.new);
-final tabIndexProvider = StateProvider<int>((ref) => 0);
 
-class HistoryController extends AsyncNotifier<HistoryState> {
+final dashboardControllerProvider = AsyncNotifierProvider<DashboardController, DashboardState>(DashboardController.new);
+
+class DashboardController extends AsyncNotifier<DashboardState> {
 
   late final MeasurementService _measurementService = ref.read(measurementServiceProvider);
   late final AdjustmentService _adjustmentService = ref.read(adjustmentServiceProvider);
-  
-  @override
-  Future<HistoryState> build() async {
+
+
+    @override
+  Future<DashboardState> build() async {
      final pump = ref.watch(selectedPumpProvider);
 
     if (pump == null) {
-      return HistoryState(
+      return DashboardState(
         groupedMeasurements: {}, 
         adjustments: []
       );
@@ -33,7 +34,7 @@ class HistoryController extends AsyncNotifier<HistoryState> {
       final groupedMeasurements = Utils().groupMeasurements(measurements);
       final adjustments = await _adjustmentService.fetchAdjustmentsByPumpId(pump.id);
 
-      return HistoryState(
+      return DashboardState(
         groupedMeasurements: groupedMeasurements,
         adjustments: adjustments,
       );
@@ -43,29 +44,28 @@ class HistoryController extends AsyncNotifier<HistoryState> {
     }
   }
 
-  Future<void> refresh() async {
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => build());
-  }
 }
 
-class HistoryState {
+class DashboardState {
   final Map<String, List<Measurement>> groupedMeasurements;
   final List<Adjustment> adjustments;
 
-  HistoryState({
+  DashboardState({
     Map<String, List<Measurement>>? groupedMeasurements,
     List<Adjustment>? adjustments,
   })  : groupedMeasurements = groupedMeasurements ?? {},
         adjustments = adjustments ?? [];
 
-  HistoryState copyWith({
+  DashboardState copyWith({
     Map<String, List<Measurement>>? groupedMeasurements,
     List<Adjustment>? adjustments,
   }) {
-    return HistoryState(
+    return DashboardState(
       groupedMeasurements: groupedMeasurements ?? this.groupedMeasurements,
       adjustments: adjustments ?? this.adjustments,
     );
   }
 }
+
+
+  
