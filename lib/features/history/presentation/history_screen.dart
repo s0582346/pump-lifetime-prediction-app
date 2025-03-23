@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_predictive_maintenance_app/features/history/presentation/components/measurement_list_widget.dart';
-import 'package:flutter_predictive_maintenance_app/features/history/presentation/controllers/history_controller.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/presentation/measurement_list_widget.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_controller.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
   const HistoryScreen({Key? key}) : super(key: key);

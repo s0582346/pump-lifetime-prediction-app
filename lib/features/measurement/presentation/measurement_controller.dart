@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
-import 'package:flutter_predictive_maintenance_app/features/history/presentation/controllers/history_controller.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_screen.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/measurement_validation_state.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
@@ -52,7 +52,7 @@ class MeasurementController extends Notifier<Measurement> {
     if (state.date == null) {
       state = state.copyWith(date: DateTime.now());
     }
-    
+
     if (context.mounted && isValid && pump != null) {
       result = await _measurementService.saveMeasurement(state, pump);
 

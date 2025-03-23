@@ -4,7 +4,7 @@ import 'package:flutter_predictive_maintenance_app/features/chart/application/ad
 import 'package:flutter_predictive_maintenance_app/features/chart/application/prediction_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
-import 'package:flutter_predictive_maintenance_app/features/history/presentation/controllers/history_controller.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_controller.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/application/measurement_service.dart';
