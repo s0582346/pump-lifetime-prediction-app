@@ -7,14 +7,15 @@ import 'package:flutter/material.dart';
 // This chart needs to be built as a component since ill be reusing it depending on how many tabs there are. 
 // This means each chart will have different outputs and it should retains its state when the user navigates to other widgets. 
 // It should receive a list which contains the points to be plotted. It should be required.
-
-
 class CustomLineChart extends StatelessWidget {
   final double xAxisStart;
   final double xAxisEnd;
   final double yIntercept;
   final List<FlSpot> blueLineSpots;
   final List<FlSpot> grayLineSpots;
+  final minY;
+  final maxY;
+  final yInterval;
 
   const CustomLineChart({
     super.key,
@@ -23,6 +24,9 @@ class CustomLineChart extends StatelessWidget {
     required this.xAxisStart,
     required this.xAxisEnd,
     this.yIntercept = 0,
+    this.minY = 0.8,
+    this.maxY = 1.1,
+    this.yInterval = 0.05,
   });
 
   @override
@@ -36,8 +40,9 @@ class CustomLineChart extends StatelessWidget {
       ];
     }
     
-    final double interval = ((xAxisEnd - xAxisStart) > 100) ? 20 : 10;
-    final double adjustedMaxX = ((xAxisEnd - xAxisStart) < 50 ? 50 : (xAxisEnd - xAxisStart) + 10);
+    final difference = (xAxisEnd - xAxisStart).toInt();
+    final double interval = (difference > 180) ? 50 : (difference > 100) ? 20 : (difference > 50) ? 10 : 5;
+    final double adjustedMaxX = (difference < 10) ? 20 : (difference < 30) ? 30 : difference + 10; // some margin depending on the range
 
     final List<FlSpot> threshold = [
       const FlSpot(0, 0.9),
@@ -48,15 +53,15 @@ class CustomLineChart extends StatelessWidget {
       LineChartData(
         minX: 0,
         maxX: adjustedMaxX,
-        minY: 0.8,
-        maxY: 1.1,
+        minY: minY,
+        maxY: maxY,
         lineTouchData: const LineTouchData(enabled: true),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 40, 
-              interval: 0.05,
+              interval: yInterval,
               getTitlesWidget: (value, meta) {
                 return Text(
                   value.toStringAsFixed(2),
@@ -85,7 +90,7 @@ class CustomLineChart extends StatelessWidget {
           rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
 
-        gridData: const FlGridData(show: true, drawVerticalLine: false, drawHorizontalLine: true, horizontalInterval: 0.05),
+        gridData: FlGridData(show: true, drawVerticalLine: false, drawHorizontalLine: true, horizontalInterval: yInterval),
         
         // Borders
         borderData: FlBorderData(

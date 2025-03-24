@@ -1,8 +1,7 @@
-
-
 import 'package:flutter_predictive_maintenance_app/features/chart/application/adjustment_service.dart';
+import 'package:flutter_predictive_maintenance_app/features/chart/application/prediction_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
-import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_controller.dart';
+import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/application/measurement_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
@@ -15,28 +14,38 @@ final dashboardControllerProvider = AsyncNotifierProvider<DashboardController, D
 class DashboardController extends AsyncNotifier<DashboardState> {
 
   late final MeasurementService _measurementService = ref.read(measurementServiceProvider);
+  late final PredictionService _predictionService = ref.read(predictionServiceProvider);
   late final AdjustmentService _adjustmentService = ref.read(adjustmentServiceProvider);
 
 
-    @override
+  @override
   Future<DashboardState> build() async {
      final pump = ref.watch(selectedPumpProvider);
 
     if (pump == null) {
       return DashboardState(
-        groupedMeasurements: {}, 
-        adjustments: []
+        measurements: [], 
+        adjustments: [],
+        prediction: Prediction(),
       );
     } 
 
     try {
+      final pumpId = pump.id.replaceAll(RegExp(r'-\w+$'), '');
+      final adjustmentId = '$pumpId-S'; 
+      final predictions = await _predictionService.getPredictions(pump);
+      final predictionTotal = predictions.firstWhere(
+        (p) => p.adjusmentId == adjustmentId,
+        orElse: () => Prediction(),
+      );
       final measurements = await _measurementService.fetchMeasurementsByPumpId(pump.id);
       final groupedMeasurements = Utils().groupMeasurements(measurements);
       final adjustments = await _adjustmentService.fetchAdjustmentsByPumpId(pump.id);
 
       return DashboardState(
-        groupedMeasurements: groupedMeasurements,
+        measurements: measurements,
         adjustments: adjustments,
+        prediction: predictionTotal,
       );
     
     } catch (e, stack) {
@@ -44,25 +53,35 @@ class DashboardController extends AsyncNotifier<DashboardState> {
     }
   }
 
+  Future<void> refresh() async {
+    state = const AsyncValue.loading(); // Set the state to loading
+    state = await AsyncValue.guard(() => build());
+  }
+
 }
 
 class DashboardState {
-  final Map<String, List<Measurement>> groupedMeasurements;
-  final List<Adjustment> adjustments;
+  final List<Measurement>? measurements;
+  final List<Adjustment>? adjustments;
+  final Prediction? prediction;
 
   DashboardState({
-    Map<String, List<Measurement>>? groupedMeasurements,
+    List<Measurement>? measurements,
     List<Adjustment>? adjustments,
-  })  : groupedMeasurements = groupedMeasurements ?? {},
-        adjustments = adjustments ?? [];
+    Prediction? prediction,
+  })  : measurements = measurements ?? [],
+        adjustments = adjustments ?? [],
+        prediction = prediction ?? Prediction();
 
   DashboardState copyWith({
-    Map<String, List<Measurement>>? groupedMeasurements,
+    List<Measurement>? measurements,
     List<Adjustment>? adjustments,
+    Prediction? prediction,
   }) {
     return DashboardState(
-      groupedMeasurements: groupedMeasurements ?? this.groupedMeasurements,
+      measurements: measurements ?? this.measurements,
       adjustments: adjustments ?? this.adjustments,
+      prediction: prediction ?? this.prediction,
     );
   }
 }

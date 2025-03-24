@@ -10,28 +10,11 @@ class PumpService{
 
   Future<void> savePump(Pump pump) async {
     try {
-      final db = await DatabaseHelper().database;
-      final adjustmentService = AdjustmentService();
-
-      final pumpId = generatePumpId(pump.type); // Generate a unique pump ID
-      pump = pump.copyWith(id: pumpId);
-
-      await db.insert('pumps', pump.toMap());
-      // create an open adjustment for the pump
-      await adjustmentService.createAdjustment(pump.id);
-
+      final pumpRepository = PumpRepository(db: await DatabaseHelper().database);
+      await pumpRepository.savePump(pump.toMap());
     } catch (e) {
       print('Error saving pump: $e');
     }
-  }
-
-  String generatePumpId(String pumpType) {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    final random = Random();
-
-    String randomLetters = List.generate(3, (_) => letters[random.nextInt(letters.length)]).join();
-
-    return '$pumpType-$randomLetters';
   }
 
   Future<List<Pump>> getPumps() async {

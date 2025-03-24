@@ -43,11 +43,20 @@ class Utils {
     return ((doubleValue ?? 0.0) * factor).toInt();
   }
 
-  dynamic formatAdjustmentId(String pumpId, int adjustmentCount) {
-    RegExp regExp = new RegExp(r'^[^-]+');
-    String? result = regExp.firstMatch(pumpId)?.group(0);
+  String formatAdjustmentId(String pumpId, String adjustmentCount) {
+    return '$pumpId-$adjustmentCount';
+  }
 
-    return '$result-$adjustmentCount';
+  /// Removes the middle section of an adjustment ID that matches
+  /// a hyphen followed by exactly three uppercase letters (e.g., "-ALV").
+  /// 
+  /// Example:
+  ///   Input:  "NM090-ALV-0"
+  ///   Output: "NM090-0"
+  String formatTabLabel(String adjustmentId) {
+    RegExp regExp = new RegExp(r'(-[A-Z]{3})');
+    String? result = regExp.firstMatch(adjustmentId)?.group(0);
+    return adjustmentId.replaceAll(result ?? '', ''); 
   }
 
   double normalize(String measurableParameter, Measurement reference, Measurement newMeasurement) {
@@ -165,8 +174,8 @@ class Utils {
   // Generate a list of FlSpot objects based on a quadratic function
   List<FlSpot> generateQuadraticSpots(double a, double b, double c, {double start = 0, double end = 50, double step = 1, double targetY = 0.9}) {
     final List<FlSpot> spots = [];
-    double newEnd = calculateXIntercept(a, b, c) ?? end;
-    end = newEnd;
+    //double newEnd = calculateXIntercept(a, b, c) ?? end;
+    //end = newEnd;
 
     for (double x = start; x <= end; x += step) {
       final double y = a * x * x + b * x + c; // y = ax^2 + bx + c

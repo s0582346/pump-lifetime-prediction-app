@@ -41,9 +41,9 @@ class _ChartScreenState extends ConsumerState<ChartScreen> with TickerProviderSt
         ),
         error: (e, _) => Center(child: Text("Error: $e")),
         data: (data) {
-          final adjustments = data.adjustments ?? [];
-          final groupedMeasurements = data.groupedMeasurements ?? {};
-          final predictions = data.predictions ?? [];
+          final adjustments = data.adjustments;
+          final groupedMeasurements = data.groupedMeasurements;
+          final predictions = data.predictions;
 
           // If no adjustments are available, show a message
           if (adjustments.isEmpty) {
@@ -71,7 +71,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> with TickerProviderSt
                 dividerHeight: 3,
                 labelColor: AppColors.primaryColor,
                 controller: _tabController,
-                tabs: adjustments.map((a) => Tab(text: a.id)).toList(),
+                tabs: adjustments.map((a) => Tab(text: Utils().formatTabLabel(a.id))).toList(),
               ),
 
               // Display the chart for each adjustment

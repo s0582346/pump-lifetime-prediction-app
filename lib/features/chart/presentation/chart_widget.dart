@@ -114,7 +114,7 @@ class ChartWidget extends ConsumerWidget {
                   blueLineSpots: blueSpots,
                   grayLineSpots: regression ?? [],
                   xAxisStart: firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
-                  xAxisEnd:  prediction.estimatedOperatingHours ?? firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
+                  xAxisEnd:  prediction.estimatedOperatingHours ?? lastMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
                   yIntercept: yIntercept ?? 0.0,
                 ),
               ),

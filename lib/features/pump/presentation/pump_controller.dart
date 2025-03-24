@@ -1,31 +1,29 @@
+import 'dart:math';
+
+import 'package:flutter_predictive_maintenance_app/features/chart/application/adjustment_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/application/pump_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/presentation/pump_validation_state.dart';
+import 'package:flutter_predictive_maintenance_app/shared/result_info.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 
 
+
 class PumpController extends Notifier<Pump> {
-  // initialize the state of the controller
+  late final AdjustmentService _adjustmentService = ref.read(adjustmentServiceProvider);
+  late final PumpService _pumpServiceProvider = ref.read(pumpServiceProvider);
+  
+  
   @override
   Pump build() {
     return Pump(type: '', id: '');
   }
 
-  set name(String? value) {
-    state = state.copyWith(name: value);
-  }
-
-  set pumpType(String? value) {
-    state = state.copyWith(type: value);
-  }
-
-  set rotorGeometry(String? value) {
-    state = state.copyWith(rotorGeometry: value);
-  }
-
-  set numberOfStages(String? value) {
-    state = state.copyWith(numberOfStages: value);
-  }
+  set name(String? value) => state = state.copyWith(name: value);
+  set pumpType(String? value) => state = state.copyWith(type: value);
+  set rotorGeometry(String? value) => state = state.copyWith(rotorGeometry: value);
+  set numberOfStages(String? value) => state = state.copyWith(numberOfStages: value);
+  
 
   set speedChange(String? value) {
     state = state.copyWith(speedChange: value);
@@ -52,22 +50,19 @@ class PumpController extends Notifier<Pump> {
   }
 
 
-  Future<bool> savePumpData() async {
-    // TODO: code below still needed?
-    final convertedState = state.copyWith(
-      solidConcentration: state.solidConcentration,
-      type: state.type,
-      medium: state.medium,
-      measurableParameter: state.measurableParameter,
-      permissibleTotalWear: state.permissibleTotalWear
-    );
+  Future<ResultInfo> savePumpData() async {
+    final pump = state;
+    final pumpId = generatePumpId(pump.type); // Generate a unique pump ID
+    final updatedPump = pump.copyWith(id: pumpId);
 
     try {
-      await PumpService().savePump(convertedState);
+      await _pumpServiceProvider.savePump(updatedPump);
+      await _adjustmentService.createSumAdjustment(pumpId);
+      await _adjustmentService.createAdjustment(pumpId);
       state = build();
-      return true;  // success
+      return ResultInfo.success(); 
     } catch (e) {
-      return false;  // failure
+      return ResultInfo.error('Error saving pump: $e');  
     }
   }
 
@@ -156,4 +151,15 @@ final pumpValidationProvider = Provider<PumpValidationState>((ref) {
     typeOfTimeEntryError: validateTypeOfTimeEntry(pump.typeOfTimeEntry),
   ) : const PumpValidationState();
 });
+
+
+ String generatePumpId(String pumpType) {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    final random = Random();
+
+    String randomLetters = List.generate(3, (_) => letters[random.nextInt(letters.length)]).join();
+
+    return '$pumpType-$randomLetters';
+  }
+
 

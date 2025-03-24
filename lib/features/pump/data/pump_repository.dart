@@ -15,4 +15,8 @@ class PumpRepository {
   Future<void> deletePump(String id) async {
     await db.delete('pumps', where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<void> savePump(Map<String, dynamic> pump) async {
+    await db.insert('pumps', pump);
+  }
 }

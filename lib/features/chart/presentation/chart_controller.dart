@@ -37,7 +37,7 @@ class ChartController extends AsyncNotifier<ChartState> {
     try {
       final measurements = await _measurementService.fetchMeasurementsByPumpId(pump.id);
       final groupedMeasurements = Utils().groupMeasurements(measurements);
-      final adjustments = await _adjustmentService.fetchAdjustmentsByPumpId(pump.id);
+      final adjustments = (await _adjustmentService.fetchAdjustmentsByPumpId(pump.id))!.skip(1).toList();
       final predictions = await _predictionService.getPredictions(pump);
      
       return ChartState(
@@ -67,7 +67,7 @@ class ChartController extends AsyncNotifier<ChartState> {
    Future<void> openAdjustment(String adjustmentId) async {
     final pump = ref.read(selectedPumpProvider);
     if (pump == null) return;
-    print('Opening adjustment $adjustmentId');
+   
     await _adjustmentService.openAdjustment(adjustmentId);
     refresh();
     ref.read(historyControllerProvider.notifier).refresh();
