@@ -64,14 +64,13 @@ class ChartWidget extends ConsumerWidget {
         (pump.measurableParameter == 'volume flow') ? m.Qn : m.pn);
     }).toList();
 
-      final legendItems = [
-              LegendItem(label: 'Blue Line', color: Colors.blue, isLine: true),
-              LegendItem(label: 'Gray Line', color: Colors.grey, isLine: true),
-              LegendItem(
-                label: 'Threshold', color: Colors.red, isLine: true, isDashed: true),
-              LegendItem(
-                label: 'Y-Intercept', color: Colors.black, isLine: true, isDashed: true),
-            ];
+
+    final legendItems = [
+      LegendItem(label: pump.measurableParameter == 'volume flow' ? 'Q/n' : 'p/n', color: Colors.blue, isLine: true),
+      LegendItem(label: 'Regression', color: Colors.grey, isLine: true),
+      LegendItem(label: 'Threshold', color: Colors.red, isLine: true, isDashed: true),
+      LegendItem(label: 'Operating Hours', color: Colors.black, isLine: true, isDashed: true),
+    ];
 
     return Scaffold(
       backgroundColor: Colors.white,
