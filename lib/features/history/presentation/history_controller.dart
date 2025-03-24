@@ -31,7 +31,8 @@ class HistoryController extends AsyncNotifier<HistoryState> {
     try {
       final measurements = await _measurementService.fetchMeasurementsByPumpId(pump.id);
       final groupedMeasurements = Utils().groupMeasurements(measurements);
-      final adjustments = await _adjustmentService.fetchAdjustmentsByPumpId(pump.id);
+      final adjustments = (await _adjustmentService.fetchAdjustmentsByPumpId(pump.id))!.skip(1).toList(); // first adjustment is the sum of all adjustments, so we skip it
+
 
       return HistoryState(
         groupedMeasurements: groupedMeasurements,

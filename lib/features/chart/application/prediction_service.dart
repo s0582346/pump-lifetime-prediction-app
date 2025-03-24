@@ -27,7 +27,7 @@ class PredictionService {
   }
 }
 
-Future<void> savePrediction(String adjustmentId, Pump pump) async {
+Future<void> predict(String adjustmentId, Pump pump) async {
   print('Saving prediction for adjustment $adjustmentId');
 
   final db = await DatabaseHelper().database;
@@ -50,7 +50,6 @@ Future<void> savePrediction(String adjustmentId, Pump pump) async {
     final measurements = await measurementService.fetchMeasurementsFromAdjustment(adjustmentId, pump.id);
 
     if (measurements == null || measurements.length < 3) {
-      print('Not enough measurements. Skipping prediction.');
       return;
     }
   
@@ -68,7 +67,7 @@ Future<void> savePrediction(String adjustmentId, Pump pump) async {
       result = PolyFit(Array(currentOperatingHours), Array(Qn), 2); 
     } else {
       for (final m in measurements) {
-        final double? hours = m.currentOperatingHours;
+        final double? hours = m.currentOperatingHours.toDouble();
         final double? flow = m.pn;
 
         if (hours != null && flow != null) {
@@ -78,33 +77,27 @@ Future<void> savePrediction(String adjustmentId, Pump pump) async {
       }
 
       result = PolyFit(Array(currentOperatingHours), Array(pn), 2); 
-  }
+    }
 
     //final model = fitQuadratic(currentOperatingHours, qn);
    
-    print('Fitted Model => $result');
     if (result.coefficients().length != 3) {
-      print('Error: Quadratic fit failed.');
       return;
     }
     QuadraticModel model = QuadraticModel(result.coefficients()[0], result.coefficients()[1], result.coefficients()[2]);
 
+     // TODO use method from Utils
     final solutions = findXForY(model, 0.900);
 
     double? estimatedOperatingHours;
-    if (solutions.isEmpty) {
-      print('No real solution for y=0.900.');
-    } else {
-      for (final x in solutions) {
+    if (solutions.isNotEmpty) {
+       for (final x in solutions) {
         if (x >= 0) {
           print('At y=0.900 => x= $x (Operating Hours)');
           estimatedOperatingHours = x;
         }
       }
     }
-  
-
-    //final remainingDaysTillMaintenance = Utils().calculateRemainingDaysTillMaintenance(measurements.last.date, estimatedOperatingHours, currentOperatingHours.last, measurements.last.averageOperatingHoursPerDay);
 
     // format estimated maintenance date
     DateTime? estimatedMaintenanceDate;
@@ -122,18 +115,71 @@ Future<void> savePrediction(String adjustmentId, Pump pump) async {
       b: model.b,
       c: model.c,
     );
-  
 
-  print('Estimated Operating hours: ${prediction.estimatedOperatingHours}');
+    (existingPrediction != null) ? await predictionService.updatePrediction(prediction) : await predictionService.savePrediction(prediction, adjustmentId);
+}
 
-  // Save the updated prediction (Update if exists, Insert if new)
-  if (existingPrediction != null) {
-    await predictionService.updatePrediction(prediction);
-    print('Updated existing prediction');
-  } else {
-    await predictionService.savePrediction(prediction, adjustmentId);
-    print('Inserted new prediction');
+Future<void> predictTotal(Pump pump) async {
+  final List<double> QnTotal = [];
+  final List<double> pnTotal = [];
+  final List<double> currentOperatingHoursTotal = [];
+  PolyFit? resultTotal;
+
+  final pumpId = pump.id.replaceAll(RegExp(r'-\w+$'), '');
+  final adjustmentId = '$pumpId-S'; 
+
+  final db = await DatabaseHelper().database;
+  final predictionService = PredictionRepository(db: db);
+  final measurementService = MeasurementService();
+  final measurementsTotal = await measurementService.fetchMeasurementsByPumpId(pump.id);
+
+  Prediction? existingPrediction = await predictionService.getPredictionByAdjustmentId(adjustmentId);
+  Prediction prediction = existingPrediction ?? Prediction(); // no prediction, then create one
+
+  if (measurementsTotal == null || measurementsTotal.length < 3) {
+    return;
   }
+
+  if (pump.measurableParameter == 'volume flow') {
+    for (final m in measurementsTotal) {
+      final double? hours = m.currentOperatingHours.toDouble();
+      final double? flow = m.Qn;
+
+      if (hours != null && flow != null) {
+        currentOperatingHoursTotal.add(hours);
+        QnTotal.add(flow);
+      }
+    }
+  
+    resultTotal = PolyFit(Array(currentOperatingHoursTotal), Array(QnTotal), 2); 
+  } else if (pump.measurableParameter == 'pressure') {
+    for (final m in measurementsTotal) {
+      final double? hours = m.currentOperatingHours;
+      final double? flow = m.pn;
+
+      if (hours != null && flow != null) {
+        currentOperatingHoursTotal.add(hours);
+        pnTotal.add(flow);
+      }
+    }
+
+    resultTotal = PolyFit(Array(currentOperatingHoursTotal), Array(pnTotal), 2); 
+  }
+
+  if (resultTotal?.coefficients().length != 3) {
+    return;
+  }
+
+  QuadraticModel model = QuadraticModel(resultTotal!.coefficients()[0], resultTotal.coefficients()[1], resultTotal.coefficients()[2]);
+
+  prediction = prediction.copyWith(
+    adjusmentId: adjustmentId,
+    a: model.a,
+    b: model.b,
+    c: model.c,
+  );
+
+  (existingPrediction != null) ? await predictionService.updatePrediction(prediction) : await predictionService.savePrediction(prediction, adjustmentId);
 }
 
 

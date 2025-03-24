@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
+import 'package:flutter_predictive_maintenance_app/features/dashboard/dashboard_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_screen.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/measurement_validation_state.dart';
@@ -21,7 +22,7 @@ class MeasurementController extends Notifier<Measurement> {
     return Measurement();
   }
 
-  set date(date) => state = state.copyWith(date: date);
+  set date(value) => state = state.copyWith(date: value);
   set volumeFlow(value) => state = state.copyWith(volumeFlow: value);
   set pressure(value) => state = state.copyWith(pressure: value);
   set rotationalFrequency(value) => state = state.copyWith(rotationalFrequency: value);
@@ -74,6 +75,7 @@ class MeasurementController extends Notifier<Measurement> {
                 reset();
                 ref.read(historyControllerProvider.notifier).refresh();
                 ref.read(chartControllerProvider.notifier).refresh();
+                ref.read(dashboardControllerProvider.notifier).refresh();
                 if (context.mounted) Navigator.of(context).popUntil((route) => route.isFirst); 
               }  
             )

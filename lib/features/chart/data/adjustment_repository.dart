@@ -23,7 +23,7 @@ class AdjustmentRepository {
       // if no open adjustment found, get adjustment count
       final count = await _getAdjustmentCount(pumpId);
 
-      final adjustmentId = Utils().formatAdjustmentId(pumpId, count);
+      final adjustmentId = Utils().formatAdjustmentId(pumpId, count.toString());
 
       // If no open adjustment found, create a new one
       await db.rawInsert(
@@ -46,17 +46,36 @@ class AdjustmentRepository {
   Future<void> createAdjustment(String pumpId) async {
     try {
       // if no open adjustment found, get adjustment count
-      final count = await _getAdjustmentCount(pumpId);
-      final adjustmentId = Utils().formatAdjustmentId(pumpId, count);
+      int count = await _getAdjustmentCount(pumpId) - 1;
+      final adjustmentId = Utils().formatAdjustmentId(pumpId, count.toString());
 
 
       // Get the current adjustment ID for the pump
       await db.rawInsert(
-        'INSERT OR IGNORE INTO adjustments (id, status, pumpId, date) VALUES (?, ?, ?, ?)',
+        'INSERT INTO adjustments (id, status, pumpId, date) VALUES (?, ?, ?, ?)',
         [    
           adjustmentId,
           'open',
           pumpId,  // Using passed pumpId
+          DateTime.now().toIso8601String(),
+        ],
+      );
+      
+    } catch (e) {
+      throw Exception('Failed to create adjustment: $e');
+    }
+  }
+
+  Future<void> createSumAdjustment(String pumpId) async {
+    try {
+      final adjustmentId = Utils().formatAdjustmentId(pumpId, 'S');
+
+      await db.rawInsert(
+        'INSERT INTO adjustments (id, status, pumpId, date) VALUES (?, ?, ?, ?)',
+        [    
+          adjustmentId,
+          'close',
+          pumpId, 
           DateTime.now().toIso8601String(),
         ],
       );
@@ -92,9 +111,8 @@ Future<void> closeAdjustment(Database db, String adjustmentId) async {
       where: 'id = ?',
       whereArgs: [adjustmentId],
     );
-    print('Adjustment $adjustmentId successfully closed.');
-  } catch (e) {
-    print('Failed to close adjustment: $e');
+  } catch (e, stackTrace) {
+    throw Exception('Failed to close adjustment: $e');
   }
 }
 
@@ -109,9 +127,8 @@ Future<void> openAdjustment(Database db, String adjustmentId) async {
       where: 'id = ?',
       whereArgs: [adjustmentId],
     );
-    print('Adjustment $adjustmentId successfully opened.');
   } catch (e) {
-    print('Failed to open adjustment: $e');
+    throw Exception('Failed to open adjustment: $e');
   }
 }
   

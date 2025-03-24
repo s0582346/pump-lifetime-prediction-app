@@ -45,17 +45,14 @@ class MeasurementService {
         if (result < wearLimit && !forceSave) {
           return ResultInfo.error(result); // return if the wear limit is exceeded
         }
-      
+        
+        isVolumeFlow ? Qn = result : pn = result;
+      }
+
+      if (measurementsTotal.isNotEmpty) {
         referenceTotal = measurementsTotal.first;
         final resultTotal = Utils().normalize(pump.measurableParameter, referenceTotal, newMeasurement);
-
-        if (isVolumeFlow) {
-          Qn = result;
-          QnTotal = resultTotal;
-        } else {
-          pn = result;
-          pnTotal = resultTotal;
-        }
+        isVolumeFlow ? QnTotal = resultTotal : pnTotal = resultTotal;
       }
 
       // Compute current operating hours based on time entry type
@@ -116,8 +113,10 @@ class MeasurementService {
 
       // Save measurement and prediction
       await measurementRepo.saveMeasurement(updatedMeasurement);
-      await predictionService.savePrediction(adjustmentId, pump);
-  
+      await predictionService.predict(adjustmentId, pump);
+      await predictionService.predictTotal(pump);
+
+
       return ResultInfo.success();
     } catch (e, stackTrace) {
       // TODO use logError

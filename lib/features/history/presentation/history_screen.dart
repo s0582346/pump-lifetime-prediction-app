@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
+import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/measurement_list_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_controller.dart';
@@ -35,8 +36,6 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> with TickerProvid
           final groupedMeasurements = data.groupedMeasurements;
           final adjustments = data.adjustments;
 
-
-
           final newIndex = adjustments.length - 1;
           if (_tabController == null || _tabController!.length != adjustments.length) {
             _currentTabIndex = newIndex;
@@ -57,7 +56,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> with TickerProvid
                 labelColor: AppColors.primaryColor,
                 dividerHeight: 3,
                 controller: _tabController,
-                tabs: adjustments.map((a) => Tab(text: a.id)).toList(),
+                tabs: adjustments.map((a) => Tab(text: Utils().formatTabLabel(a.id))).toList(),
               ),
               Expanded(
                 child: TabBarView(

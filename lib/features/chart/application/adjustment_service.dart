@@ -18,7 +18,15 @@ class AdjustmentService {
   Future<void> createAdjustment(pumpId) async {
     final db = await DatabaseHelper().database;
     final adjustmentRepo = AdjustmentRepository(db: db);
+    print('Creating adjustment');
     await adjustmentRepo.createAdjustment(pumpId);
+  }
+
+  Future<void> createSumAdjustment(pumpId) async {
+    final db = await DatabaseHelper().database;
+    final adjustmentRepo = AdjustmentRepository(db: db);
+    print('Creating sum adjustment');
+    await adjustmentRepo.createSumAdjustment(pumpId);
   }
 
   Future<void> closeAdjustment(String adjustmentId) async {
