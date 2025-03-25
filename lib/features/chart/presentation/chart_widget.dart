@@ -1,11 +1,8 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/components/form_components/primary_button.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
-import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/custom_line_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/info_block.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/legend_widget.dart';
@@ -35,56 +32,68 @@ class ChartWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    double limit = 0.900;
-    double? yIntercept = prediction.estimatedOperatingHours; // set to the estimated operating hours as default, if no solution is found
+    final utils = Utils();
+    double thresholdLimit = 0.900;
+    double? yIntercept = prediction.estimatedOperatingHours;
 
-    // Extract the count from the adjustmentId => NM045-0
-    RegExp regex = RegExp(r'\d$');
-    Match? match = regex.firstMatch(adjustment.id);
-    final count = match?[0] ?? '0';
-
+    // Extract count from the adjustment id (e.g., NM045-0).
+    final count = _extractCountFromAdjustment(adjustment.id);
     final residualWear = pump.permissibleTotalWear - ((int.tryParse(count) ?? 0) * 10);
 
     final hasMeasurements = measurements.isNotEmpty;
     final firstMeasurement = hasMeasurements ? measurements.first : null;
     final lastMeasurement = hasMeasurements ? measurements.last : null;
-    
-    final solutions = Utils().findXForY(prediction.a, prediction.b, prediction.c, limit); // normally two solutions
 
+    // Determine the yIntercept based on the threshold.
+    final solutions = utils.findXForY(prediction.a, prediction.b, prediction.c, thresholdLimit);
     for (var solution in solutions) {
-      if (solution > 0 && solution > yIntercept!) {
+      if (solution > 0 && solution > (yIntercept ?? 0)) {
         yIntercept = solution;
         break;
       }
     }
 
     final xOffset = firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0;
-    List<FlSpot> blueSpots = measurements.map((m) {
-      return FlSpot(m.currentOperatingHours - xOffset, 
-        (pump.measurableParameter == 'volume flow') ? m.Qn : m.pn);
+    final blueSpots = measurements.map((m) {
+      return FlSpot(
+        m.currentOperatingHours - xOffset,
+        pump.measurableParameter == 'volume flow' ? m.Qn : m.pn,
+      );
     }).toList();
 
-
     final legendItems = [
-      LegendItem(label: pump.measurableParameter == 'volume flow' ? 'Q/n' : 'p/n', color: Colors.blue, isLine: true),
-      LegendItem(label: 'Regression', color: Colors.grey, isLine: true),
-      LegendItem(label: 'Threshold', color: Colors.amber, isLine: true, isDashed: true),
-      LegendItem(label: 'Operating Hours', color: Colors.black, isLine: true, isDashed: true),
+      LegendItem(
+        label: pump.measurableParameter == 'volume flow' ? 'Q/n' : 'p/n',
+        color: Colors.blue,
+        isLine: true,
+      ),
+      LegendItem(
+        label: 'Regression',
+        color: Colors.grey,
+        isLine: true,
+      ),
+      LegendItem(
+        label: 'Threshold',
+        color: Colors.amber,
+        isLine: true,
+        isDashed: true,
+      ),
+      LegendItem(
+        label: 'Operating Hours',
+        color: Colors.black,
+        isLine: true,
+        isDashed: true,
+      ),
     ];
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height
-            ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min, // Shrink-wrap contents
+    return SingleChildScrollView(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 10),
-
             Padding(
               padding: const EdgeInsets.all(10),
               child: Align(
@@ -94,16 +103,15 @@ class ChartWidget extends ConsumerWidget {
                   estimatedOperatingHours: prediction.estimatedOperatingHours ?? 0.0,
                   count: count,
                   maintenanceDate: prediction.estimatedMaintenanceDate != null
-                      ? Utils().formatDate(prediction.estimatedMaintenanceDate)
+                      ? utils.formatDate(prediction.estimatedMaintenanceDate)
                       : '-',
                   residualWear: residualWear,
                   adjustment: adjustment,
                   pump: pump,
-                  isLast: isLast
+                  isLast: isLast,
                 ),
               ),
             ),
-
             SizedBox(
               height: 275,
               width: double.infinity,
@@ -113,17 +121,23 @@ class ChartWidget extends ConsumerWidget {
                   blueLineSpots: blueSpots,
                   grayLineSpots: regression ?? [],
                   xAxisStart: firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
-                  xAxisEnd:  prediction.estimatedOperatingHours ?? lastMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
+                  xAxisEnd: prediction.estimatedOperatingHours ??
+                      lastMeasurement?.currentOperatingHours.toDouble() ??
+                      0.0,
                   yIntercept: yIntercept ?? 0.0,
                 ),
               ),
             ),
-
             LegendWidget(legendItems: legendItems),
           ],
         ),
-        ),
       ),
     );
+  }
+
+  String _extractCountFromAdjustment(String adjustmentId) {
+    final regex = RegExp(r'\d$');
+    final match = regex.firstMatch(adjustmentId);
+    return match?[0] ?? '0';
   }
 }
