@@ -84,7 +84,7 @@ class Measurement {
       pressure: (map['pressure']).toDouble() / 100,
       rotationalFrequency: (map['rotationalFrequency']).toDouble() / 100,
       currentOperatingHours: ((map['currentOperatingHours'] ?? 0) ~/ 100), // interger division
-      averageOperatingHoursPerDay: (map['averageOperatingHoursPerDay'] ?? 0) / 100,
+      averageOperatingHoursPerDay: ((map['averageOperatingHoursPerDay'] ?? 0) ~/ 100), // interger division
       Qn: (map['Qn'] ?? 0).toDouble() / 1000,
       pn: (map['pn'] ?? 0).toDouble() / 1000,
       QnTotal: (map['QnTotal'] ?? 0).toDouble() / 1000,

@@ -60,6 +60,9 @@ Future<void> predict(String adjustmentId, Pump pump) async {
           Qn.add(flow);
         }
       }
+
+      final zeroCount = currentOperatingHours.where((h) => h == 0.0).length;
+      if (zeroCount > 1) return;
     
       coeffs = fitQuadratic(currentOperatingHours, Qn); 
     } else {
@@ -72,6 +75,9 @@ Future<void> predict(String adjustmentId, Pump pump) async {
           pn.add(flow);
         }
       }
+
+      final zeroCount = currentOperatingHours.where((h) => h == 0.0).length;
+      if (zeroCount > 1) return;
 
       coeffs = fitQuadratic(currentOperatingHours, pn); 
     }
@@ -142,6 +148,9 @@ Future<void> predictTotal(Pump pump) async {
       }
     }
 
+    final zeroCount = currentOperatingHoursTotal.where((h) => h == 0.0).length;
+    if (zeroCount > 1) return;
+
     coeffs = fitQuadratic(currentOperatingHoursTotal, QnTotal); 
   } else if (pump.measurableParameter == 'pressure') {
     for (final m in measurementsTotal) {
@@ -153,6 +162,9 @@ Future<void> predictTotal(Pump pump) async {
         pnTotal.add(flow);
       }
     }
+
+    final zeroCount = currentOperatingHoursTotal.where((h) => h == 0.0).length;
+    if (zeroCount > 1) return;
 
     coeffs = fitQuadratic(currentOperatingHoursTotal, pnTotal); 
   }

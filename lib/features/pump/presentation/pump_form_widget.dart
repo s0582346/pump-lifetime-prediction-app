@@ -67,7 +67,7 @@ class PumpFormWidget extends ConsumerWidget {
           onChanged: (value) => pumpDataNotifier.permissibleTotalWear = value,
           validator: validation.persmissibleTotalWearError,
           isSubmitting: isSubmitting,
-          //keyboardType: TextInputType.number,
+          keyboardType: TextInputType.number,
         ),
         SelectWidget(
           label: 'Measurable Parameter',

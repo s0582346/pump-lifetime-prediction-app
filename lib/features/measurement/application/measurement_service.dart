@@ -33,7 +33,8 @@ class MeasurementService {
       // Initialize variables with default values
       Measurement? reference, referenceTotal;
       double Qn = 1, pn = 1, QnTotal = 1, pnTotal = 1;
-      double? currentOperatingHours = double.tryParse(newMeasurement.currentOperatingHours); // default current operating hours from the new measurement
+      final op = newMeasurement.currentOperatingHours;
+      double? currentOperatingHours = double.tryParse(newMeasurement.currentOperatingHours ?? '') ?? 0.0; // default current operating hours from the new measurement
       final isVolumeFlow = pump.measurableParameter == 'volume flow';
     
       // Compute reference values if measurements exist
@@ -59,17 +60,27 @@ class MeasurementService {
         final lastOperatingHours = lastMeasurement.currentOperatingHours;
 
         if (pump.typeOfTimeEntry.contains('average')) {
-          debugPrint('Calculating average operating hours per day');
-          final averageOperatingHoursPerDay = int.tryParse(newMeasurement.averageOperatingHoursPerDay) ?? 0;
-          final currentDate = newMeasurement.date;
-          final startDate = DateTime.tryParse(lastMeasurement.date) ?? DateTime.now();
+          int? avgOperatingHoursPerDay;
+          DateTime? startDate;
+          DateTime? currentDate;
+          Measurement? previousEntry;
+      
+          if (isEditing) {
+            previousEntry = getPreviousEntry(measurementsTotal, newMeasurement.id);
+            startDate = (previousEntry != null) ? DateTime.tryParse(previousEntry.date) : DateTime.now();
+            //previousOperatingHours = (previousEntry != null) ? previousEntry.currentOperatingHours : 0;
+          } else {
+            startDate = DateTime.tryParse(lastMeasurement.date);
+          }
+          currentDate = newMeasurement.date;
+          avgOperatingHoursPerDay = int.tryParse(newMeasurement.averageOperatingHoursPerDay) ?? 0;
 
           debugPrint('Start Date: $startDate, Current Operating Hours: $lastOperatingHours');
-          debugPrint('Average Operating Hours Per Day: $averageOperatingHoursPerDay, Current Date: $currentDate');
+          debugPrint('Average Operating Hours Per Day: $avgOperatingHoursPerDay, Current Date: $currentDate');
 
           currentOperatingHours = Utils().calculateCurrentOperatingHours(
-            lastOperatingHours,
-            averageOperatingHoursPerDay,
+            isEditing ? previousEntry?.currentOperatingHours : lastOperatingHours,
+            avgOperatingHoursPerDay,
             currentDate,
             startDate, 
           );
@@ -89,11 +100,7 @@ class MeasurementService {
               currentOperatingHours = currentOperatingHours + (previousEntry.currentOperatingHours);
             }
           } else {
-            print('new measurement: ${newMeasurement.currentOperatingHours.runtimeType}');
             final newHours = double.tryParse(newMeasurement.currentOperatingHours) ?? 0;
-            print('new: $newHours');
-            print('last: ${lastMeasurement.currentOperatingHours}');
-            print('sum: ${newHours + lastMeasurement.currentOperatingHours}');
             currentOperatingHours = newHours + lastMeasurement.currentOperatingHours;
           }
         }

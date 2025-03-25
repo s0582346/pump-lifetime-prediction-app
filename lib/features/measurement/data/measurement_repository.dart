@@ -54,7 +54,7 @@ class MeasurementRepository {
       FROM measurements m
       JOIN adjustments a ON m.adjustmentId = a.id
       WHERE a.id = ? AND a.pumpId = ?
-      ORDER BY m.currentOperatingHours ASC, m.date ASC
+      ORDER BY m.date ASC, m.currentOperatingHours ASC
       ''',
       [adjustmentId, pumpId],
     );

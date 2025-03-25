@@ -22,7 +22,9 @@ class MeasurementController extends Notifier<Measurement> {
     return Measurement();
   }
 
-  set date(value) => state = state.copyWith(date: value);
+  set date(value) { 
+    state = state.copyWith(date: value); 
+  }
   set volumeFlow(value) => state = state.copyWith(volumeFlow: value);
   set pressure(value) => state = state.copyWith(pressure: value);
   set rotationalFrequency(value) => state = state.copyWith(rotationalFrequency: value);
@@ -51,7 +53,9 @@ class MeasurementController extends Notifier<Measurement> {
   
     // Use internal state directly
     if (state.date == null) {
-      state = state.copyWith(date: DateTime.now());
+      final date = DateTime.now();
+      DateTime dateOnly = DateTime(date.year, date.month, date.day);
+      state = state.copyWith(date: dateOnly);
     }
 
     if (context.mounted && isValid && pump != null) {
