@@ -54,51 +54,58 @@ class _ChartScreenState extends ConsumerState<ChartScreen> with TickerProviderSt
           // Initialize or update the tab controller based on adjustments.
           _initializeTabControllerIfNeeded(adjustments);
 
-          return Column(
-            children: [
-              TabBar(
-                tabAlignment: TabAlignment.start,
-                isScrollable: true,
-                indicatorColor: AppColors.primaryColor,
-                dividerHeight: 3,
-                labelColor: AppColors.primaryColor,
-                controller: _tabController,
-                tabs: adjustments
-                    .map((a) => Tab(text: Utils().formatTabLabel(a.id)))
-                    .toList(),
-              ),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: adjustments.map((adjustment) {
-                    final predictionForTab = predictions.firstWhere(
-                      (p) => p.adjusmentId == adjustment.id,
-                      orElse: () => Prediction(
-                        adjusmentId: adjustment.id,
-                        estimatedOperatingHours: 0,
-                        a: 0.0,
-                        b: 0.0,
-                        c: 0.0,
-                      ),
-                    );
+          return OrientationBuilder(
+            builder: (context, orientation) {
+              final isPortrait = orientation == Orientation.portrait;
+              return Column(
+                children: [
+                  // Only show the TabBar in portrait mode.
+                  if (isPortrait)
+                    TabBar(
+                      tabAlignment: TabAlignment.start,
+                      isScrollable: true,
+                      indicatorColor: AppColors.primaryColor,
+                      dividerHeight: 3,
+                      labelColor: AppColors.primaryColor,
+                      controller: _tabController,
+                      tabs: adjustments
+                          .map((a) => Tab(text: Utils().formatTabLabel(a.id)))
+                          .toList(),
+                    ),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: adjustments.map((adjustment) {
+                        final predictionForTab = predictions.firstWhere(
+                          (p) => p.adjusmentId == adjustment.id,
+                          orElse: () => Prediction(
+                            adjusmentId: adjustment.id,
+                            estimatedOperatingHours: 0,
+                            a: 0.0,
+                            b: 0.0,
+                            c: 0.0,
+                          ),
+                        );
 
-                    final regressionSpots = _calculateRegressionSpots(
-                      predictionForTab,
-                      groupedMeasurements[adjustment.id] ?? [],
-                    );
+                        final regressionSpots = _calculateRegressionSpots(
+                          predictionForTab,
+                          groupedMeasurements[adjustment.id] ?? [],
+                        );
 
-                    return ChartWidget(
-                      measurements: groupedMeasurements[adjustment.id] ?? [],
-                      adjustment: adjustment,
-                      prediction: predictionForTab,
-                      regression: regressionSpots,
-                      pump: pump!,
-                      isLast: adjustment.id == adjustments.last.id,
-                    );
-                  }).toList(),
-                ),
-              ),
-            ],
+                        return ChartWidget(
+                          measurements: groupedMeasurements[adjustment.id] ?? [],
+                          adjustment: adjustment,
+                          prediction: predictionForTab,
+                          regression: regressionSpots,
+                          pump: pump!,
+                          isLast: adjustment.id == adjustments.last.id,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              );
+            },
           );
         },
       ),
