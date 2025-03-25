@@ -49,20 +49,22 @@ class DashboardWidget extends ConsumerWidget {
   children: [
     const SizedBox(height: 20),
     Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.0),
       child: Row(
-        mainAxisSize: MainAxisSize.max,
+        //mainAxisSize: MainAxisSize.max,
         children: [
           Text(
             pump.name,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 23,
+              fontSize: 25,
             ),
           ),
         ],
       ),
     ),
+    const Divider(height: 10, thickness: 1.5, indent: 10, endIndent: 10, color: Colors.grey),
+    const SizedBox(height: 10),
     Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       child: Row(
@@ -110,6 +112,8 @@ class DashboardWidget extends ConsumerWidget {
         ],
       ),
     ),
+    //const Divider(height: 20, thickness: 1, indent: 10, endIndent: 10, color: Colors.grey),
+    const SizedBox(height: 10),
     SizedBox(
       height: 400,
       width: double.infinity,

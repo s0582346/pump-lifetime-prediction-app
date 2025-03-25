@@ -8,12 +8,9 @@ import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dar
 import 'package:flutter_predictive_maintenance_app/navigation/custom_bottom_navigation_bar_item.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/custom_app_bar.dart';
 
-
-
 /// This acts like a global state container <br/>
 /// Any widget in the app tree can access it by watching or reading it
 final selectedPumpProvider = StateProvider<Pump?>((ref) => null);
-
 
 /// Navigation widget is used to display the screens based on the index of the bottom navigation bar <br/>
 /// It uses IndexedStack to maintain the state of the screen <br/>
@@ -24,7 +21,7 @@ class Navigation extends ConsumerStatefulWidget {
   
   const Navigation({
     super.key,
-    required this.selectedPump
+    required this.selectedPump,
   });
 
   @override
@@ -44,30 +41,36 @@ class _NavigationState extends ConsumerState<Navigation> {
   @override
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(bottomNavigationProvider);
-
-    return Scaffold(
-      appBar: const CustomAppBar(title: 'NETZSCH'),
-      backgroundColor: Colors.white,
-      body: IndexedStack(
-        index: currentIndex,
-        children: const [
-          HistoryScreen(),
-          DashboardScreen(),
-          ChartScreen(),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        currentIndex: currentIndex,
-        onTap: (index) {
-          ref.read(bottomNavigationProvider.notifier).state = index;
-        },
-        items: [
-          CustomBottomNavigationBarItem(assetPath: 'assets/nav/form.png'),
-          CustomBottomNavigationBarItem(assetPath: 'assets/nav/netzsch.png'),
-          CustomBottomNavigationBarItem(assetPath: 'assets/nav/chart.png'),
-        ],
-      ),
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        final isPortrait = orientation == Orientation.portrait;
+        // Show app bar unless we are in landscape and the current index is 2.
+        final showAppBar = isPortrait || currentIndex != 2;
+        return Scaffold(
+          appBar: showAppBar ? const CustomAppBar(title: 'NETZSCH') : null,
+          backgroundColor: Colors.white,
+          body: IndexedStack(
+            index: currentIndex,
+            children: const [
+              HistoryScreen(),
+              DashboardScreen(),
+              ChartScreen(),
+            ],
+          ),
+          bottomNavigationBar: showAppBar ? BottomNavigationBar(
+            backgroundColor: Colors.white,
+            currentIndex: currentIndex,
+            onTap: (index) {
+              ref.read(bottomNavigationProvider.notifier).state = index;
+            },
+            items: [
+              CustomBottomNavigationBarItem(assetPath: 'assets/nav/form.png'),
+              CustomBottomNavigationBarItem(assetPath: 'assets/nav/netzsch.png'),
+              CustomBottomNavigationBarItem(assetPath: 'assets/nav/chart.png'),
+            ],
+          ) : null,
+        );
+      },
     );
   }
 }
