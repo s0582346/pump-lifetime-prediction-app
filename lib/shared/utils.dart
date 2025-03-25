@@ -121,13 +121,12 @@ class Utils {
   /// average operating hours per day, current date and last date
   /// TO USE
   /// - when type of time entry = 'average operating hours per day'
-  double calculateCurrentOperatingHours(double? startOperatingHours, int? averageOperatingHoursPerDay, DateTime? currentDate, DateTime? lastDate) {
+  double calculateCurrentOperatingHours(int? startOperatingHours, int? averageOperatingHoursPerDay, DateTime? currentDate, DateTime? lastDate) {
     if (startOperatingHours == null || averageOperatingHoursPerDay == null || currentDate == null || lastDate == null) {
       return 0;
     }
 
     final dayDiff = currentDate.difference(lastDate).inHours / 24;
-    print("dayDiff: $dayDiff");
     
     if (dayDiff <= 0) {
       return 0;

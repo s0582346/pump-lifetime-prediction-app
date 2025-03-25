@@ -20,8 +20,6 @@ class MeasurementDataWidget extends ConsumerWidget {
     final isAverage = pump?.typeOfTimeEntry.contains('average');
     final isSubmitting = ref.watch(isSubmittingProvider);
 
-    print('is submitting: $isSubmitting');
-
     final hLabel = pump?.typeOfTimeEntry.contains('average') ? 'Average Operating Hours Per Day' : pump?.typeOfTimeEntry.contains('relative') ? 'Operating Time (Relative)' : 'Operating Time (Absolute)';
 
     return ListView(

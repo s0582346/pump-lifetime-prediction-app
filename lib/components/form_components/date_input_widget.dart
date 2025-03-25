@@ -41,6 +41,8 @@ class _DateInputWdigetState extends ConsumerState<DateInputWidget> {
     super.didUpdateWidget(oldWidget);
     if (widget.initialValue == null) {
       _selectedDate = DateTime.now();
+      DateTime dateOnly = DateTime(_selectedDate!.year, _selectedDate!.month, _selectedDate!.day);
+      _selectedDate = dateOnly;
       _controller.text = _formatDate(_selectedDate);
     } else if (widget.initialValue != oldWidget.initialValue) {
       _selectedDate = widget.initialValue;
