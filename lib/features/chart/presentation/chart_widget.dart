@@ -68,7 +68,7 @@ class ChartWidget extends ConsumerWidget {
     final legendItems = [
       LegendItem(label: pump.measurableParameter == 'volume flow' ? 'Q/n' : 'p/n', color: Colors.blue, isLine: true),
       LegendItem(label: 'Regression', color: Colors.grey, isLine: true),
-      LegendItem(label: 'Threshold', color: Colors.red, isLine: true, isDashed: true),
+      LegendItem(label: 'Threshold', color: Colors.amber, isLine: true, isDashed: true),
       LegendItem(label: 'Operating Hours', color: Colors.black, isLine: true, isDashed: true),
     ];
 

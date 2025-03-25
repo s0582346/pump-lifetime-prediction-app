@@ -20,32 +20,28 @@ class DashboardController extends AsyncNotifier<DashboardState> {
 
   @override
   Future<DashboardState> build() async {
+    List<Adjustment>? adjustments = [];
      final pump = ref.watch(selectedPumpProvider);
 
     if (pump == null) {
       return DashboardState(
         measurements: [], 
         adjustments: [],
-        prediction: Prediction(),
+        predictions: [],
       );
     } 
 
     try {
-      final pumpId = pump.id.replaceAll(RegExp(r'-\w+$'), '');
-      final adjustmentId = '$pumpId-S'; 
       final predictions = await _predictionService.getPredictions(pump);
-      final predictionTotal = predictions.firstWhere(
-        (p) => p.adjusmentId == adjustmentId,
-        orElse: () => Prediction(),
-      );
       final measurements = await _measurementService.fetchMeasurementsByPumpId(pump.id);
       final groupedMeasurements = Utils().groupMeasurements(measurements);
-      final adjustments = await _adjustmentService.fetchAdjustmentsByPumpId(pump.id);
+      adjustments = await _adjustmentService.fetchAdjustmentsByPumpId(pump.id);
+      adjustments = adjustments!.where((a) => a.id != '${pump.id}-S').toList(); // first adjustment is the sum of all adjustments, so we skip it
 
       return DashboardState(
         measurements: measurements,
         adjustments: adjustments,
-        prediction: predictionTotal,
+        predictions: predictions,
       );
     
     } catch (e, stack) {
@@ -62,26 +58,26 @@ class DashboardController extends AsyncNotifier<DashboardState> {
 
 class DashboardState {
   final List<Measurement>? measurements;
-  final List<Adjustment>? adjustments;
-  final Prediction? prediction;
+  final List<Adjustment> adjustments;
+  final List<Prediction>? predictions;
 
   DashboardState({
     List<Measurement>? measurements,
     List<Adjustment>? adjustments,
-    Prediction? prediction,
+    List<Prediction>? predictions,
   })  : measurements = measurements ?? [],
-        adjustments = adjustments ?? [],
-        prediction = prediction ?? Prediction();
+        predictions = predictions ?? [],
+        adjustments = adjustments ?? [];
 
   DashboardState copyWith({
     List<Measurement>? measurements,
     List<Adjustment>? adjustments,
-    Prediction? prediction,
+    List<Prediction>? predictions,
   }) {
     return DashboardState(
       measurements: measurements ?? this.measurements,
       adjustments: adjustments ?? this.adjustments,
-      prediction: prediction ?? this.prediction,
+      predictions: predictions ?? this.predictions,
     );
   }
 }

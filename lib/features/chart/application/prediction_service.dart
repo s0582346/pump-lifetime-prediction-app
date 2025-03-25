@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter_predictive_maintenance_app/database/database_helper.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/data/prediction_repository.dart';
@@ -28,8 +29,6 @@ class PredictionService {
 }
 
 Future<void> predict(String adjustmentId, Pump pump) async {
-  print('Saving prediction for adjustment $adjustmentId');
-
   final db = await DatabaseHelper().database;
   final predictionService = PredictionRepository(db: db);
   final measurementService = MeasurementService();
@@ -37,14 +36,12 @@ Future<void> predict(String adjustmentId, Pump pump) async {
 
   // Check if an existing prediction already exists
   Prediction? existingPrediction = await predictionService.getPredictionByAdjustmentId(adjustmentId);
-
-  // If an existing prediction is found, use it; otherwise, create a new one
   Prediction prediction = existingPrediction ?? Prediction();
   
     final List<double> currentOperatingHours = [];
     final List<double> Qn = [];
     final List<double> pn = [];
-    final PolyFit result;
+    List<double> coeffs = [];
 
 
     final measurements = await measurementService.fetchMeasurementsFromAdjustment(adjustmentId, pump.id);
@@ -64,7 +61,7 @@ Future<void> predict(String adjustmentId, Pump pump) async {
         }
       }
     
-      result = PolyFit(Array(currentOperatingHours), Array(Qn), 2); 
+      coeffs = fitQuadratic(currentOperatingHours, Qn); 
     } else {
       for (final m in measurements) {
         final double? hours = m.currentOperatingHours.toDouble();
@@ -76,18 +73,14 @@ Future<void> predict(String adjustmentId, Pump pump) async {
         }
       }
 
-      result = PolyFit(Array(currentOperatingHours), Array(pn), 2); 
+      coeffs = fitQuadratic(currentOperatingHours, pn); 
     }
-
-    //final model = fitQuadratic(currentOperatingHours, qn);
    
-    if (result.coefficients().length != 3) {
-      return;
-    }
-    QuadraticModel model = QuadraticModel(result.coefficients()[0], result.coefficients()[1], result.coefficients()[2]);
+    final a = coeffs.length > 2 ? coeffs[2] : 0.0;
+    final b = coeffs.length > 1 ? coeffs[1] : 0.0;
+    final c = coeffs.length > 0 ? coeffs[0] : 0.0;
 
-     // TODO use method from Utils
-    final solutions = findXForY(model, 0.900);
+    final solutions = findXForY(a, b, c, 0.900);
 
     double? estimatedOperatingHours;
     if (solutions.isNotEmpty) {
@@ -111,23 +104,21 @@ Future<void> predict(String adjustmentId, Pump pump) async {
       estimatedOperatingHours: estimatedOperatingHours,
       estimatedMaintenanceDate: estimatedMaintenanceDate,
       adjusmentId: adjustmentId,
-      a: model.a,
-      b: model.b,
-      c: model.c,
+      a: a,
+      b: b,
+      c: c,
     );
 
     (existingPrediction != null) ? await predictionService.updatePrediction(prediction) : await predictionService.savePrediction(prediction, adjustmentId);
 }
 
 Future<void> predictTotal(Pump pump) async {
-  final List<double> QnTotal = [];
+  List<double> QnTotal = [];
   final List<double> pnTotal = [];
-  final List<double> currentOperatingHoursTotal = [];
-  PolyFit? resultTotal;
+  List<double> currentOperatingHoursTotal = [];
+  List<double> coeffs = [];
 
-  final pumpId = pump.id.replaceAll(RegExp(r'-\w+$'), '');
-  final adjustmentId = '$pumpId-S'; 
-
+  final adjustmentId = '${pump.id}-S'; 
   final db = await DatabaseHelper().database;
   final predictionService = PredictionRepository(db: db);
   final measurementService = MeasurementService();
@@ -143,19 +134,19 @@ Future<void> predictTotal(Pump pump) async {
   if (pump.measurableParameter == 'volume flow') {
     for (final m in measurementsTotal) {
       final double? hours = m.currentOperatingHours.toDouble();
-      final double? flow = m.Qn;
+      final double? flow = m.QnTotal;
 
       if (hours != null && flow != null) {
         currentOperatingHoursTotal.add(hours);
         QnTotal.add(flow);
       }
     }
-  
-    resultTotal = PolyFit(Array(currentOperatingHoursTotal), Array(QnTotal), 2); 
+
+    coeffs = fitQuadratic(currentOperatingHoursTotal, QnTotal); 
   } else if (pump.measurableParameter == 'pressure') {
     for (final m in measurementsTotal) {
       final double? hours = m.currentOperatingHours;
-      final double? flow = m.pn;
+      final double? flow = m.pnTotal;
 
       if (hours != null && flow != null) {
         currentOperatingHoursTotal.add(hours);
@@ -163,20 +154,21 @@ Future<void> predictTotal(Pump pump) async {
       }
     }
 
-    resultTotal = PolyFit(Array(currentOperatingHoursTotal), Array(pnTotal), 2); 
+    coeffs = fitQuadratic(currentOperatingHoursTotal, pnTotal); 
   }
 
-  if (resultTotal?.coefficients().length != 3) {
-    return;
-  }
 
-  QuadraticModel model = QuadraticModel(resultTotal!.coefficients()[0], resultTotal.coefficients()[1], resultTotal.coefficients()[2]);
+  final a = coeffs.length > 2 ? coeffs[2] : 0.0;
+  final b = coeffs.length > 1 ? coeffs[1] : 0.0;
+  final c = coeffs.length > 0 ? coeffs[0] : 0.0;
+
+  print('${a}x^2 + ${b}x + ${c}');
 
   prediction = prediction.copyWith(
     adjusmentId: adjustmentId,
-    a: model.a,
-    b: model.b,
-    c: model.c,
+    a: a,
+    b: b,
+    c: c,
   );
 
   (existingPrediction != null) ? await predictionService.updatePrediction(prediction) : await predictionService.savePrediction(prediction, adjustmentId);
@@ -189,7 +181,7 @@ Future<void> predictTotal(Pump pump) async {
 /// to the points (x[i], y[i]) using a least-squares approach.
 ///
 /// Returns a QuadraticModel with coefficients (a, b, c).
-QuadraticModel fitQuadratic(xVals, yVals) {
+List<double> fitQuadratic(xVals, yVals) {
   assert(xVals.length == yVals.length,
       'xVals and yVals must have the same length.');
 
@@ -237,7 +229,8 @@ QuadraticModel fitQuadratic(xVals, yVals) {
   final b = coeffs[1];
   final a = coeffs[2];
 
-  return QuadraticModel(a, b, c);
+  //return QuadraticModel(a, b, c);
+  return coeffs;
 }
 
 
@@ -312,10 +305,8 @@ List<List<double>> invert3x3(List<List<double>> m) {
 ///
 /// Typically you'll either get 0, 1, or 2 real solutions.
 /// You can decide which solution(s) make physical sense (e.g., x >= 0).
-List<double> findXForY(QuadraticModel model, double targetY) {
-  final a = model.a;
-  final b = model.b;
-  final c_ = model.c - targetY; // shift so that we solve a*x^2 + b*x + c_ = 0
+List<double> findXForY(double a, double b, double c, double targetY) {
+  final c_ = c - targetY; // shift so that we solve a*x^2 + b*x + c_ = 0
 
   // Edge case: If 'a' ~ 0, we have a linear equation:
   if (a.abs() < 1e-12) {

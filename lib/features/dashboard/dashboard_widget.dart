@@ -2,24 +2,25 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/custom_line_chart.dart';
+import 'package:flutter_predictive_maintenance_app/features/dashboard/sum_line_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
 class DashboardWidget extends ConsumerWidget {
-  final Prediction? prediction;
+  final List<Prediction>? predictions;
   final List<Measurement>? measurements;
   final List<FlSpot>? regression;
-  //final Adjustment adjustment;
+  final List<Adjustment> adjustments;
   final Pump pump;
 
   const DashboardWidget({
     super.key,
     required this.measurements,
-    //required this.adjustment,
+    required this.adjustments,
     this.regression,
-    required this.prediction,
+    required this.predictions,
     required this.pump,
   });
 
@@ -40,9 +41,7 @@ class DashboardWidget extends ConsumerWidget {
     final xOffset = firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0;
     if (hasMeasurements) {
       blueSpots = measurements!.map((m) {
-      return FlSpot(m.currentOperatingHours - xOffset, 
-        (pump.measurableParameter == 'volume flow') ? m.QnTotal : m.pnTotal);
-      }).toList();
+        return FlSpot(m.currentOperatingHours - xOffset, (pump.measurableParameter == 'volume flow') ? m.QnTotal : m.pnTotal); }).toList();
     }
 
     return Column(
@@ -58,7 +57,7 @@ class DashboardWidget extends ConsumerWidget {
             pump.name,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 20,
+              fontSize: 23,
             ),
           ),
         ],
@@ -116,7 +115,7 @@ class DashboardWidget extends ConsumerWidget {
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(2, 20, 20, 20),
-        child: CustomLineChart(
+        child: SumLineChart(
           blueLineSpots: blueSpots,
           grayLineSpots: regression ?? [],
           xAxisStart: firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
@@ -124,6 +123,8 @@ class DashboardWidget extends ConsumerWidget {
           minY: 0.2,
           maxY: 1.1,
           yInterval: 0.1,
+          adjustments: adjustments,
+          predictions: predictions,
         ),
       ),
     ),
