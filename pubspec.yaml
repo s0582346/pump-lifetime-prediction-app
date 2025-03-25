@@ -45,6 +45,8 @@ dependencies:
   http: ^1.3.0
 
 dev_dependencies:
+  flutter_native_splash: ^2.4.0
+  flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
 
@@ -99,3 +101,15 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/nav/NETZSCH_N.jpg"
+  remove_alpha_ios: true
+
+flutter_native_splash:
+  color: "#ffffff" # background color (can be dark or light)
+  image: assets/nav/NETZSCH_N.jpg
+  android: true
+  ios: true
+  fullscreen: true
