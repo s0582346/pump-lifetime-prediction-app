@@ -134,7 +134,7 @@ Future<void> predictTotal(Pump pump) async {
   if (pump.measurableParameter == 'volume flow') {
     for (final m in measurementsTotal) {
       final double? hours = m.currentOperatingHours.toDouble();
-      final double? flow = m.QnTotal;
+      final double? flow = m.QnTotal.toDouble();
 
       if (hours != null && flow != null) {
         currentOperatingHoursTotal.add(hours);
@@ -145,7 +145,7 @@ Future<void> predictTotal(Pump pump) async {
     coeffs = fitQuadratic(currentOperatingHoursTotal, QnTotal); 
   } else if (pump.measurableParameter == 'pressure') {
     for (final m in measurementsTotal) {
-      final double? hours = m.currentOperatingHours;
+      final double? hours = m.currentOperatingHours.toDouble();
       final double? flow = m.pnTotal;
 
       if (hours != null && flow != null) {
@@ -162,7 +162,7 @@ Future<void> predictTotal(Pump pump) async {
   final b = coeffs.length > 1 ? coeffs[1] : 0.0;
   final c = coeffs.length > 0 ? coeffs[0] : 0.0;
 
-  print('${a}x^2 + ${b}x + ${c}');
+  //print('${a}x^2 + ${b}x + ${c}');
 
   prediction = prediction.copyWith(
     adjusmentId: adjustmentId,
