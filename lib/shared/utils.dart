@@ -31,16 +31,14 @@ class Utils {
 
     if (value == null) return 0;
     if (value is int) return value * factor; // Directly multiply if it's already an int
-    if (value is double) return (value * factor).toInt(); // Directly convert if it's a double
-
-    String valueToString = value.toString();
+    if (value is double) return (value * factor).round(); // Directly convert if it's a double
     
-    if (valueToString.contains(',')) {
-      valueToString = valueToString.replaceAll(',', '.');
+    if (value.contains(',')) {
+      value = value.replaceAll(',', '.');
     }
-
-    double? doubleValue = double.tryParse(valueToString.toString());
-    return ((doubleValue ?? 0.0) * factor).toInt();
+    
+    double? doubleValue = double.tryParse(value);
+    return ((doubleValue ?? 0.0) * factor).round();
   }
 
   String formatAdjustmentId(String pumpId, String adjustmentCount) {
@@ -60,16 +58,16 @@ class Utils {
   }
 
   double normalize(String measurableParameter, Measurement reference, Measurement newMeasurement) {
-    final double param = _toDouble((measurableParameter == 'volume flow') ? newMeasurement.volumeFlow : newMeasurement.pressure);
+    final double flow = _toDouble((measurableParameter == 'volume flow') ? newMeasurement.volumeFlow : newMeasurement.pressure);
     final double n = _toDouble(newMeasurement.rotationalFrequency);
-    final double refQ = _toDouble(reference.volumeFlow);
+    final double refFlow = _toDouble((measurableParameter == 'volume flow') ? reference.volumeFlow : reference.pressure);
     final double refN = _toDouble(reference.rotationalFrequency);
   
-    if (refN == 0 || refQ == 0) {
-      throw ArgumentError("nStart and QStart must not be zero to avoid division by zero.");
+    if (refN == 0 || refFlow == 0) {
+      throw ArgumentError("nStart and flowStart must not be zero to avoid division by zero.");
     }
   
-    double ratio = (param / n) / (refQ / refN);
+    double ratio = (flow / n) / (refFlow / refN);
     return double.parse(ratio.toStringAsFixed(3));
   }
 

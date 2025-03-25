@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
+import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_predictive_maintenance_app/shared/widgets/settings_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/widgets/alert_widget.dart';
@@ -34,7 +35,7 @@ class InfoBlock extends ConsumerWidget {
     final isOpen = adjustment.status == 'open';
 
     // build the dropdown menu
-    final dropDownOpt = isOpen ? 'Close ${adjustment.id}' : 'Open ${adjustment.id}';
+    final dropDownOpt = isOpen ? 'Close ${Utils().formatTabLabel(adjustment.id)}' : 'Open ${Utils().formatTabLabel(adjustment.id)}';
     final SettingsOption stateOption = SettingsOption(
       label: dropDownOpt,
       onTap: () => isOpen

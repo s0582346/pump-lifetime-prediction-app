@@ -36,7 +36,6 @@ class MeasurementService {
       double? currentOperatingHours = double.tryParse(newMeasurement.currentOperatingHours); // default current operating hours from the new measurement
       final isVolumeFlow = pump.measurableParameter == 'volume flow';
     
-
       // Compute reference values if measurements exist
       if (measurements.isNotEmpty && (newMeasurement.id == null || getPreviousEntry(measurements, newMeasurement.id) != null)) {
         reference = measurements.first;
@@ -45,7 +44,6 @@ class MeasurementService {
         if (result < wearLimit && !forceSave) {
           return ResultInfo.error(result); // return if the wear limit is exceeded
         }
-        
         isVolumeFlow ? Qn = result : pn = result;
       }
 
@@ -56,9 +54,9 @@ class MeasurementService {
       }
 
       // Compute current operating hours based on time entry type
-      if (measurements.isNotEmpty) {
-        final lastMeasurement = measurements.last;
-        final lastOperatingHours = (lastMeasurement.currentOperatingHours as num) / 100;
+      if (measurementsTotal.isNotEmpty) {
+        final lastMeasurement = measurementsTotal.last;
+        final lastOperatingHours = lastMeasurement.currentOperatingHours;
 
         if (pump.typeOfTimeEntry.contains('average')) {
           debugPrint('Calculating average operating hours per day');
@@ -83,17 +81,20 @@ class MeasurementService {
           debugPrint("Calculating relative current operating hours");
 
           if (isEditing) {
-            final previousEntry = getPreviousEntry(measurements, newMeasurement.id);
-            
+            final previousEntry = getPreviousEntry(measurementsTotal, newMeasurement.id);
+
             // sum if its not the first entry, else operating hours will be the same as the last entry  
             if (previousEntry != null) {
-              final previousOperatingHours = (previousEntry.currentOperatingHours as num) / 100;
               currentOperatingHours = double.tryParse(newMeasurement.currentOperatingHours) ?? 0;
-              currentOperatingHours = currentOperatingHours + previousOperatingHours;
+              currentOperatingHours = currentOperatingHours + (previousEntry.currentOperatingHours);
             }
           } else {
+            print('new measurement: ${newMeasurement.currentOperatingHours.runtimeType}');
             final newHours = double.tryParse(newMeasurement.currentOperatingHours) ?? 0;
-            currentOperatingHours = newHours + lastOperatingHours;
+            print('new: $newHours');
+            print('last: ${lastMeasurement.currentOperatingHours}');
+            print('sum: ${newHours + lastMeasurement.currentOperatingHours}');
+            currentOperatingHours = newHours + lastMeasurement.currentOperatingHours;
           }
         }
       }
