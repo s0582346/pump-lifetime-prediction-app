@@ -136,7 +136,7 @@ class CustomLineChart extends StatelessWidget {
           LineChartBarData(
             spots: threshold, 
             isCurved: false, 
-            color: Colors.red, 
+            color: Colors.amber, 
             barWidth: 2, 
             dashArray: [5, 5]
           ),

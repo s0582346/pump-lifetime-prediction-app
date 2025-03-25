@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
+import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/dashboard/dashboard_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/dashboard/dashboard_widget.dart';
@@ -43,17 +44,24 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       error: (e, _) => Center(child: Text("Error: $e")),
       data: (data) {
         final measurements = data.measurements;
-        final prediction = data.prediction;
+        final predictions = data.predictions;
+        final adjustments = data.adjustments;
+        
+        Prediction? predictionTotal;
+        if (predictions != null && predictions.isNotEmpty) {
+          predictionTotal = predictions.firstWhere(
+          (p) => p.adjusmentId == '${pump!.id}-S',
+          orElse: () => Prediction(),
+          );
+        }
 
         List<FlSpot> regressionSpots = [];
-        if (prediction?.a != null && measurements!.isNotEmpty) {
-          //final xOffset = measurements.first.currentOperatingHours.toDouble() ?? 0.0;
-
+        if (predictionTotal?.a != null && measurements!.isNotEmpty) {
           regressionSpots = Utils().generateQuadraticSpots(
-            prediction?.a,
-            prediction?.b,
-            prediction?.c,
-            start: measurements.first.currentOperatingHours.toDouble() ?? 0.0,
+            predictionTotal!.a,
+            predictionTotal.b, 
+            predictionTotal.c,
+            start: measurements.first.currentOperatingHours.toDouble(),
             end: measurements.last.currentOperatingHours.toDouble() + 10,
             targetY: 0.0,
           );
@@ -61,9 +69,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
         return DashboardWidget(
           measurements: measurements,
-          prediction: prediction,
+          predictions: predictions,
           regression: regressionSpots,
           pump: pump!,
+          adjustments: adjustments,
         );
       },
     ),

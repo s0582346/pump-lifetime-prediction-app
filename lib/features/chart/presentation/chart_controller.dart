@@ -4,6 +4,7 @@ import 'package:flutter_predictive_maintenance_app/features/chart/application/ad
 import 'package:flutter_predictive_maintenance_app/features/chart/application/prediction_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
+import 'package:flutter_predictive_maintenance_app/features/dashboard/dashboard_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_controller.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -62,6 +63,7 @@ class ChartController extends AsyncNotifier<ChartState> {
     await _adjustmentService.closeAdjustment(adjustmentId);
     refresh();
     ref.read(historyControllerProvider.notifier).refresh();
+    ref.read(dashboardControllerProvider.notifier).refresh();
   }
 
    Future<void> openAdjustment(String adjustmentId) async {
@@ -71,6 +73,7 @@ class ChartController extends AsyncNotifier<ChartState> {
     await _adjustmentService.openAdjustment(adjustmentId);
     refresh();
     ref.read(historyControllerProvider.notifier).refresh();
+    ref.read(dashboardControllerProvider.notifier).refresh();
   }
 
   Future<void> createAdjustment(String adjustmentId) async {

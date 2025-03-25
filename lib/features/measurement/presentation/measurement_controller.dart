@@ -61,6 +61,7 @@ class MeasurementController extends Notifier<Measurement> {
         reset(); // Reset state after save
         ref.read(historyControllerProvider.notifier).refresh();
         ref.read(chartControllerProvider.notifier).refresh();
+        ref.read(dashboardControllerProvider.notifier).refresh();
         if (context.mounted) Navigator.of(context).pop();
       } else {
         if (context.mounted) {
