@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'package:flutter_predictive_maintenance_app/features/chart/application/adjustment_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
-import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
-import 'package:flutter_predictive_maintenance_app/shared/controllers/base_measurement_controller.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/application/measurement_service.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/application/measurement_service.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 
 final historyControllerProvider = AsyncNotifierProvider<HistoryController, HistoryState>(HistoryController.new);

@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter_predictive_maintenance_app/database/database_helper.dart';
-import 'package:flutter_predictive_maintenance_app/features/chart/application/prediction_service.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/prediction/prediction_service.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/data/adjustment_repository.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/data/measurement_repository.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/data/measurement_repository.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/result_info.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';

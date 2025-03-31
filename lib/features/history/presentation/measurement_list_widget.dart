@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/form_screen.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/measurement_controller.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/presentation/form_screen.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/presentation/measurement_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 import 'package:intl/intl.dart';
 
