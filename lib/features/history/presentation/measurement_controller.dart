@@ -3,13 +3,13 @@ import 'package:flutter_predictive_maintenance_app/features/chart/presentation/c
 import 'package:flutter_predictive_maintenance_app/features/dashboard/dashboard_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_screen.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/presentation/measurement_validation_state.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/presentation/measurement_validation_state.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/result_info.dart';
 import 'package:flutter_predictive_maintenance_app/shared/widgets/alert_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/application/measurement_service.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/application/measurement_service.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 
 

@@ -1,9 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
-import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
+import 'package:flutter_predictive_maintenance_app/features/prediction/prediction.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/custom_line_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/dashboard/sum_line_chart.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';

@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
-import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
+import 'package:flutter_predictive_maintenance_app/features/prediction/prediction.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

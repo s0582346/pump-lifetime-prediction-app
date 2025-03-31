@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 
@@ -68,44 +68,6 @@ class Utils {
     }
   
     double ratio = (flow / n) / (refFlow / refN);
-    return double.parse(ratio.toStringAsFixed(3));
-  }
-
-
-
-  double calculateQn(Measurement actual, Measurement reference) {
-    // Safely convert any numeric-like field to double
-    final double actualQ = _toDouble(actual.volumeFlow);
-    final double actualN = _toDouble(actual.rotationalFrequency);
-    final double refQ = _toDouble(reference.volumeFlow);
-    final double refN = _toDouble(reference.rotationalFrequency);
-
-    /*
-    print("actualQ: ${actualQ}");
-    print("actualN: ${actualN}");
-    print("refQ: ${refQ}");
-    print("refN: ${refN}"); */
-  
-    if (refN == 0 || refQ == 0) {
-      throw ArgumentError("nStart and QStart must not be zero to avoid division by zero.");
-    }
-  
-    double ratio = (actualQ / actualN) / (refQ / refN);
-    return double.parse(ratio.toStringAsFixed(3));
-  }
-
-  double calculatePn(Measurement actual, Measurement reference) {
-    // Safely convert any numeric-like field to double
-    final double actualP = _toDouble(actual.pressure);
-    final double actualN = _toDouble(actual.rotationalFrequency);
-    final double refP = _toDouble(reference.pressure);
-    final double refN = _toDouble(reference.rotationalFrequency);
-  
-    if (refN == 0 || refP == 0) {
-      throw ArgumentError("nStart and QStart must not be zero to avoid division by zero.");
-    }
-  
-    double ratio = (actualP / actualN) / (refP / refN);
     return double.parse(ratio.toStringAsFixed(3));
   }
   
@@ -190,78 +152,6 @@ class Utils {
 
   return spots;
 }
-
-
-  
-/// Computes the x-axis intercept for the quadratic equation.
-/// Returns the new end value if it is greater than the current end; otherwise, returns currentEnd.
-double? calculateXIntercept(double a, double b, double c) {
-  /*
-  if (a == 0) {
-    // Handle linear case: y = b*x + c => x = -c / b (if b != 0)
-    return b != 0 ? (-c / b) : currentEnd;
-  }*/
-  
-  final double discriminant = (b * b) - (4 * a * c);
-  if (discriminant < 0) {
-    // No real roots; return the current end.
-    return null;
-  }
-  
-  final double sqrtDiscriminant = sqrt(discriminant);
-  final double root1 = (-b + sqrtDiscriminant) / (2 * a);
-  final double root2 = (-b - sqrtDiscriminant) / (2 * a);
-  
-  // Choose the root that is greater than currentEnd.
-  double newEnd = root1 > root2 ? root1 : root2;
-  
-  /*
-  if (root1 > currentEnd) {
-    newEnd = root1;
-  } else if (root2 > currentEnd) {
-    newEnd = root2;
-  }*/
-  
-    return newEnd;
-  }
-
-  /// Returns all real solutions x for the equation:
-/// a*x^2 + b*x + (c - targetY) = 0.
-///
-/// Typically you'll either get 0, 1, or 2 real solutions.
-/// You can decide which solution(s) make physical sense (e.g., x >= 0).
-List<double> findXForY(double a, double b, double c, double targetY) {
-  final c_ = c - targetY; // shift so that we solve a*x^2 + b*x + c_ = 0
-
-  // Edge case: If 'a' ~ 0, we have a linear equation:
-  /*
-  if (a.abs() < 1e-12) {
-    // b*x + c_ = 0 => x = -c_/b
-    if (b.abs() < 1e-12) {
-      return []; // No solution if b also ~ 0
-    }
-    return [-c_ / b];
-  }*/
-
-  // Solve discriminant
-  final discriminant = b * b - 4 * a * c_;
-  if (discriminant < 0) {
-    // No real solutions
-    return [];
-  } else if (discriminant == 0) {
-    // One real solution
-    final x = -b / (2 * a);
-    return [x];
-  } else {
-    // Two real solutions
-    final sqrtD = sqrt(discriminant);
-    final x1 = (-b + sqrtD) / (2 * a);
-    final x2 = (-b - sqrtD) / (2 * a);
-    return [x1, x2];
-  }
-}
-
-  
 
   /// Calculate the remaining days till maintenance based on the current date,
   int calculateRemainingDaysTillMaintenance(DateTime? currentDate, hoursTillMaintenance, currentOperatingHours, averageHoursPerDay) 

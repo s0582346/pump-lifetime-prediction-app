@@ -1,9 +1,9 @@
 import 'package:flutter_predictive_maintenance_app/features/chart/application/adjustment_service.dart';
-import 'package:flutter_predictive_maintenance_app/features/chart/application/prediction_service.dart';
+import 'package:flutter_predictive_maintenance_app/features/prediction/prediction_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
-import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/application/measurement_service.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/prediction/prediction.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/application/measurement_service.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

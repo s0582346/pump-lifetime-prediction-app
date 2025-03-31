@@ -1,6 +1,6 @@
 
 
-import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
+import 'package:flutter_predictive_maintenance_app/features/prediction/prediction.dart';
 import 'package:sqflite/sqflite.dart';
 
 class PredictionRepository {

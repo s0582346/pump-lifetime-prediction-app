@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/components/form_components/primary_button.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
-import 'package:flutter_predictive_maintenance_app/features/chart/domain/prediction.dart';
+import 'package:flutter_predictive_maintenance_app/features/prediction/prediction.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/custom_line_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/info_block.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/legend_widget.dart';
-import 'package:flutter_predictive_maintenance_app/features/measurement/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
+import 'package:flutter_predictive_maintenance_app/shared/math_utils.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -32,7 +33,6 @@ class ChartWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final utils = Utils();
     double thresholdLimit = 0.900;
     double? yIntercept = prediction.estimatedOperatingHours;
 
@@ -45,7 +45,7 @@ class ChartWidget extends ConsumerWidget {
     final lastMeasurement = hasMeasurements ? measurements.last : null;
 
     // Determine the yIntercept based on the threshold.
-    final solutions = utils.findXForY(prediction.a, prediction.b, prediction.c, thresholdLimit);
+    final solutions = MathUtils().findIntersectionAtY(prediction.a, prediction.b, prediction.c, thresholdLimit);
     for (var solution in solutions) {
       if (solution > 0 && solution > (yIntercept ?? 0)) {
         yIntercept = solution;
@@ -103,7 +103,7 @@ class ChartWidget extends ConsumerWidget {
                   estimatedOperatingHours: prediction.estimatedOperatingHours ?? 0.0,
                   count: count,
                   maintenanceDate: prediction.estimatedMaintenanceDate != null
-                      ? utils.formatDate(prediction.estimatedMaintenanceDate)
+                      ? Utils().formatDate(prediction.estimatedMaintenanceDate)
                       : '-',
                   residualWear: residualWear,
                   adjustment: adjustment,
