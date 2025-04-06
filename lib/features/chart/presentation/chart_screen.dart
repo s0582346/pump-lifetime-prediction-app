@@ -92,13 +92,15 @@ class _ChartScreenState extends ConsumerState<ChartScreen> with TickerProviderSt
                           groupedMeasurements[adjustment.id] ?? [],
                         );
 
-                        return ChartWidget(
-                          measurements: groupedMeasurements[adjustment.id] ?? [],
-                          adjustment: adjustment,
-                          prediction: predictionForTab,
-                          regression: regressionSpots,
-                          pump: pump!,
-                          isLast: adjustment.id == adjustments.last.id,
+                        return SingleChildScrollView (
+                          child: ChartWidget(
+                            measurements: groupedMeasurements[adjustment.id] ?? [],
+                            adjustment: adjustment,
+                            prediction: predictionForTab,
+                            regression: regressionSpots,
+                            pump: pump!,
+                            isLast: adjustment.id == adjustments.last.id,
+                          ),
                         );
                       }).toList(),
                     ),
@@ -136,7 +138,7 @@ class _ChartScreenState extends ConsumerState<ChartScreen> with TickerProviderSt
       prediction.b!,
       prediction.c!,
       start: xOffset,
-      end: measurements.last.currentOperatingHours.toDouble(),
+      end: prediction.estimatedOperatingHours ?? measurements.last.currentOperatingHours.toDouble() ?? 0.0,
     );
   }
 

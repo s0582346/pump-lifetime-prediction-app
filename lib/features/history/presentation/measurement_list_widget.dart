@@ -20,10 +20,7 @@ class MeasurementListWidget extends ConsumerWidget {
     final slCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q' : 'p'; // Second last column
     final lCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q/n' : 'p/n'; // Last column
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: SingleChildScrollView(
-        child: DataTable(
+    return DataTable(
           columnSpacing: 20.0,
           headingRowHeight: 50.0,
           columns: [
@@ -112,8 +109,6 @@ class MeasurementListWidget extends ConsumerWidget {
               ),
             ]);
           }).toList(),
-        ),
-      ),
     );
   }
 

@@ -30,7 +30,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> with TickerProvid
     return Scaffold(
       backgroundColor: Colors.white,
       body: historyState.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primaryColor, backgroundColor: Colors.grey)), // TODO make a custom loading widget
+        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primaryColor, backgroundColor: Colors.grey)),
         error: (e, _) => Center(child: Text("Error: $e")),
         data: (data) {
           final groupedMeasurements = data.groupedMeasurements;
@@ -62,7 +62,13 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> with TickerProvid
                 child: TabBarView(
                   controller: _tabController,
                   children: adjustments.map((a) {
-                    return MeasurementListWidget(measurements: groupedMeasurements[a.id], adjustment: a);
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: MeasurementListWidget(
+                        measurements: groupedMeasurements[a.id], 
+                        adjustment: a
+                      ),
+                    );
                   }).toList(),
                 ),
               ),

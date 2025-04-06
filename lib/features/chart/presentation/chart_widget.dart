@@ -86,33 +86,30 @@ class ChartWidget extends ConsumerWidget {
       ),
     ];
 
-    return SingleChildScrollView(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: InfoBlock(
-                  currentOperatingHours: lastMeasurement?.currentOperatingHours ?? 0.0,
-                  estimatedOperatingHours: prediction.estimatedOperatingHours ?? 0.0,
-                  count: count,
-                  maintenanceDate: prediction.estimatedMaintenanceDate != null
-                      ? Utils().formatDate(prediction.estimatedMaintenanceDate)
-                      : '-',
-                  residualWear: residualWear,
-                  adjustment: adjustment,
-                  pump: pump,
-                  isLast: isLast,
-                ),
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: InfoBlock(
+              currentOperatingHours: lastMeasurement?.currentOperatingHours ?? 0.0,
+              estimatedOperatingHours: prediction.estimatedOperatingHours ?? 0.0,
+              count: count,
+              maintenanceDate: prediction.estimatedMaintenanceDate != null
+                  ? Utils().formatDate(prediction.estimatedMaintenanceDate)
+                  : '-',
+              residualWear: residualWear,
+              adjustment: adjustment,
+              pump: pump,
+              isLast: isLast,
             ),
-            SizedBox(
+          ),
+        ),
+        SizedBox(
               height: 275,
               width: double.infinity,
               child: Padding(
@@ -128,10 +125,9 @@ class ChartWidget extends ConsumerWidget {
                 ),
               ),
             ),
-            LegendWidget(legendItems: legendItems),
-          ],
-        ),
-      ),
+        LegendWidget(legendItems: legendItems),
+        const SizedBox(height: 10),
+      ],
     );
   }
 

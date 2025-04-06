@@ -30,17 +30,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final dashboardState = ref.watch(dashboardControllerProvider);
     final pump = ref.watch(selectedPumpProvider);
 
-  return Scaffold(
-  backgroundColor: Colors.white,
-  body: SingleChildScrollView(
-    scrollDirection: Axis.vertical,
-    child: dashboardState.when(
-      loading: () => const Center(
-        child: CircularProgressIndicator(
-          color: AppColors.primaryColor,
-          backgroundColor: Colors.grey,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: dashboardState.when(
+        loading: () => const Center(
+          child: CircularProgressIndicator(
+            color: AppColors.primaryColor,
+            backgroundColor: Colors.grey,
+          ),
         ),
-      ),
       error: (e, _) => Center(child: Text("Error: $e")),
       data: (data) {
         final measurements = data.measurements;
@@ -67,16 +65,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           );
         }
 
-        return DashboardWidget(
+        return SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: DashboardWidget(
           measurements: measurements,
           predictions: predictions,
           regression: regressionSpots,
           pump: pump!,
           adjustments: adjustments,
-        );
-      },
-    ),
-  ),
-);
+          )
+          );
+        },
+      ),
+    );
   }
 }
