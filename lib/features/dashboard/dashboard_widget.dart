@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
+import 'package:flutter_predictive_maintenance_app/features/dashboard/property_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/prediction/prediction.dart';
-import 'package:flutter_predictive_maintenance_app/features/chart/presentation/custom_line_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/dashboard/sum_line_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
@@ -26,12 +26,6 @@ class DashboardWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) { 
-    /*for (var m in measurements!) {
-      print(m.adjustmentId);
-      print(m.QnTotal);
-    }*/
-
-
     List<FlSpot> blueSpots = [];
     bool hasMeasurements = measurements != null && measurements!.isNotEmpty;
     
@@ -65,54 +59,33 @@ class DashboardWidget extends ConsumerWidget {
     ),
     const Divider(height: 10, thickness: 1.5, indent: 10, endIndent: 10, color: Colors.grey),
     const SizedBox(height: 10),
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-      child: Row(
-        children: [
-          const Text('Pump Type: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
-          Text(pump.type),
-        ],
-      ),
+    PropertyWidget(
+      label: 'Pump Type',
+      value: pump.type,
     ),
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-      child: Row(
-        children: [
-          const Text('Permissible Total Wear: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
-          Text("${pump.permissibleTotalWear.toStringAsFixed(0)} %"),
-        ],
-      ),
+    PropertyWidget(
+      label: 'Permissible Total Wear',
+      value: "${pump.permissibleTotalWear.toStringAsFixed(0)} %",
     ),
-     if (pump.rotorGeometry != null && pump.rotorGeometry!.isNotEmpty)
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-        child: Row(
-          children: [
-            const Text('Rotor Geometry: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
-            Text(pump.rotorGeometry),
-          ],
-        ),
+    if (pump.rotorGeometry != null && pump.rotorGeometry!.isNotEmpty)
+    PropertyWidget(
+      label: 'Rotor Geometry',
+      value: pump.rotorGeometry,
+    ),
+    if (pump.solidConcentration != null)
+    PropertyWidget(
+      label: 'Solid Concentration',
+      value: "${pump.solidConcentration} %",
     ),
     if (pump.medium != null && pump.medium!.isNotEmpty)
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-        child: Row(
-          children: [
-            const Text('Medium: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
-            Text(pump.medium),
-          ],
-        ),
-      ),
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-      child: Row(
-        children: [
-          const Text('Type Of Time Entry: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
-          Text(pump.typeOfTimeEntry.replaceAll('per day', '')),
-        ],
-      ),
+    PropertyWidget(
+      label: 'Medium',
+      value: pump.medium,
     ),
-    //const Divider(height: 20, thickness: 1, indent: 10, endIndent: 10, color: Colors.grey),
+    PropertyWidget(
+      label: 'Type Of Time Entry',
+      value: pump.typeOfTimeEntry.replaceAll('per day', ''),
+    ),
     const SizedBox(height: 10),
     SizedBox(
       height: 400,
