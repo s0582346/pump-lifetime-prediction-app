@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 //          ones at the bottom. The legend box is placed inside a SingleChildScrollView > ConstrainedBox, 
 //          which should provide basic responsiveness. However, if you think additional layout adjustments 
 //          are needed to better support various screen sizes, please include those improvements.
-
-
 class LegendItem {
   final String label;
   final Color color;
@@ -72,8 +70,8 @@ class LegendWidget extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               // Bottom legend items in a Wrap for responsiveness.
-                 LayoutBuilder(
-                builder: (context, constraints) {
+                LayoutBuilder(
+                  builder: (context, constraints) {
                   // If the width is very narrow, stack the two items vertically.
                   if (constraints.maxWidth < 300) {
                     return Column(
