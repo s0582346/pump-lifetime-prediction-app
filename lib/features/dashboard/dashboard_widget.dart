@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
+import 'package:flutter_predictive_maintenance_app/features/dashboard/adjustments_table.dart';
 import 'package:flutter_predictive_maintenance_app/features/dashboard/property_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/prediction/prediction.dart';
 import 'package:flutter_predictive_maintenance_app/features/dashboard/sum_line_chart.dart';
@@ -105,7 +106,12 @@ class DashboardWidget extends ConsumerWidget {
         ),
       ),
     ),
-  ],
+        AdjustmentsTable(
+          adjustments: adjustments,
+          totalMeasurements: measurements ?? [],
+          predictions: predictions ?? [],
+        ),
+  ]
 );
   }
 
