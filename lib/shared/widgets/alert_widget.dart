@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_predictive_maintenance_app/components/form_components/primary_button.dart';
+import 'package:flutter_predictive_maintenance_app/shared/components/primary_button.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 
 class AlertWidget extends StatelessWidget {
