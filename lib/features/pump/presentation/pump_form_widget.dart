@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/presentation/pump_controller.dart';
-import 'package:flutter_predictive_maintenance_app/components/form_components/input_widget.dart';
-import 'package:flutter_predictive_maintenance_app/components/form_components/select_widget.dart';
-import 'package:flutter_predictive_maintenance_app/components/form_components/primary_button.dart';
+import 'package:flutter_predictive_maintenance_app/shared/components/input_widget.dart';
+import 'package:flutter_predictive_maintenance_app/shared/components/select_widget.dart';
+import 'package:flutter_predictive_maintenance_app/shared/components/primary_button.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 
 class PumpFormWidget extends ConsumerWidget {
