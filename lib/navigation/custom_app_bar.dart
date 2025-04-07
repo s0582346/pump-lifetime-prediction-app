@@ -20,22 +20,15 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(
-            Icons.logout,
-            color: Colors.white,
-          ),
+        Builder(
+        builder: (context) => IconButton(
+          icon: const Icon(Icons.settings, color: Colors.white),
           onPressed: () {
-            // TODO: WIP - this needs to open a side menu
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (context) => InitialScreen(), // pass the selected pump to the Navigation widget
-                ),
-                (Route<dynamic> route) => false // remove all the routes from the stack
-            );
+            Scaffold.of(context).openEndDrawer();
           },
         ),
-      ],
+      ),
+    ],
     );
   }
 
