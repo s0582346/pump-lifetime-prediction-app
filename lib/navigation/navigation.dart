@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/dashboard/dashboard_screen.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/presentation/initial_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation_provider.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_screen.dart';
@@ -48,6 +50,97 @@ class _NavigationState extends ConsumerState<Navigation> {
         final showAppBar = isPortrait || currentIndex != 2;
         return Scaffold(
           appBar: showAppBar ? const CustomAppBar(title: 'NETZSCH') : null,
+          endDrawer: Drawer(
+            backgroundColor: AppColors.greyColor,
+            width: 225,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.zero
+            ),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                const SizedBox( 
+                  height: 135,                    
+                  child: DrawerHeader(
+                  decoration: BoxDecoration(
+                  color: AppColors.primaryColor,
+                ),
+                child: Text(''),
+                ),
+                ),
+              ListTile(
+               title: const Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Switch',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(width: 8), // spacing between text and icon
+                  Icon(
+                    Icons.logout,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+              onTap: () {
+                Navigator.of(context).pop(); // Close the drawer
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const InitialScreen(),
+                  ),
+                  (Route<dynamic> route) => false,
+                );
+              },            
+              ),
+            ListTile(
+               title: const Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'How To Use',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(width: 8), // spacing between text and icon
+                  Icon(
+                    Icons.info,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            onTap: () {}, ),
+            ListTile(
+               title: const Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Help',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(width: 8), // spacing between text and icon
+                  Icon(
+                    Icons.help,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            onTap: () {},
+        ),
+      ],
+    ),
+  ),
           backgroundColor: Colors.white,
           body: IndexedStack(
             index: currentIndex,

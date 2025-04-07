@@ -40,14 +40,14 @@ class DashboardWidget extends ConsumerWidget {
     }
 
     return Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    const SizedBox(height: 20),
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.0),
-      child: Row(
-        //mainAxisSize: MainAxisSize.max,
-        children: [
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.0),
+          child: Row(
+          //mainAxisSize: MainAxisSize.max,
+            children: [
           Text(
             pump.name,
             style: const TextStyle(
@@ -106,13 +106,16 @@ class DashboardWidget extends ConsumerWidget {
         ),
       ),
     ),
+        const SizedBox(height: 20),
+        const Divider(height: 10, thickness: 1.5, indent: 10, endIndent: 10, color: Colors.grey),
         AdjustmentsTable(
           adjustments: adjustments,
           totalMeasurements: measurements ?? [],
           predictions: predictions ?? [],
         ),
+        const SizedBox(height: 20),
   ]
-);
+    );
   }
 
   
