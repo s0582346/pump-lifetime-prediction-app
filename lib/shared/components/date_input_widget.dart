@@ -58,7 +58,8 @@ class _DateInputWdigetState extends ConsumerState<DateInputWidget> {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Theme(
+        return SafeArea(
+          child: Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
               primary: AppColors.greyColor,
@@ -74,8 +75,9 @@ class _DateInputWdigetState extends ConsumerState<DateInputWidget> {
           child: AlertDialog(
             backgroundColor: Colors.white,
             contentPadding: const EdgeInsets.all(16),
-            content: SizedBox(
-              height: 300,
+            content: Container(
+              width: MediaQuery.of(context).size.width * 0.8,
+              constraints: const BoxConstraints(maxHeight: 300),
               child: CalendarDatePicker(
                 initialDate: _selectedDate ?? DateTime.now(),
                 firstDate: DateTime(2000),
@@ -103,6 +105,7 @@ class _DateInputWdigetState extends ConsumerState<DateInputWidget> {
               ),
             ],
           ),
+        ),
         );
       },
     );

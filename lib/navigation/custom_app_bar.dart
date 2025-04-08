@@ -22,7 +22,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
       actions: [
         Builder(
         builder: (context) => IconButton(
-          icon: const Icon(Icons.settings, color: Colors.white),
+          icon: const Icon(Icons.menu, color: Colors.white),
           onPressed: () {
             Scaffold.of(context).openEndDrawer();
           },
