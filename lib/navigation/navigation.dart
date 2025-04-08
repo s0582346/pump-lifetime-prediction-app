@@ -9,6 +9,8 @@ import 'package:flutter_predictive_maintenance_app/features/chart/presentation/c
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/custom_bottom_navigation_bar_item.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/custom_app_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 /// This acts like a global state container <br/>
 /// Any widget in the app tree can access it by watching or reading it
@@ -136,7 +138,7 @@ class _NavigationState extends ConsumerState<Navigation> {
                   ),
                 ],
               ),
-            onTap: () {},
+            onTap: () => launchUrlString('https://pumps-systems.netzsch.com/en-US/forms/contact-page'),
         ),
       ],
     ),

@@ -14,7 +14,6 @@ class InitialScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pumpsAsyncValue = ref.watch(pumpsProvider);
 
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF007167),
