@@ -10,6 +10,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AppBar(
+      centerTitle: false,
       backgroundColor: const Color(0xFF007167),
       title: Text(
         title,
