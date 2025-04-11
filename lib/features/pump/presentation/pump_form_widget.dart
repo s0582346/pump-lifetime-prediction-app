@@ -59,6 +59,8 @@ class PumpFormWidget extends ConsumerWidget {
           initialValue: pumpDataState.solidConcentration,
           onChanged: (value) => pumpDataNotifier.solidConcentration = value,
           keyboardType: TextInputType.number,
+          isSubmitting: isSubmitting,
+          validator: validation.solidConcentrationError,
         ),
         InputWidget(
           label: 'Permissible Total Wear [%]',
