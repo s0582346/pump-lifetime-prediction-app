@@ -94,10 +94,9 @@ final pumpValidationProvider = Provider<PumpValidationState>((ref) {
   }
 
   String? validateSolidConcentration(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return errorEmptyMessage;
+    if (value == null) {
+      return null;
     }
-
     final intValue = int.tryParse(value);
     if (intValue == null) {
       return 'Please enter a valid number';
@@ -144,7 +143,7 @@ final pumpValidationProvider = Provider<PumpValidationState>((ref) {
   return isSubmitting ? PumpValidationState(
     nameError: validateName(pump.name),
     pumpTypeError: validatePumpType(pump.type),
-    solidConcentration: validateSolidConcentration(pump.solidConcentration),
+    solidConcentrationError: validateSolidConcentration(pump.solidConcentration),
     measurableParameterError: validateMeasurableParameter(pump.measurableParameter),
     persmissibleTotalWearError: validatePermissibleTotalWear(pump.permissibleTotalWear),
     typeOfTimeEntryError: validateTypeOfTimeEntry(pump.typeOfTimeEntry),

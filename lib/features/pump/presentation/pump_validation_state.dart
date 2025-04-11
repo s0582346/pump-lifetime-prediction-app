@@ -4,13 +4,13 @@ class PumpValidationState {
   final String? measurableParameterError;
   final String? persmissibleTotalWearError;
   final String? typeOfTimeEntryError;
-  final String? solidConcentration;
+  final String? solidConcentrationError;
   
 
   const PumpValidationState({
     this.nameError,
     this.pumpTypeError,
-    this.solidConcentration,
+    this.solidConcentrationError,
     this.measurableParameterError,
     this.persmissibleTotalWearError,
     this.typeOfTimeEntryError
@@ -20,6 +20,6 @@ class PumpValidationState {
     // If all error fields are null, it means everything is valid
     return nameError == null && pumpTypeError == null 
       && measurableParameterError == null && persmissibleTotalWearError == null
-      && typeOfTimeEntryError == null && solidConcentration == null;
+      && typeOfTimeEntryError == null && solidConcentrationError == null;
   }
 }
