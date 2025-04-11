@@ -160,6 +160,16 @@ List<double> findIntersectionAtY(double a, double b, double c, double targetY) {
   }
 }
 
+  int? calculateActualWear(lastMeasurement) {
+    if (lastMeasurement == null) {
+      return null; // No measurements available
+    }
+    final ratio = (lastMeasurement.Qn ?? lastMeasurement.pn) * 1000;
+
+    final wearPercentage = (ratio / 1000) * 100;
+
+    return (100 - wearPercentage).toInt();
+  }
 
 
 }

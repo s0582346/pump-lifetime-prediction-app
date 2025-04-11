@@ -32,10 +32,20 @@ class MeasurementService {
 
       // Initialize variables with default values
       Measurement? reference, referenceTotal;
-      double Qn = 1, pn = 1, QnTotal = 1, pnTotal = 1;
-      final op = newMeasurement.currentOperatingHours;
+      double? Qn, pn, QnTotal, pnTotal;
       double? currentOperatingHours = double.tryParse(newMeasurement.currentOperatingHours ?? '') ?? 0.0; // default current operating hours from the new measurement
       final isVolumeFlow = pump.measurableParameter == 'volume flow';
+
+      if (isVolumeFlow) {
+        // default Qn 
+        Qn = 1;
+        QnTotal = 1; 
+      } else {
+        // default pn
+        pn = 1; 
+        pnTotal = 1;
+      }
+
     
       // Compute reference values if measurements exist
       if (measurements.isNotEmpty && (newMeasurement.id == null || getPreviousEntry(measurements, newMeasurement.id) != null)) {
