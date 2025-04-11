@@ -45,11 +45,13 @@ class PumpBox extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                Expanded(
+                  child: Text(
                   pump.name,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 20,
+                    fontSize: 20, ),
+                  overflow: TextOverflow.clip,
                   ),
                 ),
                 SettingsWidget(options: [
@@ -93,11 +95,12 @@ class PumpBox extends ConsumerWidget {
               ],
             ),
             (pump.medium != null && pump.medium!.isNotEmpty) ?
-              Row(
-                children: [
-                  const Text('Medium: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
-                  Text(pump.medium)
-                ],
+             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Medium: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
+                Expanded(child: Text(pump.medium, overflow: TextOverflow.clip,)),
+              ],
             ) : Container(),
           ],
         ),

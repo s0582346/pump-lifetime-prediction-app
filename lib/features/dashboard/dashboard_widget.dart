@@ -33,6 +33,7 @@ class DashboardWidget extends ConsumerWidget {
     final firstMeasurement = hasMeasurements ? measurements!.first : null;
     final lastMeasurement = hasMeasurements ? measurements!.last : null;
 
+    // Create blue spots for the chart based on the measurements
     final xOffset = firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0;
     if (hasMeasurements) {
       blueSpots = measurements!.map((m) {
@@ -45,19 +46,18 @@ class DashboardWidget extends ConsumerWidget {
         const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.0),
-          child: Row(
-          //mainAxisSize: MainAxisSize.max,
-            children: [
-          Text(
-            pump.name,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 25,
-            ),
+          child: Expanded(
+            child:
+              Text(
+                pump.name,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                ),
+                overflow: TextOverflow.clip,
+              ),
           ),
-        ],
-      ),
-    ),
+        ),
     const Divider(height: 10, thickness: 1.5, indent: 10, endIndent: 10, color: Colors.grey),
     const SizedBox(height: 10),
     PropertyWidget(
