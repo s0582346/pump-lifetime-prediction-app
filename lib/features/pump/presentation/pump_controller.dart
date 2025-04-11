@@ -23,31 +23,13 @@ class PumpController extends Notifier<Pump> {
   set pumpType(String? value) => state = state.copyWith(type: value);
   set rotorGeometry(String? value) => state = state.copyWith(rotorGeometry: value);
   set numberOfStages(String? value) => state = state.copyWith(numberOfStages: value);
+  set speedChange(String? value) => state = state.copyWith(speedChange: value);
+  set medium(String? value) => state = state.copyWith(medium: value);
+  set measurableParameter(String? value) => state = state.copyWith(measurableParameter: value);
+  set permissibleTotalWear(String value) => state = state.copyWith(permissibleTotalWear: value);
+  set solidConcentration(String solidConcentration) => state = state.copyWith(solidConcentration: solidConcentration);
+  set typeOfTimeEntry(String? typeOfTimeEntry) => state = state.copyWith(typeOfTimeEntry: typeOfTimeEntry);
   
-
-  set speedChange(String? value) {
-    state = state.copyWith(speedChange: value);
-  }
-
-  set medium(String? value) {
-    state = state.copyWith(medium: value);
-  }
-
-  set measurableParameter(String? value) {
-    state = state.copyWith(measurableParameter: value);
-  }
-
-  set permissibleTotalWear(String value) {
-    state = state.copyWith(permissibleTotalWear: value);
-  }
-  
-  set solidConcentration(String solidConcentration) {
-    state = state.copyWith(solidConcentration: solidConcentration);
-  }
-
-  set typeOfTimeEntry(String? typeOfTimeEntry) {
-    state = state.copyWith(typeOfTimeEntry: typeOfTimeEntry);
-  }
 
 
   Future<ResultInfo> savePumpData() async {
@@ -111,13 +93,29 @@ final pumpValidationProvider = Provider<PumpValidationState>((ref) {
     return null;
   }
 
-  String? validatePermissibleTotalWear(String? value) {
-
+  String? validateSolidConcentration(String? value) {
     if (value == null || value.trim().isEmpty) {
       return errorEmptyMessage;
     }
 
-    // Try parsing the string to an int.
+    final intValue = int.tryParse(value);
+    if (intValue == null) {
+      return 'Please enter a valid number';
+    }
+
+    if (intValue < 0 || intValue > 100) {
+      return 'Please enter a value between 10 and 100';
+    }
+  
+    return null;
+  }
+
+
+  String? validatePermissibleTotalWear(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return errorEmptyMessage;
+    }
+
     final intValue = int.tryParse(value);
     if (intValue == null) {
       return 'Please enter a valid number';
@@ -146,6 +144,7 @@ final pumpValidationProvider = Provider<PumpValidationState>((ref) {
   return isSubmitting ? PumpValidationState(
     nameError: validateName(pump.name),
     pumpTypeError: validatePumpType(pump.type),
+    solidConcentration: validateSolidConcentration(pump.solidConcentration),
     measurableParameterError: validateMeasurableParameter(pump.measurableParameter),
     persmissibleTotalWearError: validatePermissibleTotalWear(pump.permissibleTotalWear),
     typeOfTimeEntryError: validateTypeOfTimeEntry(pump.typeOfTimeEntry),
