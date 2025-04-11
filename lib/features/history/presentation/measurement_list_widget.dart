@@ -86,14 +86,14 @@ class MeasurementListWidget extends ConsumerWidget {
 
             return DataRow(cells: [
               DataCell(Text(_formatDate(data.date))),
-              DataCell(Text(data.currentOperatingHours.toStringAsFixed(1))),
-              DataCell(Text(data.rotationalFrequency.toStringAsFixed(2))),
-              DataCell(Text(slCVal.toStringAsFixed(2))),
+              DataCell(Center(child: Text(data.currentOperatingHours.toStringAsFixed(1)))),
+              DataCell(Center(child:Text(data.rotationalFrequency.toStringAsFixed(2)))),
+              DataCell(Center(child:Text(slCVal.toStringAsFixed(2)))),
               DataCell(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(lCVal.toStringAsFixed(3)),
+                    Center(child: Text(lCVal.toStringAsFixed(3))),
                     //const SizedBox(width: 5),
                     (adjustment!.status == 'open') 
                       ? IconButton(

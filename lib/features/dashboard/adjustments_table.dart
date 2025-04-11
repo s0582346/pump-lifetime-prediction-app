@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/prediction/prediction.dart';
+import 'package:flutter_predictive_maintenance_app/shared/math_utils.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 
 class AdjustmentsTable extends StatelessWidget {
@@ -30,39 +31,65 @@ class AdjustmentsTable extends StatelessWidget {
                 columnSpacing: 10.0,
                 headingRowHeight: 50.0,
                 columns: const [
-                  DataColumn(label: Text('Adjustment')),
-                  DataColumn(label: Text('h - target')),
-                  DataColumn(label: Text('h - actual')),
-                  DataColumn(label: Text('Residual Wear')),
+                  DataColumn(
+                    headingRowAlignment: MainAxisAlignment.start,
+                    label: Text('Name'),
+                  ),
+                  DataColumn(
+                    headingRowAlignment: MainAxisAlignment.center,
+                    label: Text('h - target')
+                  ),
+                  DataColumn(
+                    headingRowAlignment: MainAxisAlignment.center,
+                    label: Text('h - actual')
+                  ),
+                  DataColumn(
+                    headingRowAlignment: MainAxisAlignment.center,
+                    label: Text('Actual Wear %')
+                  ),
                 ],
-                rows: adjustments.map((data) {
+                rows: adjustments.map((adjustment) {
+                  if (adjustment.status == 'open') {
+                    return const DataRow(cells: [
+                      DataCell(Center(child: Text(('-')))),
+                      DataCell(Center(child: Text(('-')))),
+                      DataCell(Center(child: Text(('-')))),
+                      DataCell(Center(child: Text(('-')))),
+                    ]);
+                  }
+
                   // Filter measurements matching the current adjustment.
                   final matchingMeasurements = totalMeasurements!
-                      .where((m) => m.adjustmentId == data.id)
+                      .where((m) => m.adjustmentId == adjustment.id)
                       .toList();
 
-                  // Safely get operating hours from the last measurement or a fallback if none exist.
+                  // Safely get operating hours from the last measurement or a fallback.
                   final operatingHours = matchingMeasurements.isNotEmpty
                       ? matchingMeasurements.last.currentOperatingHours.toStringAsFixed(0)
                       : '-';
 
                   // Find a prediction for the current adjustment or return a default Prediction.
                   final prediction = predictions!.firstWhere(
-                    (p) => p.adjusmentId == data.id,
+                    (p) => p.adjusmentId == adjustment.id,
                     orElse: () => Prediction(),
                   );
 
-                  // Safely get the estimated operating hours from prediction or a fallback.
+                  // Get estimated operating hours from prediction.
                   final estimatedOperatingHours = prediction.estimatedOperatingHours != null
                       ? prediction.estimatedOperatingHours!.toStringAsFixed(0)
                       : '-';
 
+                  // Calculate wear if measurements exist.
+                  final wear = matchingMeasurements.isNotEmpty
+                      ? MathUtils().calculateActualWear(matchingMeasurements.last)?.toString() ?? '-'
+                      : '-';
+
                   return DataRow(
                     cells: [
-                      DataCell(Text(Utils().formatTabLabel(data.id))),
-                      DataCell(Text(estimatedOperatingHours)),
-                      DataCell(Text(operatingHours)),
-                      DataCell(Text(''))
+                      DataCell(Center(child: Text(Utils().formatTabLabel(adjustment.id)))),
+                      DataCell(Center(child: Text(estimatedOperatingHours))),
+                      DataCell(Center(child: Text(operatingHours))),
+                      DataCell(Center(child: Text(wear))),
                     ],
                   );
                 }).toList(),
