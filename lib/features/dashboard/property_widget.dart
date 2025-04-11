@@ -21,6 +21,7 @@ class PropertyWidget extends StatelessWidget {
     return Padding(
       padding: padding ?? const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '$label:',
@@ -36,7 +37,7 @@ class PropertyWidget extends StatelessWidget {
             child: Text(
               value,
               style: valueStyle ?? const TextStyle(fontSize: 14),
-              overflow: TextOverflow.ellipsis,
+              overflow: TextOverflow.clip,
             ),
           ),
         ],

@@ -45,6 +45,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         final predictions = data.predictions;
         final adjustments = data.adjustments;
         
+        // Get the total prediction
         Prediction? predictionTotal;
         if (predictions != null && predictions.isNotEmpty) {
           predictionTotal = predictions.firstWhere(
@@ -53,6 +54,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           );
         }
 
+        // Get the regression spots for the chart
         List<FlSpot> regressionSpots = [];
         if (predictionTotal?.a != null && measurements!.isNotEmpty) {
           regressionSpots = Utils().generateQuadraticSpots(
