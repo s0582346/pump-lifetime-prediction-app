@@ -113,32 +113,47 @@ MeasurementValidationState validateMeasurement(
   const validNumberMessage = 'Please enter a valid number.';
 
   String? validateRotationalFrequency(value) {
-    if (value == null || value.toString().trim().isEmpty) return errorEmptyMessage;
-    if (value.contains(',')) {
-      value = value.replaceAll(',', '.');
-    }
-    final formatted = double.tryParse(value);
-    if (formatted == null || formatted <= 0.0) return validNumberMessage;
+    final stringValue = value?.toString().trim();
+
+    if (stringValue == null || stringValue.isEmpty) return errorEmptyMessage;
+
+    final normalized = stringValue.replaceAll(',', '.');
+
+    final parsed = double.tryParse(normalized);
+
+    if (parsed == null || parsed < 0) return validNumberMessage;
+
     return null;
   }
 
-  String? validateOperatingHours(value) {
-    if (value == null || value.toString().trim().isEmpty) return errorEmptyMessage;
-    if (value.contains(',')) {
-      value = value.replaceAll(',', '.');
+  String? validateOperatingHours(dynamic value) {
+    final stringValue = value?.toString().trim();
+  
+    if (stringValue == null || stringValue.isEmpty) return errorEmptyMessage;
+  
+    if (stringValue.contains(',')) {
+      value = stringValue.replaceAll(',', '.');
+    } else {
+      value = stringValue;
     }
+  
     final formatted = int.tryParse(value);
+  
     if (formatted == null || formatted < 0) return validNumberMessage;
+  
     return null;
   }
 
-  String? validateFlow(value) {
-    if (value == null || value.toString().trim().isEmpty) return errorEmptyMessage;
-    if (value.contains(',')) {
-      value = value.replaceAll(',', '.');
-    }
-    final formatted = double.tryParse(value);
+  String? validateFlow(dynamic value) {
+    final stringValue = value?.toString().trim();
+
+    if (stringValue == null || stringValue.isEmpty) return errorEmptyMessage;
+
+    final normalized = stringValue.replaceAll(',', '.');
+    final formatted = double.tryParse(normalized);
+
     if (formatted == null || formatted <= 0.0) return validNumberMessage;
+
     return null;
   }
   

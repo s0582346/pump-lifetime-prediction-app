@@ -27,7 +27,7 @@ class MeasurementListWidget extends ConsumerWidget {
           headingRowHeight: 50.0,
           columns: [
             const DataColumn(
-              headingRowAlignment: MainAxisAlignment.start,
+              headingRowAlignment: MainAxisAlignment.center,
               label: Text(
                 "Datum",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
@@ -59,25 +59,25 @@ class MeasurementListWidget extends ConsumerWidget {
             ),
             DataColumn(
               headingRowAlignment: MainAxisAlignment.center,
-              label: Row(
-                children: [
-                  Text(
-                    lCLabel,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+              label: Text(
+                lCLabel,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+              ),
+            ),
+            if (adjustment!.status == 'open')
+            DataColumn(
+              headingRowAlignment: MainAxisAlignment.center,
+              label: Center(
+                child: CircleAvatar(
+                  backgroundColor: AppColors.primaryColor,
+                  radius: 14,
+                  child: IconButton(
+                    onPressed: () => _navigateToFormScreen(context),
+                    icon: const Icon(Icons.add, color: Colors.white, size: 18),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
                   ),
-                  (adjustment!.status == 'open')
-                      ? Padding(padding: const EdgeInsets.only(left: 20.0), 
-                       child: CircleAvatar(
-                          backgroundColor: AppColors.primaryColor,
-                          radius: 15,
-                          child: IconButton(
-                            onPressed: () => _navigateToFormScreen(context),
-                            icon: const Icon(Icons.add, color: Colors.white, size: 18),
-                            padding: EdgeInsets.zero,
-                          ),
-                        ))
-                      : Container()
-                ],
+                ),
               ),
             ),
           ],
@@ -85,27 +85,29 @@ class MeasurementListWidget extends ConsumerWidget {
             final slCVal = (pump?.measurableParameter == 'volume flow') ? data.volumeFlow : data.pressure;
             final lCVal = (pump?.measurableParameter == 'volume flow') ? data.Qn : data.pn;
             
-
             return DataRow(cells: [
               DataCell(Center(child: Text(_formatDate(data.date)))),
               DataCell(Center(child: Text(data.currentOperatingHours.toStringAsFixed(0)))),
               DataCell(Center(child: Text(data.rotationalFrequency.toStringAsFixed(_hasDecimals(data.rotationalFrequency) ? 2 : 1)))),
               DataCell(Center(child: Text(slCVal.toStringAsFixed(2)))),
+              DataCell(Center(child: Text(lCVal.toStringAsFixed(2)))),
+              if (adjustment!.status == 'open') 
               DataCell(
-                Row(
-                  children: [
-                    Center(child: Text(lCVal.toStringAsFixed(3))),
-                    const SizedBox(width: 5),
-                    (adjustment!.status == 'open') 
-                      ? IconButton(
-                        onPressed: () {
-                          ref.read(measurementProvider.notifier).loadMeasurement(data);
-                          _navigateToFormScreen(context);
-                        },
-                        icon: const Icon(Icons.edit, color: Colors.grey, size: 20),
-                      )
-                      : Container()
-                  ],
+                Align(
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    height: 30, // Match height with add button
+                    width: 30,
+                    child: IconButton(
+                      onPressed: () {
+                        ref.read(measurementProvider.notifier).loadMeasurement(data);
+                        _navigateToFormScreen(context);
+                      },
+                      icon: const Icon(Icons.edit, size: 20, color: Colors.grey),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(), // Remove default sizing
+                    ),
+                  ),
                 ),
               ),
             ]);
