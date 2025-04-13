@@ -113,6 +113,9 @@ MeasurementValidationState validateMeasurement(
 
   String? validateRotationalFrequency(value) {
     if (value == null || value.toString().trim().isEmpty) return errorEmptyMessage;
+    if (value.contains(',')) {
+      value = value.replaceAll(',', '.');
+    }
     final formatted = double.tryParse(value);
     if (formatted == null || formatted <= 0.0) return validNumberMessage;
     return null;
@@ -120,14 +123,19 @@ MeasurementValidationState validateMeasurement(
 
   String? validateOperatingHours(value) {
     if (value == null || value.toString().trim().isEmpty) return errorEmptyMessage;
+    if (value.contains(',')) {
+      value = value.replaceAll(',', '.');
+    }
     final formatted = int.tryParse(value);
     if (formatted == null || formatted < 0) return validNumberMessage;
     return null;
   }
 
-  String? validateValue(value) {
+  String? validateFlow(value) {
     if (value == null || value.toString().trim().isEmpty) return errorEmptyMessage;
-
+    if (value.contains(',')) {
+      value = value.replaceAll(',', '.');
+    }
     final formatted = double.tryParse(value);
     if (formatted == null || formatted <= 0.0) return validNumberMessage;
     return null;
@@ -135,8 +143,8 @@ MeasurementValidationState validateMeasurement(
   
   return MeasurementValidationState(
     dateError: null,
-    volumeFlowError: isVolumeFlow ? validateValue(measurement.volumeFlow) : null,
-    pressureError: !isVolumeFlow ? validateValue(measurement.pressure) : null,
+    volumeFlowError: isVolumeFlow ? validateFlow(measurement.volumeFlow) : null,
+    pressureError: !isVolumeFlow ? validateFlow(measurement.pressure) : null,
     rotationalFrequencyError: validateRotationalFrequency(measurement.rotationalFrequency),
     currentOperatingHoursError: !isAverage ? validateOperatingHours(measurement.currentOperatingHours) : null,
     averageOperatingHoursPerDayError: isAverage ? validateOperatingHours(measurement.averageOperatingHoursPerDay) : null,
