@@ -20,6 +20,8 @@ class MeasurementListWidget extends ConsumerWidget {
     final slCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q' : 'p'; // Second last column
     final lCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q/n' : 'p/n'; // Last column
 
+    
+
     return DataTable(
           columnSpacing: 20.0,
           headingRowHeight: 50.0,
@@ -86,15 +88,13 @@ class MeasurementListWidget extends ConsumerWidget {
 
             return DataRow(cells: [
               DataCell(Text(_formatDate(data.date))),
-              DataCell(Center(child: Text(data.currentOperatingHours.toStringAsFixed(1)))),
-              DataCell(Center(child:Text(data.rotationalFrequency.toStringAsFixed(2)))),
-              DataCell(Center(child:Text(slCVal.toStringAsFixed(2)))),
+              DataCell(Text(data.currentOperatingHours.toStringAsFixed(1))),
+              DataCell(Text(data.rotationalFrequency.toStringAsFixed(0))),
+              DataCell(Text(slCVal.toStringAsFixed(2))),
               DataCell(
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Center(child: Text(lCVal.toStringAsFixed(3))),
-                    //const SizedBox(width: 5),
+                    Text(lCVal.toStringAsFixed(3)),
                     (adjustment!.status == 'open') 
                       ? IconButton(
                         onPressed: () {

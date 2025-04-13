@@ -86,7 +86,7 @@ class AdjustmentsTable extends StatelessWidget {
 
                   return DataRow(
                     cells: [
-                      DataCell(Center(child: Text(Utils().formatTabLabel(adjustment.id)))),
+                      DataCell(Text(Utils().formatTabLabel(adjustment.id))),
                       DataCell(Center(child: Text(estimatedOperatingHours))),
                       DataCell(Center(child: Text(operatingHours))),
                       DataCell(Center(child: Text(wear))),

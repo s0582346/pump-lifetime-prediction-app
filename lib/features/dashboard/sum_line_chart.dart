@@ -37,16 +37,7 @@ class SumLineChart extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    List<FlSpot> yInterceptLine = [const FlSpot(0, 0)];
-    if (yIntercept != 0) {
-      yInterceptLine = [
-        // subtract the x-axis start from the y-intercept to get the correct x value
-        FlSpot(yIntercept - xAxisStart, 0.9), 
-        FlSpot(yIntercept - xAxisStart, 0.8),
-      ];
-    }
-    
+  Widget build(BuildContext context) { 
     final difference = (xAxisEnd - xAxisStart).toInt();
     final double interval = (difference > 180) ? 50 : (difference > 100) ? 20 : (difference > 50) ? 10 : 5;
     final double adjustedMaxX = (difference < 10) ? 20 : (difference < 30) ? 30 : difference + 10; // some margin depending on the range
@@ -183,47 +174,40 @@ class SumLineChart extends StatelessWidget {
     required List<Adjustment> adjustments,
     double xAxisStart = 0,
   }) {
-
     double limit = 0.9;
-    double y = 0.0;
     final List<LineChartBarData> predictionLines = [];
 
     if (predictions == null) return predictionLines;
 
     for (var a in adjustments) {
-      y += 0.1;
-
       if (a.status == 'open') continue; 
 
+      // Find prediction for the current adjustment
       final prediction = predictions.firstWhere(
         (p) => p.adjusmentId == a.id,
         orElse: () => Prediction(),
       );
     
       final estimatedOperatingHours = prediction.estimatedOperatingHours;
-      if (estimatedOperatingHours == null) {
-        continue;
-      }
-    
+      
       final List<FlSpot> predictionLine = [
-        FlSpot(estimatedOperatingHours, limit),
-        FlSpot(estimatedOperatingHours, 0.2),
+        FlSpot(estimatedOperatingHours ?? 0, limit),
+        FlSpot(estimatedOperatingHours ?? 0, 0.2),
       ];
 
       predictionLines.add(
         LineChartBarData(
           spots: predictionLine,
           isCurved: false,
-          color: Colors.amber,
+          color: estimatedOperatingHours != null ? Colors.amber : Colors.transparent,
           barWidth: 2,
           dashArray: [5, 5],
         ),
       );
 
-      limit -= y;
+      limit = double.parse((limit - 0.1).toStringAsFixed(2));
     }
 
-  return predictionLines;
-}
-
+    return predictionLines;
+  }
 }

@@ -110,21 +110,21 @@ class ChartWidget extends ConsumerWidget {
           ),
         ),
         SizedBox(
-              height: 275,
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(2, 20, 20, 20),
-                child: CustomLineChart(
-                  blueLineSpots: blueSpots,
-                  grayLineSpots: regression ?? [],
-                  xAxisStart: firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
-                  xAxisEnd: prediction.estimatedOperatingHours ??
-                      lastMeasurement?.currentOperatingHours.toDouble() ??
-                      0.0,
-                  yIntercept: yIntercept ?? 0.0,
-                ),
-              ),
+          height: 275,
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(2, 20, 20, 20),
+            child: CustomLineChart(
+              blueLineSpots: blueSpots,
+              grayLineSpots: regression ?? [],
+              xAxisStart: firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
+              xAxisEnd: prediction.estimatedOperatingHours ??
+                  lastMeasurement?.currentOperatingHours.toDouble() ??
+                  0.0,
+              yIntercept: yIntercept ?? 0.0,
             ),
+          ),
+        ),
         LegendWidget(legendItems: legendItems),
         const SizedBox(height: 10),
       ],

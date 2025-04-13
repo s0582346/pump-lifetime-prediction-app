@@ -62,7 +62,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             predictionTotal.b, 
             predictionTotal.c,
             start: measurements.first.currentOperatingHours.toDouble(),
-            end: measurements.last.currentOperatingHours.toDouble() + 10,
+            end: predictionTotal.estimatedOperatingHours ?? measurements.last.currentOperatingHours.toDouble(),
             targetY: 0.0,
           );
         }
