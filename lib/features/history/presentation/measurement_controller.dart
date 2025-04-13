@@ -6,6 +6,7 @@ import 'package:flutter_predictive_maintenance_app/features/history/presentation
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/measurement_validation_state.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/result_info.dart';
+import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_predictive_maintenance_app/shared/widgets/alert_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
@@ -25,11 +26,11 @@ class MeasurementController extends Notifier<Measurement> {
   set date(value) { 
     state = state.copyWith(date: value); 
   }
-  set volumeFlow(value) => state = state.copyWith(volumeFlow: value);
-  set pressure(value) => state = state.copyWith(pressure: value);
-  set rotationalFrequency(value) => state = state.copyWith(rotationalFrequency: value);
-  set currentOperatingHours(value) => state = state.copyWith(currentOperatingHours: value);
-  set averageOperatingHoursPerDay(value) => state = state.copyWith(averageOperatingHoursPerDay: value);
+  set volumeFlow(value) => state = state.copyWith(volumeFlow: Utils().normalizeInput(value));
+  set pressure(value) => state = state.copyWith(pressure: Utils().normalizeInput(value));
+  set rotationalFrequency(value) => state = state.copyWith(rotationalFrequency: Utils().normalizeInput(value));
+  set currentOperatingHours(value) => state = state.copyWith(currentOperatingHours: Utils().normalizeInput(value));
+  set averageOperatingHoursPerDay(value) => state = state.copyWith(averageOperatingHoursPerDay: Utils().normalizeInput(value));
   
   
   void loadMeasurement(Measurement measurement) {

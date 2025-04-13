@@ -45,6 +45,21 @@ class Utils {
     return '$pumpId-$adjustmentCount';
   }
 
+  
+  double? normalizeInput(dynamic value) {
+    if (value == null) return null; 
+
+    if (value is String) {
+      return double.tryParse(value.replaceAll(',', '.'));
+    } 
+
+    if (value is num) {
+      return value.toDouble();
+    } 
+
+    return null;
+  }
+
   /// Removes the middle section of an adjustment ID that matches
   /// a hyphen followed by exactly three uppercase letters (e.g., "-ALV").
   /// 
