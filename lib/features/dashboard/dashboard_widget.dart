@@ -39,15 +39,23 @@ class DashboardWidget extends ConsumerWidget {
       blueSpots = measurements!.map((m) {
         return FlSpot(m.currentOperatingHours - xOffset, (pump.measurableParameter == 'volume flow') ? m.QnTotal : m.pnTotal); }).toList();
     }
-    
+
+    double xAxisEnd;
+    if (predictions != null && predictions!.isNotEmpty && lastMeasurement != null) {
+      final predictedOperatingHours = predictions!.last.estimatedOperatingHours;
+      final lastMeasuredHours = lastMeasurement.currentOperatingHours.toDouble() ?? 0.0;
+      xAxisEnd = (predictedOperatingHours! > lastMeasuredHours) ? predictedOperatingHours : lastMeasuredHours;
+    } else {
+      xAxisEnd = lastMeasurement?.currentOperatingHours.toDouble() ?? 0.0;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.0),
-          child: Expanded(
-            child:
+          child: 
               Text(
                 pump.name,
                 style: const TextStyle(
@@ -57,7 +65,6 @@ class DashboardWidget extends ConsumerWidget {
                 overflow: TextOverflow.clip,
               ),
           ),
-        ),
         const Divider(height: 10, thickness: 1.5, indent: 10, endIndent: 10, color: Colors.grey),
         const SizedBox(height: 10),
         PropertyWidget(
@@ -97,7 +104,7 @@ class DashboardWidget extends ConsumerWidget {
               blueLineSpots: blueSpots,
               grayLineSpots: regression ?? [],
               xAxisStart: firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
-              xAxisEnd: (predictions!.last.estimatedOperatingHours ?? 0.0) > (lastMeasurement?.currentOperatingHours.toDouble() ?? 0.0) ? predictions!.last.estimatedOperatingHours : lastMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
+              xAxisEnd: xAxisEnd,
               minY: 0.2,
               maxY: 1.1,
               yInterval: 0.1,
