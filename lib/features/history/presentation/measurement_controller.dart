@@ -128,19 +128,20 @@ MeasurementValidationState validateMeasurement(
 
   String? validateOperatingHours(dynamic value) {
     final stringValue = value?.toString().trim();
-  
+
     if (stringValue == null || stringValue.isEmpty) return errorEmptyMessage;
-  
+
     if (stringValue.contains(',')) {
       value = stringValue.replaceAll(',', '.');
     } else {
       value = stringValue;
     }
-  
-    final formatted = int.tryParse(value);
-  
+
+    final formatted = int.tryParse(value
+    );
+
     if (formatted == null || formatted < 0) return validNumberMessage;
-  
+
     return null;
   }
 

@@ -46,18 +46,14 @@ class Utils {
   }
 
   
-  double? normalizeInput(dynamic value) {
+  String? normalizeInput(dynamic value) {
     if (value == null) return null; 
 
-    if (value is String) {
-      return double.tryParse(value.replaceAll(',', '.'));
-    } 
-
     if (value is num) {
-      return value.toDouble();
+      return value.toString().replaceAll(',', '.');
     } 
 
-    return null;
+    return value.replaceAll(',', '.');
   }
 
   /// Removes the middle section of an adjustment ID that matches

@@ -88,15 +88,15 @@ class MeasurementListWidget extends ConsumerWidget {
             return DataRow(cells: [
               DataCell(Center(child: Text(_formatDate(data.date)))),
               DataCell(Center(child: Text(data.currentOperatingHours.toStringAsFixed(0)))),
-              DataCell(Center(child: Text(data.rotationalFrequency.toStringAsFixed(_hasDecimals(data.rotationalFrequency) ? 2 : 1)))),
+              DataCell(Center(child: Text(data.rotationalFrequency.toStringAsFixed(_hasDecimals(data.rotationalFrequency) ? 2 : 0)))),
               DataCell(Center(child: Text(slCVal.toStringAsFixed(2)))),
-              DataCell(Center(child: Text(lCVal.toStringAsFixed(2)))),
+              DataCell(Center(child: Text(lCVal.toStringAsFixed(3)))),
               if (adjustment!.status == 'open') 
               DataCell(
                 Align(
                   alignment: Alignment.center,
                   child: SizedBox(
-                    height: 30, // Match height with add button
+                    height: 30,
                     width: 30,
                     child: IconButton(
                       onPressed: () {
@@ -105,7 +105,7 @@ class MeasurementListWidget extends ConsumerWidget {
                       },
                       icon: const Icon(Icons.edit, size: 20, color: Colors.grey),
                       padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(), // Remove default sizing
+                      constraints: const BoxConstraints(),
                     ),
                   ),
                 ),
