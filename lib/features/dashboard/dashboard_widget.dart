@@ -39,7 +39,7 @@ class DashboardWidget extends ConsumerWidget {
       blueSpots = measurements!.map((m) {
         return FlSpot(m.currentOperatingHours - xOffset, (pump.measurableParameter == 'volume flow') ? m.QnTotal : m.pnTotal); }).toList();
     }
-
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -58,54 +58,54 @@ class DashboardWidget extends ConsumerWidget {
               ),
           ),
         ),
-    const Divider(height: 10, thickness: 1.5, indent: 10, endIndent: 10, color: Colors.grey),
-    const SizedBox(height: 10),
-    PropertyWidget(
-      label: 'Pump Type',
-      value: pump.type,
-    ),
-    PropertyWidget(
-      label: 'Permissible Total Wear',
-      value: "${pump.permissibleTotalWear.toStringAsFixed(0)} %",
-    ),
-    if (pump.rotorGeometry != null && pump.rotorGeometry!.isNotEmpty)
-    PropertyWidget(
-      label: 'Rotor Geometry',
-      value: pump.rotorGeometry,
-    ),
-    if (pump.solidConcentration != null)
-    PropertyWidget(
-      label: 'Solid Concentration',
-      value: "${pump.solidConcentration} %",
-    ),
-    if (pump.medium != null && pump.medium!.isNotEmpty)
-    PropertyWidget(
-      label: 'Medium',
-      value: pump.medium,
-    ),
-    PropertyWidget(
-      label: 'Type Of Time Entry',
-      value: pump.typeOfTimeEntry.replaceAll('per day', ''),
-    ),
-    const SizedBox(height: 10),
-    SizedBox(
-      height: 400,
-      width: double.infinity,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(2, 20, 20, 20),
-        child: SumLineChart(
-          blueLineSpots: blueSpots,
-          grayLineSpots: regression ?? [],
-          xAxisStart: firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
-          xAxisEnd: lastMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
-          minY: 0.2,
-          maxY: 1.1,
-          yInterval: 0.1,
-          adjustments: adjustments,
-          predictions: predictions,
+        const Divider(height: 10, thickness: 1.5, indent: 10, endIndent: 10, color: Colors.grey),
+        const SizedBox(height: 10),
+        PropertyWidget(
+          label: 'Pump Type',
+          value: pump.type,
         ),
-      ),
-    ),
+        PropertyWidget(
+          label: 'Permissible Total Wear',
+          value: "${pump.permissibleTotalWear.toStringAsFixed(0)} %",
+        ),
+        if (pump.rotorGeometry != null && pump.rotorGeometry!.isNotEmpty)
+        PropertyWidget(
+          label: 'Rotor Geometry',
+          value: pump.rotorGeometry,
+        ),
+        if (pump.solidConcentration != null)
+        PropertyWidget(
+          label: 'Solid Concentration',
+          value: "${pump.solidConcentration} %",
+        ),
+        if (pump.medium != null && pump.medium!.isNotEmpty)
+        PropertyWidget(
+          label: 'Medium',
+          value: pump.medium,
+        ),
+        PropertyWidget(
+          label: 'Type Of Time Entry',
+          value: pump.typeOfTimeEntry.replaceAll('per day', ''),
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 400,
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(2, 20, 20, 20),
+            child: SumLineChart(
+              blueLineSpots: blueSpots,
+              grayLineSpots: regression ?? [],
+              xAxisStart: firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
+              xAxisEnd: (predictions!.last.estimatedOperatingHours ?? 0.0) > (lastMeasurement?.currentOperatingHours.toDouble() ?? 0.0) ? predictions!.last.estimatedOperatingHours : lastMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
+              minY: 0.2,
+              maxY: 1.1,
+              yInterval: 0.1,
+              adjustments: adjustments,
+              predictions: predictions,
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
         const Divider(height: 10, thickness: 1.5, indent: 10, endIndent: 10, color: Colors.grey),
         AdjustmentsTable(
@@ -114,9 +114,7 @@ class DashboardWidget extends ConsumerWidget {
           predictions: predictions ?? [],
         ),
         const SizedBox(height: 20),
-  ]
+      ]
     );
   }
-
-  
 }

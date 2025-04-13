@@ -13,9 +13,9 @@ class CustomLineChart extends StatelessWidget {
   final double yIntercept;
   final List<FlSpot> blueLineSpots;
   final List<FlSpot> grayLineSpots;
-  final minY;
-  final maxY;
-  final yInterval;
+  final minY = 0.8;
+  final maxY = 1.1;
+  final yInterval = 0.05;
 
   const CustomLineChart({
     super.key,
@@ -24,9 +24,6 @@ class CustomLineChart extends StatelessWidget {
     required this.xAxisStart,
     required this.xAxisEnd,
     this.yIntercept = 0,
-    this.minY = 0.8,
-    this.maxY = 1.1,
-    this.yInterval = 0.05,
   });
 
   @override
