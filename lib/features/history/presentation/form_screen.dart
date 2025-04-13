@@ -14,7 +14,7 @@ class FormScreen extends ConsumerWidget {
         backgroundColor: const Color(0xFF007167),
         title: const Text(
           "NETZSCH",
-            style: const TextStyle(
+            style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w900,
             color: Colors.white,
