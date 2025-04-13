@@ -65,7 +65,6 @@ class MeasurementListWidget extends ConsumerWidget {
                     lCLabel,
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
-                  //const SizedBox(width: 10),
                   (adjustment!.status == 'open')
                       ? Padding(padding: const EdgeInsets.only(left: 20.0), 
                        child: CircleAvatar(
@@ -85,16 +84,18 @@ class MeasurementListWidget extends ConsumerWidget {
           rows: (measurements ?? []).map((data) {
             final slCVal = (pump?.measurableParameter == 'volume flow') ? data.volumeFlow : data.pressure;
             final lCVal = (pump?.measurableParameter == 'volume flow') ? data.Qn : data.pn;
+            
 
             return DataRow(cells: [
               DataCell(Center(child: Text(_formatDate(data.date)))),
-              DataCell(Center(child: Text(data.currentOperatingHours.toStringAsFixed(1)))),
-              DataCell(Center(child: Text(data.rotationalFrequency.toStringAsFixed(0)))),
+              DataCell(Center(child: Text(data.currentOperatingHours.toStringAsFixed(0)))),
+              DataCell(Center(child: Text(data.rotationalFrequency.toStringAsFixed(_hasDecimals(data.rotationalFrequency) ? 2 : 1)))),
               DataCell(Center(child: Text(slCVal.toStringAsFixed(2)))),
               DataCell(
                 Row(
                   children: [
                     Center(child: Text(lCVal.toStringAsFixed(3))),
+                    const SizedBox(width: 5),
                     (adjustment!.status == 'open') 
                       ? IconButton(
                         onPressed: () {
@@ -118,6 +119,10 @@ class MeasurementListWidget extends ConsumerWidget {
         builder: (context) => const FormScreen(),
       ),
     );
+  }
+
+  bool _hasDecimals(double value) {
+    return (value % 1) != 0;
   }
 
   String _formatDate(dynamic date) {
