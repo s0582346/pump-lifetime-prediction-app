@@ -42,9 +42,9 @@ class DashboardWidget extends ConsumerWidget {
 
     double xAxisEnd;
     if (predictions != null && predictions!.isNotEmpty && lastMeasurement != null) {
-      final predictedOperatingHours = predictions!.last.estimatedOperatingHours;
+      final predictedOperatingHours = predictions!.last.estimatedOperatingHours ?? 0.0;
       final lastMeasuredHours = lastMeasurement.currentOperatingHours.toDouble() ?? 0.0;
-      xAxisEnd = (predictedOperatingHours! > lastMeasuredHours) ? predictedOperatingHours : lastMeasuredHours;
+      xAxisEnd = (predictedOperatingHours > lastMeasuredHours) ? predictedOperatingHours : lastMeasuredHours;
     } else {
       xAxisEnd = lastMeasurement?.currentOperatingHours.toDouble() ?? 0.0;
     }
