@@ -37,7 +37,6 @@ class MeasurementDataWidget extends ConsumerWidget {
           onChanged: (value) => (isVolumeFlow) ? measurementNotifier.volumeFlow = value : measurementNotifier.pressure = value,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           validator: (isSubmitting) ? ((isVolumeFlow) ? measurementValidationState.volumeFlowError : measurementValidationState.pressureError) : null,
-          //isSubmitting: isSubmitting,
         ),
 
         InputWidget(
