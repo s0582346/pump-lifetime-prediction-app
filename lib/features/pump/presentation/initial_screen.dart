@@ -17,6 +17,7 @@ class InitialScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF007167),
+        centerTitle: false,
         title: const Text(
           "NETZSCH",
             style: TextStyle(

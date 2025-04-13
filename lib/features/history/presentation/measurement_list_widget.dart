@@ -87,14 +87,14 @@ class MeasurementListWidget extends ConsumerWidget {
             final lCVal = (pump?.measurableParameter == 'volume flow') ? data.Qn : data.pn;
 
             return DataRow(cells: [
-              DataCell(Text(_formatDate(data.date))),
-              DataCell(Text(data.currentOperatingHours.toStringAsFixed(1))),
-              DataCell(Text(data.rotationalFrequency.toStringAsFixed(0))),
-              DataCell(Text(slCVal.toStringAsFixed(2))),
+              DataCell(Center(child: Text(_formatDate(data.date)))),
+              DataCell(Center(child: Text(data.currentOperatingHours.toStringAsFixed(1)))),
+              DataCell(Center(child: Text(data.rotationalFrequency.toStringAsFixed(0)))),
+              DataCell(Center(child: Text(slCVal.toStringAsFixed(2)))),
               DataCell(
                 Row(
                   children: [
-                    Text(lCVal.toStringAsFixed(3)),
+                    Center(child: Text(lCVal.toStringAsFixed(3))),
                     (adjustment!.status == 'open') 
                       ? IconButton(
                         onPressed: () {
