@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/dashboard/dashboard_screen.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/presentation/initial_screen.dart';
@@ -9,8 +12,9 @@ import 'package:flutter_predictive_maintenance_app/features/chart/presentation/c
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/custom_bottom_navigation_bar_item.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/custom_app_bar.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 /// This acts like a global state container <br/>
 /// Any widget in the app tree can access it by watching or reading it
@@ -100,7 +104,7 @@ class _NavigationState extends ConsumerState<Navigation> {
               },            
               ),
             ListTile(
-               title: const Row(
+              title: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
@@ -118,9 +122,13 @@ class _NavigationState extends ConsumerState<Navigation> {
                   ),
                 ],
               ),
-            onTap: () {}, ),
+              onTap: () => openAssetPDF(
+                'assets/nav/anleitung_app_standzeitbestimmung.pdf', 
+                'anleitung_app_standzeitbestimmung.pdf',
+              ),
+            ),
             ListTile(
-               title: const Row(
+              title: const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
@@ -138,11 +146,11 @@ class _NavigationState extends ConsumerState<Navigation> {
                   ),
                 ],
               ),
-            onTap: () => launchUrlString('https://pumps-systems.netzsch.com/en-US/forms/contact-page'),
-        ),
-      ],
-    ),
-  ),
+              onTap: () => launchUrlString('https://pumps-systems.netzsch.com/en-US/forms/contact-page'),
+                ),
+              ],
+            ),
+          ),
           backgroundColor: Colors.white,
           body: IndexedStack(
             index: currentIndex,
@@ -168,4 +176,24 @@ class _NavigationState extends ConsumerState<Navigation> {
       },
     );
   }
+
+  Future<void> openAssetPDF(String assetPath, String filename) async {
+  try {
+    // Load asset
+    final byteData = await rootBundle.load(assetPath);
+
+    // Get temp directory
+    final tempDir = await getTemporaryDirectory();
+    final file = File('${tempDir.path}/$filename');
+
+    // Write to temp file
+    await file.writeAsBytes(byteData.buffer.asUint8List());
+
+    // Open with default PDF viewer
+    await OpenFile.open(file.path);
+  } catch (e) {
+    throw ('Error opening PDF: $e');
+  }
+  }
+  
 }
