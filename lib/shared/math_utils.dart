@@ -168,7 +168,8 @@ List<double> findIntersectionAtY(double a, double b, double c, double targetY) {
 
     final wearPercentage = (ratio / 1000) * 100;
 
-    return (100 - wearPercentage).toInt();
+    final wear = (100 - wearPercentage).toInt();
+    return wear <= 0 ? 0 : wear; // Ensure wear is not negative
   }
 
 
