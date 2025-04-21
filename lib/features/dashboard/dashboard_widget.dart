@@ -5,6 +5,7 @@ import 'package:flutter_predictive_maintenance_app/features/dashboard/property_w
 import 'package:flutter_predictive_maintenance_app/features/prediction/prediction.dart';
 import 'package:flutter_predictive_maintenance_app/features/dashboard/sum_line_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class DashboardWidget extends ConsumerWidget {
     final xOffset = firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0;
     if (hasMeasurements) {
       blueSpots = measurements!.map((m) {
-        return FlSpot(m.currentOperatingHours - xOffset, (pump.measurableParameter == 'volume flow') ? m.QnTotal : m.pnTotal); }).toList();
+        return FlSpot(m.currentOperatingHours - xOffset, (pump.measurableParameter == MeasurableParameter.volumeFlow) ? m.QnTotal : m.pnTotal); }).toList();
     }
 
     double xAxisEnd;
@@ -69,16 +70,16 @@ class DashboardWidget extends ConsumerWidget {
         const SizedBox(height: 10),
         PropertyWidget(
           label: 'Pump Type',
-          value: pump.type,
+          value: pump.type!.toString(),
         ),
         PropertyWidget(
           label: 'Permissible Total Wear',
           value: "${pump.permissibleTotalWear.toStringAsFixed(0)} %",
         ),
-        if (pump.rotorGeometry != null && pump.rotorGeometry!.isNotEmpty)
+        if (pump.rotorGeometry != null && pump.rotorGeometry!.label.isNotEmpty)
         PropertyWidget(
           label: 'Rotor Geometry',
-          value: pump.rotorGeometry,
+          value: pump.rotorGeometry!.label,
         ),
         if (pump.solidConcentration != null)
         PropertyWidget(
@@ -92,7 +93,7 @@ class DashboardWidget extends ConsumerWidget {
         ),
         PropertyWidget(
           label: 'Type Of Time Entry',
-          value: pump.typeOfTimeEntry.replaceAll('per day', ''),
+          value: pump.typeOfTimeEntry!.label.replaceAll('per day', ''),
         ),
         const SizedBox(height: 10),
         SizedBox(

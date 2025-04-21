@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_predictive_maintenance_app/shared/components/primary_button.dart';
-import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
 import 'package:flutter_predictive_maintenance_app/features/prediction/prediction.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/custom_line_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/info_block.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/legend_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/math_utils.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
@@ -35,6 +34,7 @@ class ChartWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     double thresholdLimit = 0.900;
     double? yIntercept = prediction.estimatedOperatingHours;
+    final isVolumeFlow = pump.measurableParameter == MeasurableParameter.volumeFlow;
 
     // Extract count from the adjustment id (e.g., NM045-0).
     final count = _extractCountFromAdjustment(adjustment.id);
@@ -57,13 +57,13 @@ class ChartWidget extends ConsumerWidget {
     final blueSpots = measurements.map((m) {
       return FlSpot(
         m.currentOperatingHours - xOffset,
-        pump.measurableParameter == 'volume flow' ? m.Qn : m.pn,
+        isVolumeFlow ? m.Qn : m.pn,
       );
     }).toList();
 
     final legendItems = [
       LegendItem(
-        label: pump.measurableParameter == 'volume flow' ? 'Q/n' : 'p/n',
+        label: isVolumeFlow ? 'Q/n' : 'p/n',
         color: Colors.blue,
         isLine: true,
       ),

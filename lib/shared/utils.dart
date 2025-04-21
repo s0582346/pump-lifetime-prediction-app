@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 
@@ -68,10 +69,11 @@ class Utils {
     return adjustmentId.replaceAll(result ?? '', ''); 
   }
 
-  double normalize(String measurableParameter, Measurement reference, Measurement newMeasurement) {
-    final double flow = _toDouble((measurableParameter == 'volume flow') ? newMeasurement.volumeFlow : newMeasurement.pressure);
+  double normalize(MeasurableParameter measurableParameter, Measurement reference, Measurement newMeasurement) {
+    final isVolumeFlow = measurableParameter == MeasurableParameter.volumeFlow;
+    final double flow = _toDouble((isVolumeFlow) ? newMeasurement.volumeFlow : newMeasurement.pressure);
     final double n = _toDouble(newMeasurement.rotationalFrequency);
-    final double refFlow = _toDouble((measurableParameter == 'volume flow') ? reference.volumeFlow : reference.pressure);
+    final double refFlow = _toDouble((isVolumeFlow) ? reference.volumeFlow : reference.pressure);
     final double refN = _toDouble(reference.rotationalFrequency);
   
     if (refN == 0 || refFlow == 0) {

@@ -4,7 +4,9 @@ import 'package:flutter_predictive_maintenance_app/features/dashboard/dashboard_
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_screen.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/measurement_validation_state.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/time_entry.dart';
 import 'package:flutter_predictive_maintenance_app/shared/result_info.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_predictive_maintenance_app/shared/widgets/alert_widget.dart';
@@ -70,7 +72,7 @@ class MeasurementController extends Notifier<Measurement> {
         if (context.mounted) Navigator.of(context).pop();
       } else {
         if (context.mounted) {
-          final ratio = pump.measurableParameter == 'volume flow' ? 'Q/n' : 'p/n';
+          final ratio = pump.measurableParameter == MeasurableParameter.volumeFlow ? 'Q/n' : 'p/n';
 
           showDialog(
             context: context,
@@ -107,8 +109,8 @@ MeasurementValidationState validateMeasurement(
   Measurement measurement,
   Pump? pump
 ) {
-  final isVolumeFlow = pump?.measurableParameter == 'volume flow';
-  final isAverage = pump?.typeOfTimeEntry.contains('average');
+  final isVolumeFlow = pump?.measurableParameter == MeasurableParameter.volumeFlow;
+  final isAverage = pump?.typeOfTimeEntry == TimeEntry.average;
   const errorEmptyMessage = 'This field is required.';
   const validNumberMessage = 'Please enter a valid number.';
 

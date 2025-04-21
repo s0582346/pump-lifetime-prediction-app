@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump_type.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/rotor_geometry.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/rotor_stages.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/time_entry.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/presentation/pump_controller.dart';
 import 'package:flutter_predictive_maintenance_app/shared/components/input_widget.dart';
@@ -16,6 +21,7 @@ class PumpFormWidget extends ConsumerWidget {
     final validation = ref.watch(pumpValidationProvider);
     final isSubmitting = ref.watch(isSubmittingProvider);
 
+
     return ListView(
       padding: const EdgeInsets.all(40.0),
       children: [
@@ -27,25 +33,28 @@ class PumpFormWidget extends ConsumerWidget {
           validator: validation.nameError,
           isSubmitting: isSubmitting,
         ),
-        SelectWidget(
+        SelectWidget<PumpType>(
           label: 'Pump Type',
           selectedValue: pumpDataState.type,
-          onChanged: (value) => pumpDataNotifier.pumpType = value,
-          items: const ['NM045', 'NM063', 'NM070', 'NM090', 'NM100', 'NM150'],
+          onChanged: (val) => pumpDataNotifier.pumpType = val,
+          items: PumpType.values,
+          itemLabelBuilder: (type) => type.label,
           validator: validation.pumpTypeError,
           isSubmitting: isSubmitting,
         ),
-        SelectWidget(
+        SelectWidget<RotorGeometry>(
           label: 'Rotor Geometry',
           selectedValue: pumpDataState.rotorGeometry,
           onChanged: (value) => pumpDataNotifier.rotorGeometry = value,
-          items: const ['S', 'L', 'D', 'P'],
+          items: RotorGeometry.values,
+          itemLabelBuilder: (geometry) => geometry.label,
         ),
-        SelectWidget(
+        SelectWidget<RotorStages>(
           label: 'Number of Stages',
           selectedValue: pumpDataState.numberOfStages,
           onChanged: (value) => pumpDataNotifier.numberOfStages = value,
-          items: const ['1', '2'],
+          items: RotorStages.values,
+          itemLabelBuilder: (stages) => stages.label,
         ),
         InputWidget(
           label: 'Medium',
@@ -71,19 +80,21 @@ class PumpFormWidget extends ConsumerWidget {
           isSubmitting: isSubmitting,
           keyboardType: TextInputType.number,
         ),
-        SelectWidget(
+        SelectWidget<MeasurableParameter>(
           label: 'Measurable Parameter',
           selectedValue: pumpDataState.measurableParameter,
           onChanged: (value) => pumpDataNotifier.measurableParameter = value,
-          items: const ['volume flow', 'pressure'],
+          items: MeasurableParameter.values,
+          itemLabelBuilder: (flow) => flow.label,
           validator: validation.measurableParameterError,
           isSubmitting: isSubmitting,
         ),
-        SelectWidget(
+        SelectWidget<TimeEntry>(
           label: 'Type of Time Entry',
           selectedValue: pumpDataState.typeOfTimeEntry,
           onChanged: (value) => pumpDataNotifier.typeOfTimeEntry = value,
-          items: const ['operating time (absolute)', 'operating time (relative)', 'average operating time per day'],
+          items: TimeEntry.values,
+          itemLabelBuilder: (timeEntry) => timeEntry.label,
           validator: validation.typeOfTimeEntryError,
           isSubmitting: isSubmitting,
         ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/time_entry.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/measurement_controller.dart';
 import 'package:flutter_predictive_maintenance_app/shared/components/input_widget.dart';
@@ -16,11 +18,11 @@ class MeasurementDataWidget extends ConsumerWidget {
     final measurementState = ref.watch(measurementProvider);
     final pump = ref.watch(selectedPumpProvider);
     final measurementValidationState = ref.watch(measurementValidationProvider);
-    final isVolumeFlow = pump?.measurableParameter == 'volume flow';
-    final isAverage = pump?.typeOfTimeEntry.contains('average');
+    final isVolumeFlow = pump?.measurableParameter == MeasurableParameter.volumeFlow;
+    final isAverage = pump?.typeOfTimeEntry == TimeEntry.average;
     final isSubmitting = ref.watch(isSubmittingProvider);
 
-    final hLabel = pump?.typeOfTimeEntry.contains('average') ? 'Average Operating Hours Per Day' : pump?.typeOfTimeEntry.contains('relative') ? 'Operating Time (Relative)' : 'Operating Time (Absolute)';
+    final hLabel = isAverage ? 'Average Operating Hours Per Day' : pump?.typeOfTimeEntry == TimeEntry.relative ? 'Operating Time (Relative)' : 'Operating Time (Absolute)';
 
     return ListView(
       padding: const EdgeInsets.all(40.0),

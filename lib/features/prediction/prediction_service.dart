@@ -2,6 +2,7 @@ import 'package:flutter_predictive_maintenance_app/database/database_helper.dart
 import 'package:flutter_predictive_maintenance_app/features/prediction/prediction.dart';
 import 'package:flutter_predictive_maintenance_app/features/prediction/prediction_repository.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/application/measurement_service.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_predictive_maintenance_app/shared/math_utils.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
@@ -49,7 +50,7 @@ Future<void> predict(String adjustmentId, Pump pump) async {
       return;
     }
   
-    if (pump.measurableParameter == 'volume flow') {
+    if (pump.measurableParameter == MeasurableParameter.volumeFlow) {
       for (final m in measurements) {
         final double? hours = m.currentOperatingHours.toDouble();
         final double? flow = m.Qn;
@@ -133,7 +134,7 @@ Future<void> predictTotal(Pump pump) async {
   }
 
   List<double> QnTotal = [], pnTotal = [], currentOperatingHoursTotal = [], coeffs = [];
-  if (pump.measurableParameter == 'volume flow') {
+  if (pump.measurableParameter == MeasurableParameter.volumeFlow) {
     for (final m in measurementsTotal) {
       final double? hours = m.currentOperatingHours.toDouble();
       final double? flow = m.QnTotal.toDouble();

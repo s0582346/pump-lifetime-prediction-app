@@ -111,7 +111,7 @@ Future<void> closeAdjustment(Database db, String adjustmentId) async {
       where: 'id = ?',
       whereArgs: [adjustmentId],
     );
-  } catch (e, stackTrace) {
+  } catch (e) {
     throw Exception('Failed to close adjustment: $e');
   }
 }
