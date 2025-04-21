@@ -2,6 +2,11 @@ import 'dart:math';
 
 import 'package:flutter_predictive_maintenance_app/features/chart/application/adjustment_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/application/pump_service.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump_type.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/rotor_geometry.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/rotor_stages.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/time_entry.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/presentation/pump_validation_state.dart';
 import 'package:flutter_predictive_maintenance_app/shared/result_info.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,25 +21,28 @@ class PumpController extends Notifier<Pump> {
   
   @override
   Pump build() {
-    return Pump(type: '', id: '');
+    return Pump(id: '', type: null);
   }
 
   set name(String? value) => state = state.copyWith(name: value);
-  set pumpType(String? value) => state = state.copyWith(type: value);
-  set rotorGeometry(String? value) => state = state.copyWith(rotorGeometry: value);
-  set numberOfStages(String? value) => state = state.copyWith(numberOfStages: value);
+  set pumpType(PumpType? value) => state = state.copyWith(type: value);
+  set rotorGeometry(RotorGeometry? value) => state = state.copyWith(rotorGeometry: value);
+  set numberOfStages(RotorStages? value) => state = state.copyWith(numberOfStages: value);
   set speedChange(String? value) => state = state.copyWith(speedChange: value);
   set medium(String? value) => state = state.copyWith(medium: value);
-  set measurableParameter(String? value) => state = state.copyWith(measurableParameter: value);
+  set measurableParameter(MeasurableParameter? value) {
+    print('Setting measurable parameter: ${value.toString()}');
+    state = state.copyWith(measurableParameter: value);
+  } 
   set permissibleTotalWear(String value) => state = state.copyWith(permissibleTotalWear: value);
   set solidConcentration(String solidConcentration) => state = state.copyWith(solidConcentration: solidConcentration);
-  set typeOfTimeEntry(String? typeOfTimeEntry) => state = state.copyWith(typeOfTimeEntry: typeOfTimeEntry);
+  set typeOfTimeEntry(TimeEntry? typeOfTimeEntry) => state = state.copyWith(typeOfTimeEntry: typeOfTimeEntry);
   
 
 
   Future<ResultInfo> savePumpData() async {
     final pump = state;
-    final pumpId = generatePumpId(pump.type); // Generate a unique pump ID
+    final pumpId = generatePumpId(pump.type!.label); // Generate a unique pump ID
     final updatedPump = pump.copyWith(id: pumpId);
 
     try {
@@ -142,11 +150,11 @@ final pumpValidationProvider = Provider<PumpValidationState>((ref) {
 
   return isSubmitting ? PumpValidationState(
     nameError: validateName(pump.name),
-    pumpTypeError: validatePumpType(pump.type),
+    pumpTypeError: validatePumpType(pump.type?.label),
     solidConcentrationError: validateSolidConcentration(pump.solidConcentration),
-    measurableParameterError: validateMeasurableParameter(pump.measurableParameter),
+    measurableParameterError: validateMeasurableParameter(pump.measurableParameter?.label),
     persmissibleTotalWearError: validatePermissibleTotalWear(pump.permissibleTotalWear),
-    typeOfTimeEntryError: validateTypeOfTimeEntry(pump.typeOfTimeEntry),
+    typeOfTimeEntryError: validateTypeOfTimeEntry(pump.typeOfTimeEntry?.label),
   ) : const PumpValidationState();
 });
 

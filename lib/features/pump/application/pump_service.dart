@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter_predictive_maintenance_app/database/database_helper.dart';
-import 'package:flutter_predictive_maintenance_app/features/chart/application/adjustment_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/data/pump_repository.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

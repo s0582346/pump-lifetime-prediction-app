@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump_type.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/presentation/pump_controller.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 import 'package:flutter_predictive_maintenance_app/shared/widgets/settings_widget.dart';
@@ -67,18 +68,16 @@ class PumpBox extends ConsumerWidget {
                 ]),
               ],
             ),
-
             Row(
               children: [
                 const Text('Pump Type: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
-                Text(pump.type)
+                Text(pump.type.toString()),
               ],
             ),
-
             Row(
               children: [
                 const Text('Measurable Parameter: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
-                Text(pump.measurableParameter)
+                Text(pump.measurableParameter.toString())
               ],
             ),
             Row(
@@ -87,11 +86,10 @@ class PumpBox extends ConsumerWidget {
                 Text("${pump.permissibleTotalWear.toStringAsFixed(0)} %")
               ],
             ),
-            
             Row(
               children: [
                 const Text('Type Of Time Entry: ', style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
-                Text(pump.typeOfTimeEntry.replaceAll('per day', '')),
+                Text(pump.typeOfTimeEntry.toString().replaceAll('per day', '')),
               ],
             ),
             (pump.medium != null && pump.medium!.isNotEmpty) ?

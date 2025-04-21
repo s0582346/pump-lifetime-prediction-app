@@ -19,9 +19,7 @@ class AdjustmentsTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      //padding: const EdgeInsets.all(10.0),
-      // Ensure the container takes up full available width.
+    return SizedBox(
       width: double.infinity,
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -32,7 +30,7 @@ class AdjustmentsTable extends StatelessWidget {
                 headingRowHeight: 50.0,
                 columns: const [
                   DataColumn(
-                    headingRowAlignment: MainAxisAlignment.start,
+                    headingRowAlignment: MainAxisAlignment.center,
                     label: Text('Name'),
                   ),
                   DataColumn(

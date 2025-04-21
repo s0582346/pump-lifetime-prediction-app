@@ -5,7 +5,9 @@ import 'package:flutter_predictive_maintenance_app/features/prediction/predictio
 import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/data/adjustment_repository.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/data/measurement_repository.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/time_entry.dart';
 import 'package:flutter_predictive_maintenance_app/shared/result_info.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,7 +36,7 @@ class MeasurementService {
       Measurement? reference, referenceTotal;
       double? Qn, pn, QnTotal, pnTotal;
       double? currentOperatingHours = double.tryParse(newMeasurement.currentOperatingHours ?? '') ?? 0.0; // default current operating hours from the new measurement
-      final isVolumeFlow = pump.measurableParameter == 'volume flow';
+      final isVolumeFlow = pump.measurableParameter == MeasurableParameter.volumeFlow;
 
       if (isVolumeFlow) {
         // default Qn 
@@ -50,7 +52,7 @@ class MeasurementService {
       // Compute reference values if measurements exist
       if (measurements.isNotEmpty && (newMeasurement.id == null || getPreviousEntry(measurements, newMeasurement.id) != null)) {
         reference = measurements.first;
-        final result = Utils().normalize(pump.measurableParameter, reference, newMeasurement);
+        final result = Utils().normalize(pump.measurableParameter!, reference, newMeasurement);
         
         if (result < wearLimit && !forceSave) {
           return ResultInfo.error(result); // return if the wear limit is exceeded
@@ -60,7 +62,7 @@ class MeasurementService {
 
       if (measurementsTotal.isNotEmpty) {
         referenceTotal = measurementsTotal.first;
-        final resultTotal = Utils().normalize(pump.measurableParameter, referenceTotal, newMeasurement);
+        final resultTotal = Utils().normalize(pump.measurableParameter!, referenceTotal, newMeasurement);
         isVolumeFlow ? QnTotal = resultTotal : pnTotal = resultTotal;
       }
 
@@ -69,7 +71,7 @@ class MeasurementService {
         final lastMeasurement = measurementsTotal.last;
         final lastOperatingHours = lastMeasurement.currentOperatingHours;
 
-        if (pump.typeOfTimeEntry.contains('average')) {
+        if (pump.typeOfTimeEntry == TimeEntry.average) {
           int? avgOperatingHoursPerDay;
           DateTime? startDate;
           DateTime? currentDate;
@@ -98,7 +100,7 @@ class MeasurementService {
           debugPrint('Updated Current Operating Hours: $currentOperatingHours');
         }
 
-        if (pump.typeOfTimeEntry.contains('relative')) {
+        if (pump.typeOfTimeEntry == TimeEntry.relative) {
           debugPrint("Calculating relative current operating hours");
 
           if (isEditing) {

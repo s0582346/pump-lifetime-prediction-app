@@ -3,6 +3,7 @@ import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/form_screen.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/measurement_controller.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
@@ -17,10 +18,9 @@ class MeasurementListWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pump = ref.watch(selectedPumpProvider);
-    final slCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q' : 'p'; // Second last column
-    final lCLabel = (pump?.measurableParameter == 'volume flow') ? 'Q/n' : 'p/n'; // Last column
-
-    
+    final isVolumeFlow = pump?.measurableParameter == MeasurableParameter.volumeFlow;
+    final slCLabel = (isVolumeFlow) ? 'Q' : 'p'; // Second last column
+    final lCLabel = (isVolumeFlow) ? 'Q/n' : 'p/n'; // Last column
 
     return DataTable(
           columnSpacing: 20.0,
@@ -82,8 +82,8 @@ class MeasurementListWidget extends ConsumerWidget {
             ),
           ],
           rows: (measurements ?? []).map((data) {
-            final slCVal = (pump?.measurableParameter == 'volume flow') ? data.volumeFlow : data.pressure;
-            final lCVal = (pump?.measurableParameter == 'volume flow') ? data.Qn : data.pn;
+            final slCVal = (isVolumeFlow) ? data.volumeFlow : data.pressure;
+            final lCVal = (isVolumeFlow) ? data.Qn : data.pn;
             
             return DataRow(cells: [
               DataCell(Center(child: Text(_formatDate(data.date)))),
