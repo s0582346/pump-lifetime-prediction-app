@@ -1,3 +1,4 @@
+import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 
@@ -17,7 +18,8 @@ class MeasurementRepository {
 
   /// Fetch all measurements for a given pump
   Future<List<Map<String, dynamic>>> fetchMeasurementsByPumpId(String pumpId) async {
-    final List<Map<String, dynamic>> measurements = await db.rawQuery(
+    try {
+       final List<Map<String, dynamic>> measurements = await db.rawQuery(
       '''
       SELECT m.*
       FROM measurements m
@@ -29,25 +31,34 @@ class MeasurementRepository {
     );
     
     return measurements;
+    } catch (e, stack) {
+      Utils().logError(e, stack);
+      return [];
+    }
   }
 
   /// Fetch measurements for a given pump
   Future<List<Map<String, dynamic>>> getCurrentMeasurementsCount(String pumpId) async {
-    final List<Map<String, dynamic>> measurements = await db.rawQuery(
-      '''
-      SELECT count(m.*)
-      FROM measurements m
-      JOIN adjustments a ON m.adjustmentId = a.id
-      WHERE a.pumpId = ?
-      ''',
-      [pumpId],
-    );
-    
-    return measurements;
+    try {
+        final List<Map<String, dynamic>> measurements = await db.rawQuery(
+        '''
+        SELECT count(m.*)
+        FROM measurements m
+        JOIN adjustments a ON m.adjustmentId = a.id
+        WHERE a.pumpId = ?
+        ''',
+        [pumpId],
+      );
+      return measurements;
+    } catch (e, stack) {
+      Utils().logError(e, stack);
+      return [];
+    }
   }
 
   /// Fetch measurements for a given adjustment
   Future<List<Map<String, dynamic>>?> fetchMeasurementsFromAdjustment(String adjustmentId, String pumpId) async {
+    try {
     final List<Map<String, dynamic>> measurements = await db.rawQuery(
       '''
       SELECT m.*
@@ -65,6 +76,10 @@ class MeasurementRepository {
 
     
     return measurements;
+    } catch (e, stack) {
+      Utils().logError(e, stack);
+      return null;
+    }
   }
   
 
