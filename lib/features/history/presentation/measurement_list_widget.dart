@@ -88,7 +88,7 @@ class MeasurementListWidget extends ConsumerWidget {
             return DataRow(cells: [
               DataCell(Center(child: Text(_formatDate(data.date)))),
               DataCell(Center(child: Text(data.currentOperatingHours.toStringAsFixed(0)))),
-              DataCell(Center(child: Text(data.rotationalFrequency.toStringAsFixed(_hasDecimals(data.rotationalFrequency) ? 2 : 0)))),
+              DataCell(Center(child: Text(data.rotationalFrequency.toStringAsFixed(2)))),
               DataCell(Center(child: Text(slCVal.toStringAsFixed(2)))),
               DataCell(Center(child: Text(lCVal.toStringAsFixed(3)))),
               if (adjustment!.status == 'open') 

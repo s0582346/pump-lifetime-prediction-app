@@ -9,14 +9,13 @@ class AdjustmentRepository {
 
   /// Get the current adjustment ID for a given pump
   /// [pumpId] The pump ID to get the adjustment ID for
-  Future<String> getCurrentAdjustmentId(String pumpId) async {
+  Future<String?> getCurrentAdjustmentId(String pumpId) async {
     try {
-      
       // First check for existing open adjustment for this pump
       final openAdjustment = await getOpenAdjustment(pumpId); 
 
       // if adjustment is found, return the adjustment id
-      if (openAdjustment.isNotEmpty) {
+      if (openAdjustment != null && openAdjustment.isNotEmpty) {
         return openAdjustment[0]['id'].toString();
       }
  
@@ -31,14 +30,15 @@ class AdjustmentRepository {
         [    
           adjustmentId,
           'open',
-          pumpId,  // Using passed pumpId
+          pumpId, 
           DateTime.now().toIso8601String(),
         ],
       );
 
       return adjustmentId; // return adjustment id
-    } catch (e) {
-      throw Exception('Failed to get or create adjustment: $e');
+    } catch (e, stack) {
+      Utils().logError(e, stack);
+      return null;
     }
   }
 
@@ -46,7 +46,7 @@ class AdjustmentRepository {
   Future<void> createAdjustment(String pumpId) async {
     try {
       // if no open adjustment found, get adjustment count
-      int count = await _getAdjustmentCount(pumpId) - 1;
+      int count = (await _getAdjustmentCount(pumpId) ?? 0) - 1; // -1 cause we do not count the first adjustment
       final adjustmentId = Utils().formatAdjustmentId(pumpId, count.toString());
 
 
@@ -61,8 +61,8 @@ class AdjustmentRepository {
         ],
       );
       
-    } catch (e) {
-      throw Exception('Failed to create adjustment: $e');
+    } catch (e, stack) {
+      Utils().logError(e, stack);
     }
   }
 
@@ -80,24 +80,34 @@ class AdjustmentRepository {
         ],
       );
       
-    } catch (e) {
-      throw Exception('Failed to create adjustment: $e');
+    } catch (e, stack) {
+      Utils().logError(e, stack);
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchAdjustmentsByPumpId(String pumpId) {
-    return db.rawQuery(
-      'SELECT * FROM adjustments WHERE pumpId = ?',
-      [pumpId],
-    );
+  Future<List<Map<String, dynamic>>>? fetchAdjustmentsByPumpId(String pumpId) {
+    try {
+      return db.rawQuery(
+        'SELECT * FROM adjustments WHERE pumpId = ?',
+        [pumpId],
+      );
+    } catch (e, stack) {
+      Utils().logError(e, stack);
+      return null;
+    }
   }
 
 
-  Future<List<Map<String, dynamic>>> getOpenAdjustment(pumpId) {
+  Future<List<Map<String, dynamic>>>? getOpenAdjustment(pumpId) {
+    try {
     return db.rawQuery(
       'SELECT * FROM adjustments WHERE status = ? AND pumpId = ? LIMIT 1',
       ['open', pumpId],
     );
+    } catch (e, stack) {
+      Utils().logError(e, stack);
+      return null;
+    }
   }
 
   /// Closes the adjustment by setting its status to "closed" and recording the closing time.
@@ -111,9 +121,9 @@ Future<void> closeAdjustment(Database db, String adjustmentId) async {
       where: 'id = ?',
       whereArgs: [adjustmentId],
     );
-  } catch (e) {
-    throw Exception('Failed to close adjustment: $e');
-  }
+  } catch (e, stack) {
+      Utils().logError(e, stack);
+    }
 }
 
   /// Closes the adjustment by setting its status to "closed" and recording the closing time.
@@ -127,15 +137,15 @@ Future<void> openAdjustment(Database db, String adjustmentId) async {
       where: 'id = ?',
       whereArgs: [adjustmentId],
     );
-  } catch (e) {
-    throw Exception('Failed to open adjustment: $e');
+  } catch (e, stack) {
+    Utils().logError(e, stack);
   }
 }
   
   /// Get the count of adjustments for a given pump
   /// If no adjustments are found, return 0
   /// [pumpId] The pump ID to get the adjustment count for
-  Future<int> _getAdjustmentCount(String pumpId) async {
+  Future<int?> _getAdjustmentCount(String pumpId) async {
   try {
     final List<Map<String, dynamic>> result = await db.rawQuery(
       'SELECT COUNT(*) as count FROM adjustments WHERE pumpId = ?',
@@ -150,8 +160,9 @@ Future<void> openAdjustment(Database db, String adjustmentId) async {
 
     return 0;
     
-  } catch (e) {
-    throw Exception('Failed to get adjustment count: $e');
+  } catch (e, stack) {
+    Utils().logError(e, stack);
+    return null;
   }
   }
 }

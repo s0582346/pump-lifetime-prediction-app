@@ -100,17 +100,7 @@ class PumpFormWidget extends ConsumerWidget {
         ),
         const SizedBox(height: 20),
         PrimaryButton(
-          onPressed: () async {
-            ref.read(isSubmittingProvider.notifier).state = true;
-            final success = ref.read(pumpValidationProvider);
-
-            if (context.mounted && success.isFormValid) {
-                Navigator.of(context).pop();
-                await pumpDataNotifier.savePumpData();
-                ref.invalidate(pumpsProvider);  // Invalidate the provider to trigger a rebuild
-                ref.read(isSubmittingProvider.notifier).state = false;
-            }
-          },
+          onPressed: () => pumpDataNotifier.savePumpData(context, validation.isFormValid),
           label: 'Save',
           buttonColor: AppColors.greyColor,
         ),

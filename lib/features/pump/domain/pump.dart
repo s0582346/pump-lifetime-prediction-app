@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump_type.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/rotor_geometry.dart';

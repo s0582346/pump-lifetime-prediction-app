@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
 import 'package:intl/intl.dart';
@@ -89,6 +91,25 @@ class Utils {
     if (value is num) return value.toDouble();
     if (value is String) return double.tryParse(value) ?? 0.0;
     return 0.0;
+  }
+
+  void showError(String message, {BuildContext? context}) {
+    if (context != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    } else {
+      debugPrint("Error: $message");
+    }
+  }
+
+  Future<void> logError(Object error, StackTrace stackTrace) async {
+    final file = File('path_to_app_dir/error_log.txt');
+    final now = DateTime.now();
+    await file.writeAsString(
+      '[$now] $error\n$stackTrace\n\n',
+      mode: FileMode.append,
+    );
   }
 
 

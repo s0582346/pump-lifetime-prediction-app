@@ -12,20 +12,18 @@ class AdjustmentService {
     final db = await DatabaseHelper().database;
     final adjustmentRepo = AdjustmentRepository(db: db);
     final adjustment = await adjustmentRepo.getOpenAdjustment(pumpId);
-    return adjustment[0];
+    return adjustment![0];
   }
 
   Future<void> createAdjustment(pumpId) async {
     final db = await DatabaseHelper().database;
     final adjustmentRepo = AdjustmentRepository(db: db);
-    print('Creating adjustment');
     await adjustmentRepo.createAdjustment(pumpId);
   }
 
   Future<void> createSumAdjustment(pumpId) async {
     final db = await DatabaseHelper().database;
     final adjustmentRepo = AdjustmentRepository(db: db);
-    print('Creating sum adjustment');
     await adjustmentRepo.createSumAdjustment(pumpId);
   }
 
@@ -41,10 +39,13 @@ class AdjustmentService {
     await adjustmentRepo.openAdjustment(db, adjustmentId);
   }
 
-  Future<List<Adjustment>?> fetchAdjustmentsByPumpId(pumpId) async {
-    final db = await DatabaseHelper().database;
-    final adjustmentRepo = AdjustmentRepository(db: db);
-    final adjustments = await adjustmentRepo.fetchAdjustmentsByPumpId(pumpId);
-    return adjustments.map((a) => Adjustment.fromMap(a)).toList();
-  }
+ Future<List<Adjustment>> fetchAdjustmentsByPumpId(pumpId) async {
+  final db = await DatabaseHelper().database;
+  final adjustmentRepo = AdjustmentRepository(db: db);
+  final rawAdjustments = await adjustmentRepo.fetchAdjustmentsByPumpId(pumpId);
+
+  if (rawAdjustments == null) return [];
+
+  return rawAdjustments.map((a) => Adjustment.fromMap(a)).toList();
+}
 }

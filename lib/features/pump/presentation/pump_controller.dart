@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/application/adjustment_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/application/pump_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
@@ -9,14 +9,13 @@ import 'package:flutter_predictive_maintenance_app/features/pump/domain/rotor_st
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/time_entry.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/presentation/pump_validation_state.dart';
 import 'package:flutter_predictive_maintenance_app/shared/result_info.dart';
+import 'package:flutter_predictive_maintenance_app/shared/widgets/alert_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
 
-
-
 class PumpController extends Notifier<Pump> {
-  late final AdjustmentService _adjustmentService = ref.read(adjustmentServiceProvider);
   late final PumpService _pumpServiceProvider = ref.read(pumpServiceProvider);
+  late final AdjustmentService _adjustmentService = ref.read(adjustmentServiceProvider);
   
   
   @override
@@ -31,7 +30,6 @@ class PumpController extends Notifier<Pump> {
   set speedChange(String? value) => state = state.copyWith(speedChange: value);
   set medium(String? value) => state = state.copyWith(medium: value);
   set measurableParameter(MeasurableParameter? value) {
-    print('Setting measurable parameter: ${value.toString()}');
     state = state.copyWith(measurableParameter: value);
   } 
   set permissibleTotalWear(String value) => state = state.copyWith(permissibleTotalWear: value);
@@ -40,24 +38,60 @@ class PumpController extends Notifier<Pump> {
   
 
 
-  Future<ResultInfo> savePumpData() async {
-    final pump = state;
-    final pumpId = generatePumpId(pump.type!.label); // Generate a unique pump ID
-    final updatedPump = pump.copyWith(id: pumpId);
+  Future<void> savePumpData(BuildContext context, isValid) async {
+    final ref = this.ref;
+    ref.read(isSubmittingProvider.notifier).state = true;
+    FocusManager.instance.primaryFocus?.unfocus(); // Close keyboard
+    ResultInfo? result;
 
-    try {
-      await _pumpServiceProvider.savePump(updatedPump);
-      await _adjustmentService.createSumAdjustment(pumpId);
-      await _adjustmentService.createAdjustment(pumpId);
-      state = build();
-      return ResultInfo.success(); 
-    } catch (e) {
-      return ResultInfo.error('Error saving pump: $e');  
+    if (context.mounted && isValid) {
+      final pump = state;
+      final pumpId = generatePumpId(pump.type!.label); // Generate a unique pump ID
+      final updatedPump = pump.copyWith(id: pumpId);
+
+      result = await _pumpServiceProvider.savePump(updatedPump, _adjustmentService);
+      if (result.success) {
+        Navigator.of(context).pop();
+        ref.invalidate(pumpsProvider); // trigger a refresh of the pumps list
+        ref.read(isSubmittingProvider.notifier).state = false;
+        reset();
+      } else {
+        if (context.mounted) {
+          showDialog(
+              context: context,
+              builder: (context) => AlertWidget(
+                title: 'Oops! Something went wrong',
+                body: result!.errorMessage ?? 'Error saving pump.',
+              )
+            );
+        }
+      }     
     }
   }
 
-  Future<void> deletePump(String id) async {
-    await PumpService().deletePump(id);
+  Future<void> deletePump(String id, BuildContext context) async {
+    ResultInfo? result;
+
+    if (context.mounted) {
+      result = await PumpService().deletePump(id);
+      if (result.success) {
+        ref.invalidate(pumpsProvider);
+      } else {
+        if (context.mounted) {
+          showDialog(
+          context: context,
+          builder: (context) => AlertWidget(
+            title: 'Oops! Something went wrong',
+            body: result!.errorMessage ?? 'Error deleting pump.',
+          )
+        );
+        }
+      }
+    }  
+  }
+
+  void reset() {
+    state = build();
   }
 }
 

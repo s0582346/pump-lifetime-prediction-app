@@ -20,36 +20,32 @@ class PredictionService {
     final predictionsMapList = await predictionService.getPredictions(pump.id);
 
     return predictionsMapList.map((map) => Prediction.fromMap(map)).toList();
-  } catch (e, stackTrace) {
-    // Log the error and return an empty list as a fallback
-    print('Error fetching predictions: $e\n$stackTrace');
+  } catch (e, stack) {
+    Utils().logError(e, stack);
     return [];
   }
 }
 
 Future<void> predict(String adjustmentId, Pump pump) async {
-  final db = await DatabaseHelper().database;
-  final predictionService = PredictionRepository(db: db);
-  final measurementService = MeasurementService();
-  final math = MathUtils();
-  
+  try {
+    final db = await DatabaseHelper().database;
+    final predictionService = PredictionRepository(db: db);
+    final measurementService = MeasurementService();
+    final math = MathUtils();
 
-  // Check if an existing prediction already exists
-  Prediction? existingPrediction = await predictionService.getPredictionByAdjustmentId(adjustmentId);
-  Prediction prediction = existingPrediction ?? Prediction();
-  
+    // Check if an existing prediction already exists
+    Prediction? existingPrediction = await predictionService.getPredictionByAdjustmentId(adjustmentId);
+    Prediction prediction = existingPrediction ?? Prediction();
+
     final List<double> currentOperatingHours = [];
     final List<double> Qn = [];
     final List<double> pn = [];
     List<double> coeffs = [];
 
-
     final measurements = await measurementService.fetchMeasurementsFromAdjustment(adjustmentId, pump.id);
 
-    if (measurements == null || measurements.length < 3) {
-      return;
-    }
-  
+    if (measurements == null || measurements.length < 3) return;
+
     if (pump.measurableParameter == MeasurableParameter.volumeFlow) {
       for (final m in measurements) {
         final double? hours = m.currentOperatingHours.toDouble();
@@ -61,48 +57,43 @@ Future<void> predict(String adjustmentId, Pump pump) async {
         }
       }
 
-      final zeroCount = currentOperatingHours.where((h) => h == 0.0).length;
-      if (zeroCount > 1) return;
-    
-      coeffs = math.fitQuadratic(currentOperatingHours, Qn); 
+      if (currentOperatingHours.where((h) => h == 0.0).length > 1) return;
+      coeffs = math.fitQuadratic(currentOperatingHours, Qn);
     } else {
       for (final m in measurements) {
         final double? hours = m.currentOperatingHours.toDouble();
-        final double? flow = m.pn;
+        final double? pressure = m.pn;
 
-        if (hours != null && flow != null) {
+        if (hours != null && pressure != null) {
           currentOperatingHours.add(hours);
-          pn.add(flow);
+          pn.add(pressure);
         }
       }
 
-      final zeroCount = currentOperatingHours.where((h) => h == 0.0).length;
-      if (zeroCount > 1) return;
-
-      coeffs = math.fitQuadratic(currentOperatingHours, pn); 
+      if (currentOperatingHours.where((h) => h == 0.0).length > 1) return;
+      coeffs = math.fitQuadratic(currentOperatingHours, pn);
     }
-   
+
     final a = coeffs.length > 2 ? coeffs[2] : 0.0;
     final b = coeffs.length > 1 ? coeffs[1] : 0.0;
     final c = coeffs.length > 0 ? coeffs[0] : 0.0;
 
     final solutions = math.findIntersectionAtY(a, b, c, 0.900);
-
     double? estimatedOperatingHours;
-    if (solutions.isNotEmpty) {
-       for (final x in solutions) {
-        if (x >= 0) {
-          estimatedOperatingHours = x;
-        }
+
+    for (final x in solutions) {
+      if (x >= 0) {
+        estimatedOperatingHours = x;
       }
     }
 
-    // format estimated maintenance date
     DateTime? estimatedMaintenanceDate;
-    if (estimatedOperatingHours != null)
-    {
-      final remainingHoursTillMaintenance = ((estimatedOperatingHours - currentOperatingHours.last).abs()).toInt();
-      estimatedMaintenanceDate = Utils().getEstimatedMaintenanceDate(remainingHoursTillMaintenance, DateTime.parse(measurements.last.date));
+    if (estimatedOperatingHours != null) {
+      final remainingHours = ((estimatedOperatingHours - currentOperatingHours.last).abs()).toInt();
+      estimatedMaintenanceDate = Utils().getEstimatedMaintenanceDate(
+        remainingHours,
+        DateTime.parse(measurements.last.date),
+      );
     }
 
     prediction = prediction.copyWith(
@@ -114,11 +105,20 @@ Future<void> predict(String adjustmentId, Pump pump) async {
       c: c,
     );
 
-    (existingPrediction != null) ? await predictionService.updatePrediction(prediction) : await predictionService.savePrediction(prediction, adjustmentId);
+    if (existingPrediction != null) {
+      await predictionService.updatePrediction(prediction);
+    } else {
+      await predictionService.savePrediction(prediction, adjustmentId);
+    }
+
+  } catch (e, stack) {
+    Utils().logError(e, stack);
+  }
 }
 
 Future<void> predictTotal(Pump pump) async {
-  final math = MathUtils();
+  try {
+    final math = MathUtils();
   final adjustmentId = '${pump.id}-S'; 
   final db = await DatabaseHelper().database;
   final predictionService = PredictionRepository(db: db);
@@ -181,5 +181,9 @@ Future<void> predictTotal(Pump pump) async {
   );
 
   (existingPrediction != null) ? await predictionService.updatePrediction(prediction) : await predictionService.savePrediction(prediction, adjustmentId);
+
+  } catch (e, stack) {
+    Utils().logError(e, stack);
+  }
 }
 }

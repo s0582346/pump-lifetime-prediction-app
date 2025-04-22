@@ -1,9 +1,10 @@
 class ResultInfo {
   final bool success;
   final errorMessage;
+  final prop;
 
-  ResultInfo.success() : success = true, errorMessage = null;
+  ResultInfo.success() : success = true, errorMessage = null, prop = null;
   
-  ResultInfo.error(this.errorMessage) : success = false;
+  ResultInfo.error(this.prop, this.errorMessage) : success = false;
   
 }

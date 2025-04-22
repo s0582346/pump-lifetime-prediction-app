@@ -55,7 +55,7 @@ class MeasurementService {
         final result = Utils().normalize(pump.measurableParameter!, reference, newMeasurement);
         
         if (result < wearLimit && !forceSave) {
-          return ResultInfo.error(result); // return if the wear limit is exceeded
+          return ResultInfo.error('flow', result); // return if the wear limit is exceeded
         }
         isVolumeFlow ? Qn = result : pn = result;
       }
@@ -118,7 +118,7 @@ class MeasurementService {
         }
       }
 
-      final id = !isEditing ? generateMeasurementId(adjustmentId) : newMeasurement.id;
+      final id = !isEditing ? generateMeasurementId(adjustmentId!) : newMeasurement.id;
 
       // Create the updated measurement
       final updatedMeasurement = newMeasurement.copyWith(
@@ -133,17 +133,13 @@ class MeasurementService {
 
       // Save measurement and prediction
       await measurementRepo.saveMeasurement(updatedMeasurement);
-      await predictionService.predict(adjustmentId, pump);
+      await predictionService.predict(adjustmentId!, pump);
       await predictionService.predictTotal(pump);
 
-
       return ResultInfo.success();
-    } catch (e, stackTrace) {
-      // TODO use logError
-      debugPrint('Error saving measurement: $e');
-      debugPrint(stackTrace.toString());
-
-      return ResultInfo.error(stackTrace.toString());
+    } catch (e, stack) {
+      Utils().logError(e, stack);
+      return ResultInfo.error(null, 'Error saving measurement');
     }
   }
 
