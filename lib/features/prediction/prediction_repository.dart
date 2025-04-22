@@ -1,6 +1,7 @@
 
 
 import 'package:flutter_predictive_maintenance_app/features/prediction/prediction.dart';
+import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:sqflite/sqflite.dart';
 
 class PredictionRepository {
@@ -21,25 +22,36 @@ class PredictionRepository {
         [pumpId],
       );
       return predictions;
-    } catch (e) {
-      throw Exception('Failed to get predictions: $e');
+    } catch (e, stack) {
+      Utils().logError(e, stack);
+      return [];
     }
   }
 
   Future<void> savePrediction(Prediction prediction, adjustmentId) async {
-    await db.insert('predictions', prediction.toMap(), conflictAlgorithm: ConflictAlgorithm.replace,);
+    try {
+      await db.insert('predictions', prediction.toMap(), conflictAlgorithm: ConflictAlgorithm.replace,);
+    } catch (e, stack) {
+      Utils().logError(e, stack);
+    }
   }
 
   Future<void> updatePrediction(Prediction prediction) async {
+    try {
     await db.update(
       'predictions',
       prediction.toMap(),
       where: 'adjustmentId = ?',
       whereArgs: [prediction.adjusmentId],
     );
+    } catch (e, stack) {
+      Utils().logError(e, stack);
+    }
   }
 
    Future<Prediction?> getPredictionByAdjustmentId(String adjustmentId) async {
+    try {
+
     final List<Map<String, dynamic>> maps = await db.query(
       'predictions',
       where: 'adjustmentId = ?',
@@ -50,6 +62,10 @@ class PredictionRepository {
       return Prediction.fromMap(maps.first);
     }
     return null;
+    } catch (e, stack) {
+      Utils().logError(e, stack);
+      return null;
+    }
   }
 
 }
