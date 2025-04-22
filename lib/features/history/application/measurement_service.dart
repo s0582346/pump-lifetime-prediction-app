@@ -176,28 +176,6 @@ class MeasurementService {
     return measurements.map((e) => Measurement.fromMap(e)).toList();
   }
 
-
-  
-  /// Get first measurement
-  Future<Map<String, dynamic>?> getFirstMeasurement(String adjustmentId) async {
-    final db = await DatabaseHelper().database;
-    
-    final result = await db.rawQuery(
-        ''' SELECT *
-        FROM measurements 
-        WHERE adjustmentId = ? 
-        ORDER BY date ASC 
-        LIMIT 1; ''',
-        [adjustmentId],
-    );
-
-    if (result.isEmpty) {
-      return null;
-    }
-    
-    return result.first;
-  }
-
   String generateMeasurementId(String adjustmentId) {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     final random = Random();
