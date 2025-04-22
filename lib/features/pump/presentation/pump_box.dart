@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
-import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump_type.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/presentation/pump_controller.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
 import 'package:flutter_predictive_maintenance_app/shared/widgets/settings_widget.dart';
@@ -59,10 +57,8 @@ class PumpBox extends ConsumerWidget {
                   SettingsOption(
                     label: 'Delete',
                     onTap: () {
-                      ref.read(pumpFormProvider.notifier).deletePump(pump.id);
-                      if (context.mounted) {
-                        ref.invalidate(pumpsProvider);
-                      }                    
+                      ref.read(pumpFormProvider.notifier).deletePump(pump.id, context);
+                                       
                     },
                   ),
                 ]),

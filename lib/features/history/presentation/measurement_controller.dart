@@ -70,24 +70,34 @@ class MeasurementController extends Notifier<Measurement> {
         ref.read(chartControllerProvider.notifier).refresh();
         ref.read(dashboardControllerProvider.notifier).refresh();
         if (context.mounted) Navigator.of(context).pop();
-      } else {
+      } else { 
         if (context.mounted) {
-          final ratio = pump.measurableParameter == MeasurableParameter.volumeFlow ? 'Q/n' : 'p/n';
-
-          showDialog(
-            context: context,
-            builder: (context) => AlertWidget(
-              body: "The calculated $ratio exceeds the max. permissble loss. Do you still want to proceed?",
-              onTap: () async {
-                result = await _measurementService.saveMeasurement(state, pump, forceSave: true);
-                reset();
-                ref.read(historyControllerProvider.notifier).refresh();
-                ref.read(chartControllerProvider.notifier).refresh();
-                ref.read(dashboardControllerProvider.notifier).refresh();
-                if (context.mounted) Navigator.of(context).popUntil((route) => route.isFirst); 
-              }  
-            )
-          );
+          if (result.prop != null) {
+            final ratio = pump.measurableParameter == MeasurableParameter.volumeFlow ? 'Q/n' : 'p/n';
+            showDialog(
+              context: context,
+              builder: (context) => AlertWidget(
+                body: "The calculated $ratio exceeds the max. permissble loss. Do you still want to proceed?",
+                onTap: () async {
+                  result = await _measurementService.saveMeasurement(state, pump, forceSave: true);
+                  reset();
+                  ref.read(historyControllerProvider.notifier).refresh();
+                  ref.read(chartControllerProvider.notifier).refresh();
+                  ref.read(dashboardControllerProvider.notifier).refresh();
+                  if (context.mounted) Navigator.of(context).popUntil((route) => route.isFirst); 
+                }  
+              )
+            );
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) => AlertWidget(
+                title: 'Oops! Something went wrong',
+                body: result!.errorMessage ?? 'Error saving measurement.',
+              )
+            );
+          }
+        
         }
       }
       ref.read(isSubmittingProvider.notifier).state = false;

@@ -14,7 +14,7 @@ class AlertWidget extends StatelessWidget {
     return AlertDialog(
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
       backgroundColor: Colors.grey[100],
-      title: Text(title, style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold)),
+      title: Text(title, style: const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold)),
       content: Text(
         body,
         style: const TextStyle(
@@ -24,19 +24,28 @@ class AlertWidget extends StatelessWidget {
       ),
       actionsAlignment: MainAxisAlignment.center,
       actions: [
-        PrimaryButton(
-          onPressed: () => Navigator.of(context).pop(),
-          label: 'Cancel',
-          buttonColor: AppColors.greyColor,
-        ),
-        const SizedBox(width: 10),
-        PrimaryButton(
-          onPressed: () {
-            if (onTap != null) onTap!();
-          },
-          label: 'Proceed',
-          buttonColor: AppColors.primaryColor,
-        ),
+        if (onTap == null) ...[
+          const SizedBox(width: 10),
+          PrimaryButton(
+            onPressed: () => Navigator.of(context).pop(),
+            label: 'OK',
+            buttonColor: AppColors.primaryColor,
+          ),
+        ] else ...[
+          PrimaryButton(
+            onPressed: () => Navigator.of(context).pop(),
+            label: 'Cancel',
+            buttonColor: AppColors.greyColor,
+          ),
+          const SizedBox(width: 10),
+          PrimaryButton(
+            onPressed: () {
+              onTap!();
+            },
+            label: 'Proceed',
+            buttonColor: AppColors.primaryColor,
+          ),
+        ],
       ],
     );
   }
