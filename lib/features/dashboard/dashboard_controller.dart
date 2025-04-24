@@ -34,7 +34,7 @@ class DashboardController extends AsyncNotifier<DashboardState> {
       final predictions = await _predictionService.getPredictions(pump);
       final measurements = await _measurementService.fetchMeasurementsByPumpId(pump.id);
       adjustments = await _adjustmentService.fetchAdjustmentsByPumpId(pump.id);
-      adjustments = adjustments!.where((a) => a.id != '${pump.id}-S').toList(); // first adjustment is the sum of all adjustments, so we skip it
+      adjustments = adjustments.where((a) => a.id != '${pump.id}-S').toList(); // first adjustment is the sum of all adjustments, so we skip it
 
       return DashboardState(
         measurements: measurements,
