@@ -1,12 +1,11 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Utils {
 
@@ -103,8 +102,10 @@ class Utils {
     }
   }
 
+  /// Log error to a file in the app's documents directory
   Future<void> logError(Object error, StackTrace stackTrace) async {
-    final file = File('path_to_app_dir/error_log.txt');
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File('${dir.path}/error_log.txt');
     final now = DateTime.now();
     await file.writeAsString(
       '[$now] $error\n$stackTrace\n\n',
