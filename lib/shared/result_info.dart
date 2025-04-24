@@ -6,5 +6,4 @@ class ResultInfo {
   ResultInfo.success() : success = true, errorMessage = null, prop = null;
   
   ResultInfo.error(this.prop, this.errorMessage) : success = false;
-  
 }

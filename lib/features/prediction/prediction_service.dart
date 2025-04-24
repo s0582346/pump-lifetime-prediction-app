@@ -149,7 +149,7 @@ Future<void> predictTotal(Pump pump) async {
     if (zeroCount > 1) return;
 
     coeffs = math.fitQuadratic(currentOperatingHoursTotal, QnTotal); 
-  } else if (pump.measurableParameter == 'pressure') {
+  } else if (pump.measurableParameter == MeasurableParameter.pressure) {
     for (final m in measurementsTotal) {
       final double? hours = m.currentOperatingHours.toDouble();
       final double? flow = m.pnTotal;

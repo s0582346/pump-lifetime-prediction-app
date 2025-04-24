@@ -72,12 +72,11 @@ class MeasurementController extends Notifier<Measurement> {
         if (context.mounted) Navigator.of(context).pop();
       } else { 
         if (context.mounted) {
-          if (result.prop != null) {
-            final ratio = pump.measurableParameter == MeasurableParameter.volumeFlow ? 'Q/n' : 'p/n';
+          if (result.prop != null && result.errorMessage != null) {
             showDialog(
               context: context,
               builder: (context) => AlertWidget(
-                body: "The calculated $ratio exceeds the max. permissble loss. Do you still want to proceed?",
+                body: result!.errorMessage,
                 onTap: () async {
                   result = await _measurementService.saveMeasurement(state, pump, forceSave: true);
                   reset();
