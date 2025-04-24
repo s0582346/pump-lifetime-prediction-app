@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/dashboard/dashboard_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_controller.dart';
-import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_screen.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/measurement_validation_state.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/measurable_parameter.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump.dart';
@@ -183,7 +182,6 @@ MeasurementValidationState validateMeasurement(
 final measurementValidationProvider = Provider<MeasurementValidationState>((ref) {
   final measurement = ref.watch(measurementProvider);
   final pump = ref.watch(selectedPumpProvider);
-  //final isSubmitting = ref.watch(isSubmittingProvider);
 
   return validateMeasurement(measurement, pump);
 });
