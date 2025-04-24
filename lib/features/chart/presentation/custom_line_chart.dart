@@ -31,9 +31,15 @@ class CustomLineChart extends StatelessWidget {
     const double yAxisStart = 0.8;
 
     // calculate actual min value based on the blue line spots
-    final double actualMin = blueLineSpots
-    .map((spot) => spot.y)
-    .reduce((a, b) => a < b ? a : b);
+    final spots = blueLineSpots ?? [];
+    final double actualMin;
+    if (spots.isEmpty) {
+      actualMin = yAxisStart;
+    } else {
+      actualMin = spots
+          .map((spot) => spot.y)
+          .reduce((a, b) => a < b ? a : b);
+    }
 
     final double minY = (actualMin < yAxisStart)
     ? (yAxisStart - 0.1) : yAxisStart;
