@@ -13,7 +13,6 @@ class CustomLineChart extends StatelessWidget {
   final double yIntercept;
   final List<FlSpot> blueLineSpots;
   final List<FlSpot> grayLineSpots;
-  final minY = 0.8;
   final maxY = 1.1;
   final yInterval = 0.05;
 
@@ -28,12 +27,24 @@ class CustomLineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    const double yAxisStart = 0.8;
+
+    // calculate actual min value based on the blue line spots
+    final double actualMin = blueLineSpots
+    .map((spot) => spot.y)
+    .reduce((a, b) => a < b ? a : b);
+
+    final double minY = (actualMin < yAxisStart)
+    ? (yAxisStart - 0.1) : yAxisStart;
+
+
     List<FlSpot> yInterceptLine = [const FlSpot(0, 0)];
     if (yIntercept != 0) {
       yInterceptLine = [
         // subtract the x-axis start from the y-intercept to get the correct x value
         FlSpot(yIntercept - xAxisStart, 0.9), 
-        FlSpot(yIntercept - xAxisStart, 0.8),
+        FlSpot(yIntercept - xAxisStart, minY),
       ];
     }
     

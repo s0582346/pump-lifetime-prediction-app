@@ -61,6 +61,11 @@ class ChartWidget extends ConsumerWidget {
       );
     }).toList();
 
+    final lastHours = lastMeasurement?.currentOperatingHours?.toDouble() ?? 0.0;
+    final xAxisEnd = (prediction.estimatedOperatingHours != null && prediction.estimatedOperatingHours! > lastHours)
+        ? prediction.estimatedOperatingHours!
+        : lastHours ?? 0.0;
+
     final legendItems = [
       LegendItem(
         label: isVolumeFlow ? 'Q/n' : 'p/n',
@@ -118,9 +123,7 @@ class ChartWidget extends ConsumerWidget {
               blueLineSpots: blueSpots,
               grayLineSpots: regression ?? [],
               xAxisStart: firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
-              xAxisEnd: prediction.estimatedOperatingHours ??
-                  lastMeasurement?.currentOperatingHours.toDouble() ??
-                  0.0,
+              xAxisEnd: xAxisEnd,
               yIntercept: yIntercept ?? 0.0,
             ),
           ),
