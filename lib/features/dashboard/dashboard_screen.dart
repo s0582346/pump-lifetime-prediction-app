@@ -2,7 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/prediction/prediction.dart';
-import 'package:flutter_predictive_maintenance_app/features/chart/presentation/chart_widget.dart';
 import 'package:flutter_predictive_maintenance_app/features/dashboard/dashboard_controller.dart';
 import 'package:flutter_predictive_maintenance_app/features/dashboard/dashboard_widget.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';

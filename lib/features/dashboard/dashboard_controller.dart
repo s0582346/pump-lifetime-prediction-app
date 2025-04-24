@@ -5,7 +5,6 @@ import 'package:flutter_predictive_maintenance_app/features/prediction/predictio
 import 'package:flutter_predictive_maintenance_app/features/history/application/measurement_service.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/domain/measurement.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation.dart';
-import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
@@ -34,7 +33,6 @@ class DashboardController extends AsyncNotifier<DashboardState> {
     try {
       final predictions = await _predictionService.getPredictions(pump);
       final measurements = await _measurementService.fetchMeasurementsByPumpId(pump.id);
-      final groupedMeasurements = Utils().groupMeasurements(measurements);
       adjustments = await _adjustmentService.fetchAdjustmentsByPumpId(pump.id);
       adjustments = adjustments!.where((a) => a.id != '${pump.id}-S').toList(); // first adjustment is the sum of all adjustments, so we skip it
 
