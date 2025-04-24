@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/chart/domain/adjustment.dart';
 import 'package:flutter_predictive_maintenance_app/features/prediction/prediction.dart';
 
