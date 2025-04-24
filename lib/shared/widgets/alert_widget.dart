@@ -7,7 +7,7 @@ class AlertWidget extends StatelessWidget {
   final String body;
   final VoidCallback? onTap;
 
-  const AlertWidget({super.key, this.title = 'Attention', required this.body, this.onTap});
+  const AlertWidget({super.key, this.title = 'Attention!', required this.body, this.onTap});
 
   @override
   Widget build(BuildContext context) {

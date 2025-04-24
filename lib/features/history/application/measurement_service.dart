@@ -35,27 +35,32 @@ class MeasurementService {
       // Initialize variables with default values
       Measurement? reference, referenceTotal;
       double? Qn, pn, QnTotal, pnTotal;
-      double? currentOperatingHours = double.tryParse(newMeasurement.currentOperatingHours ?? '') ?? 0.0; // default current operating hours from the new measurement
+      double? currentOperatingHours = double.tryParse(newMeasurement.currentOperatingHours) ?? 0.0; // default current operating hours from the new measurement
       final isVolumeFlow = pump.measurableParameter == MeasurableParameter.volumeFlow;
+      final previousEntry = measurementsTotal.isNotEmpty ? (getPreviousEntry(measurementsTotal, newMeasurement.id) ?? measurementsTotal.last) : null; // get the previous entry for the current adjustment
 
+      if (previousEntry != null && newMeasurement.date.isBefore(DateTime.parse(previousEntry.date)) && !forceSave) {
+        return ResultInfo.error('date', 'Date cannot be earlier than the previous entry date. Do you still want to proceed?');
+      }
+
+      // default flows 
       if (isVolumeFlow) {
-        // default Qn 
         Qn = 1;
         QnTotal = 1; 
       } else {
-        // default pn
         pn = 1; 
         pnTotal = 1;
       }
 
     
       // Compute reference values if measurements exist
-      if (measurements.isNotEmpty && (newMeasurement.id == null || getPreviousEntry(measurements, newMeasurement.id) != null)) {
+      if (measurements.isNotEmpty && (newMeasurement.id == null || previousEntry != null)) {
         reference = measurements.first;
         final result = Utils().normalize(pump.measurableParameter!, reference, newMeasurement);
         
         if (result < wearLimit && !forceSave) {
-          return ResultInfo.error('flow', result); // return if the wear limit is exceeded
+          final ratio = pump.measurableParameter == MeasurableParameter.volumeFlow ? 'Q/n' : 'p/n';
+          return ResultInfo.error('flow', "The calculated $ratio exceeds the max. permissble wear (0.900). Do you still want to proceed?"); // return if the wear limit is exceeded
         }
         isVolumeFlow ? Qn = result : pn = result;
       }
@@ -79,16 +84,12 @@ class MeasurementService {
       
           if (isEditing) {
             previousEntry = getPreviousEntry(measurementsTotal, newMeasurement.id);
-            startDate = (previousEntry != null) ? DateTime.tryParse(previousEntry.date) : DateTime.now();
-            //previousOperatingHours = (previousEntry != null) ? previousEntry.currentOperatingHours : 0;
+            startDate = (previousEntry != null) ? DateTime.tryParse(previousEntry.date) : newMeasurement.date;
           } else {
             startDate = DateTime.tryParse(lastMeasurement.date);
           }
           currentDate = newMeasurement.date;
           avgOperatingHoursPerDay = int.tryParse(newMeasurement.averageOperatingHoursPerDay) ?? 0;
-
-          debugPrint('Start Date: $startDate, Current Operating Hours: $lastOperatingHours');
-          debugPrint('Average Operating Hours Per Day: $avgOperatingHoursPerDay, Current Date: $currentDate');
 
           currentOperatingHours = Utils().calculateCurrentOperatingHours(
             isEditing ? previousEntry?.currentOperatingHours : lastOperatingHours,
@@ -96,12 +97,9 @@ class MeasurementService {
             currentDate,
             startDate, 
           );
-
-          debugPrint('Updated Current Operating Hours: $currentOperatingHours');
         }
 
         if (pump.typeOfTimeEntry == TimeEntry.relative) {
-          debugPrint("Calculating relative current operating hours");
 
           if (isEditing) {
             final previousEntry = getPreviousEntry(measurementsTotal, newMeasurement.id);
@@ -139,6 +137,7 @@ class MeasurementService {
       return ResultInfo.success();
     } catch (e, stack) {
       Utils().logError(e, stack);
+      print('Error saving measurement: $e');
       return ResultInfo.error(null, 'Error saving measurement');
     }
   }
