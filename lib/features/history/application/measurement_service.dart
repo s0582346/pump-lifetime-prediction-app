@@ -39,10 +39,16 @@ class MeasurementService {
       final previousEntry = measurementsTotal.isNotEmpty ? (getPreviousEntry(measurementsTotal, newMeasurement.id) ?? measurementsTotal.last) : null; // get the previous entry for the current adjustment
 
       if (previousEntry != null && !forceSave) {
-        if (newMeasurement.date.isBefore(DateTime.parse(previousEntry.date))) {
+        final prevDateOnly   = parseDateOnly(previousEntry.date);
+        final newDateOnly    = DateTime(
+          newMeasurement.date.year,
+          newMeasurement.date.month,
+          newMeasurement.date.day,
+        );
+        if (newDateOnly.isBefore(prevDateOnly)) {
           return ResultInfo.error('date', 'This date comes before your last entry. Do you still want to proceed?');
         }
-        if (newMeasurement.currentOperatingHours < previousEntry.currentOperatingHours) {
+        if (int.parse(newMeasurement.currentOperatingHours) < previousEntry.currentOperatingHours) {
           return ResultInfo.error('operatingHours', 'This value is less than your last recorded operating hours. Do you still want to proceed?');
         }
       }
@@ -140,6 +146,7 @@ class MeasurementService {
 
       return ResultInfo.success();
     } catch (e, stack) {
+      print('Error saving measurement: $e');
       Utils().logError(e, stack);
       return ResultInfo.error(null, 'Error saving measurement');
     }
@@ -185,6 +192,11 @@ class MeasurementService {
     String randomLetters = List.generate(3, (_) => letters[random.nextInt(letters.length)]).join();
 
     return '$adjustmentId-$randomLetters';
+  }
+
+  DateTime parseDateOnly(String isoDateString) {
+    final dt = DateTime.parse(isoDateString);
+    return DateTime(dt.year, dt.month, dt.day);
   }
   
 }
