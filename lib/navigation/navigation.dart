@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/dashboard/dashboard_screen.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/presentation/initial_screen.dart';
+import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/navigation/navigation_provider.dart';
 import 'package:flutter_predictive_maintenance_app/features/history/presentation/history_screen.dart';
@@ -123,7 +124,7 @@ class _NavigationState extends ConsumerState<Navigation> {
                 ],
               ),
               onTap: () => openAssetPDF(
-                'assets/nav/anleitung_app_standzeitbestimmung.pdf', 
+                'assets/anleitung_app_standzeitbestimmung.pdf', 
                 'anleitung_app_standzeitbestimmung.pdf',
               ),
             ),
@@ -191,8 +192,8 @@ class _NavigationState extends ConsumerState<Navigation> {
 
     // Open with default PDF viewer
     await OpenFile.open(file.path);
-  } catch (e) {
-    throw ('Error opening PDF: $e');
+  } catch (e, stackTrace) {
+    Utils().logError(e, stackTrace);
   }
   }
   

@@ -176,9 +176,6 @@ class SumLineChart extends StatelessWidget {
   }) {
     double limit = 0.9;
     final List<LineChartBarData> predictionLines = [];
-    final count = adjustments.length;
-
-    print('Count: $count');
 
     if (predictions == null) return predictionLines;
 
