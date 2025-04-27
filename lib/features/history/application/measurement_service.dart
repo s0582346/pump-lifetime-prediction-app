@@ -38,8 +38,13 @@ class MeasurementService {
       final isVolumeFlow = pump.measurableParameter == MeasurableParameter.volumeFlow;
       final previousEntry = measurementsTotal.isNotEmpty ? (getPreviousEntry(measurementsTotal, newMeasurement.id) ?? measurementsTotal.last) : null; // get the previous entry for the current adjustment
 
-      if (previousEntry != null && newMeasurement.date.isBefore(DateTime.parse(previousEntry.date)) && !forceSave) {
-        return ResultInfo.error('date', 'Date cannot be earlier than the previous entry date. Do you still want to proceed?');
+      if (previousEntry != null && !forceSave) {
+        if (newMeasurement.date.isBefore(DateTime.parse(previousEntry.date))) {
+          return ResultInfo.error('date', 'This date comes before your last entry. Do you still want to proceed?');
+        }
+        if (newMeasurement.currentOperatingHours < previousEntry.currentOperatingHours) {
+          return ResultInfo.error('operatingHours', 'This value is less than your last recorded operating hours. Do you still want to proceed?');
+        }
       }
 
       // default flows 
