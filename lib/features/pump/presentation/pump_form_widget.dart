@@ -30,8 +30,7 @@ class PumpFormWidget extends ConsumerWidget {
           initialValue: pumpDataState.name,
           onChanged: (value) => pumpDataNotifier.name = value,
           keyboardType: TextInputType.text,
-          validator: validation.nameError,
-          isSubmitting: isSubmitting,
+          validator: (isSubmitting) ? validation.nameError : null,
         ),
         SelectWidget<PumpType>(
           label: 'Pump Type',
@@ -68,7 +67,6 @@ class PumpFormWidget extends ConsumerWidget {
           initialValue: pumpDataState.solidConcentration,
           onChanged: (value) => pumpDataNotifier.solidConcentration = value,
           keyboardType: TextInputType.number,
-          isSubmitting: isSubmitting,
           validator: validation.solidConcentrationError,
         ),
         InputWidget(
@@ -76,8 +74,7 @@ class PumpFormWidget extends ConsumerWidget {
           placeholder: 'z.B. 70%',
           initialValue: pumpDataState.permissibleTotalWear,
           onChanged: (value) => pumpDataNotifier.permissibleTotalWear = value,
-          validator: validation.persmissibleTotalWearError,
-          isSubmitting: isSubmitting,
+          validator: (isSubmitting) ? validation.persmissibleTotalWearError : null,
           keyboardType: TextInputType.number,
         ),
         SelectWidget<MeasurableParameter>(
@@ -100,7 +97,11 @@ class PumpFormWidget extends ConsumerWidget {
         ),
         const SizedBox(height: 20),
         PrimaryButton(
-          onPressed: () => pumpDataNotifier.savePumpData(context, validation.isFormValid),
+          onPressed: () {
+            ref.read(isSubmittingProvider.notifier).state = true;
+            final isValid = validation.isFormValid;
+            pumpDataNotifier.savePumpData(context, isValid); 
+          },
           label: 'Save',
           buttonColor: AppColors.greyColor,
         ),
