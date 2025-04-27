@@ -32,7 +32,7 @@ class ChartWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    double thresholdLimit = 0.900;
+    double thresholdLimit = 0.900; // 90% threshold limit for wear
     double? yIntercept = prediction.estimatedOperatingHours;
     final isVolumeFlow = pump.measurableParameter == MeasurableParameter.volumeFlow;
 
@@ -65,31 +65,6 @@ class ChartWidget extends ConsumerWidget {
     final xAxisEnd = (prediction.estimatedOperatingHours != null && prediction.estimatedOperatingHours! > lastHours)
         ? prediction.estimatedOperatingHours!
         : lastHours ?? 0.0;
-
-    final legendItems = [
-      LegendItem(
-        label: isVolumeFlow ? 'Q/n' : 'p/n',
-        color: Colors.blue,
-        isLine: true,
-      ),
-      LegendItem(
-        label: 'Regression',
-        color: Colors.grey,
-        isLine: true,
-      ),
-      LegendItem(
-        label: 'Threshold',
-        color: Colors.amber,
-        isLine: true,
-        isDashed: true,
-      ),
-      LegendItem(
-        label: 'Operating Hours',
-        color: Colors.black,
-        isLine: true,
-        isDashed: true,
-      ),
-    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,7 +103,30 @@ class ChartWidget extends ConsumerWidget {
             ),
           ),
         ),
-        LegendWidget(legendItems: legendItems),
+        LegendWidget(legendItems: [
+          LegendItem(
+            label: isVolumeFlow ? 'Q/n' : 'p/n',
+            color: Colors.blue,
+            isLine: true,
+          ),
+          LegendItem(
+            label: 'Regression',
+            color: Colors.grey,
+            isLine: true,
+          ),
+          LegendItem(
+            label: 'Threshold',
+            color: Colors.amber,
+            isLine: true,
+            isDashed: true,
+          ),
+          LegendItem(
+            label: 'Operating Hours',
+            color: Colors.black,
+            isLine: true,
+            isDashed: true,
+          ),
+        ]),
         const SizedBox(height: 10),
       ],
     );

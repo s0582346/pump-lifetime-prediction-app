@@ -46,6 +46,7 @@ class CustomLineChart extends StatelessWidget {
 
 
     List<FlSpot> yInterceptLine = [const FlSpot(0, 0)];
+   
     if (yIntercept != 0) {
       yInterceptLine = [
         // subtract the x-axis start from the y-intercept to get the correct x value
