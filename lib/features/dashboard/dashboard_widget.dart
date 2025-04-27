@@ -127,6 +127,6 @@ class DashboardWidget extends ConsumerWidget {
   }
 
   double _calculateMinY(double permissibleTotalWear) {
-    return 1 - (permissibleTotalWear / 100);
+    return .9 - (permissibleTotalWear / 100);
   }
 }

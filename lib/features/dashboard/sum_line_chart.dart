@@ -42,7 +42,7 @@ class SumLineChart extends StatelessWidget {
     final double adjustedMaxX = (difference < 10) ? 20 : (difference < 30) ? 30 : difference + 10; // some margin depending on the range
 
     final List<LineChartBarData> thresholdLines = _generateThresholdLines(adjustmentCount: adjustments.length, adjustedMaxX: adjustedMaxX);
-    final List<LineChartBarData> predictionLines = _generatePredictionLines(predictions: predictions, adjustments: adjustments,  xAxisStart: xAxisStart);
+    final List<LineChartBarData> predictionLines = _generatePredictionLines(predictions: predictions, adjustments: adjustments,  xAxisStart: xAxisStart, minY: minY);
 
     return LineChart(
       LineChartData(
@@ -172,9 +172,13 @@ class SumLineChart extends StatelessWidget {
     List<Prediction>? predictions,
     required List<Adjustment> adjustments,
     double xAxisStart = 0,
+    double minY = 0.3
   }) {
     double limit = 0.9;
     final List<LineChartBarData> predictionLines = [];
+    final count = adjustments.length;
+
+    print('Count: $count');
 
     if (predictions == null) return predictionLines;
 
@@ -191,7 +195,7 @@ class SumLineChart extends StatelessWidget {
       
       final List<FlSpot> predictionLine = [
         FlSpot(estimatedOperatingHours ?? 0, limit),
-        FlSpot(estimatedOperatingHours ?? 0, 0.2),
+        FlSpot(estimatedOperatingHours ?? 0, minY),
       ];
 
       predictionLines.add(
