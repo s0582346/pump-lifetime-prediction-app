@@ -96,7 +96,7 @@ class _SelectWidgetState<T extends Enum> extends State<SelectWidget<T>> {
                 ),
               ),
               decoration: InputDecoration(
-                errorText: widget.validator,
+                errorText: (widget.isSubmitting) ? widget.validator : null,
                 border: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.grey, width: 1),
                   borderRadius: BorderRadius.circular(3),

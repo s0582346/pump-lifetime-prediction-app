@@ -106,7 +106,7 @@ class DashboardWidget extends ConsumerWidget {
               grayLineSpots: regression ?? [],
               xAxisStart: firstMeasurement?.currentOperatingHours.toDouble() ?? 0.0,
               xAxisEnd: xAxisEnd,
-              minY: 0.2,
+              minY: _calculateMinY(pump.permissibleTotalWear),
               maxY: 1.1,
               yInterval: 0.1,
               adjustments: adjustments,
@@ -124,5 +124,9 @@ class DashboardWidget extends ConsumerWidget {
         const SizedBox(height: 20),
       ]
     );
+  }
+
+  double _calculateMinY(double permissibleTotalWear) {
+    return 1 - (permissibleTotalWear / 100);
   }
 }

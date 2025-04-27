@@ -8,7 +8,6 @@ class InputWidget extends StatefulWidget {
   final String placeholder;
   final TextInputType keyboardType;
   final validator;
-  final isSubmitting;
 
   const InputWidget({
     super.key,
@@ -18,7 +17,6 @@ class InputWidget extends StatefulWidget {
     required this.onChanged,
     this.keyboardType = TextInputType.text,
     this.validator,
-    this.isSubmitting = false,
   });
 
   @override

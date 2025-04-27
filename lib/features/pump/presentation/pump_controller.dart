@@ -40,7 +40,6 @@ class PumpController extends Notifier<Pump> {
 
   Future<void> savePumpData(BuildContext context, isValid) async {
     final ref = this.ref;
-    ref.read(isSubmittingProvider.notifier).state = true;
     FocusManager.instance.primaryFocus?.unfocus(); // Close keyboard
     ResultInfo? result;
 
@@ -109,7 +108,6 @@ final isSubmittingProvider = StateProvider<bool>((ref) => false);
 final pumpValidationProvider = Provider<PumpValidationState>((ref) {
   final pump = ref.watch(pumpFormProvider);
   const errorEmptyMessage = 'This field is required';
-  final isSubmitting = ref.watch(isSubmittingProvider);
 
   String? validateName(String? name) {
     if (name == null || name.trim().isEmpty) {
@@ -162,8 +160,8 @@ final pumpValidationProvider = Provider<PumpValidationState>((ref) {
       return 'Please enter a valid number';
     }
 
-    if (intValue < 10 || intValue > 100) {
-      return 'Please enter a value between 10 and 100';
+    if (intValue < 10 || intValue > 90) {
+      return 'Please enter a value between 10 and 90';
     }
 
     if (intValue % 10 != 0) {
@@ -182,14 +180,14 @@ final pumpValidationProvider = Provider<PumpValidationState>((ref) {
     return null;
   }
 
-  return isSubmitting ? PumpValidationState(
+  return PumpValidationState(
     nameError: validateName(pump.name),
     pumpTypeError: validatePumpType(pump.type?.label),
     solidConcentrationError: validateSolidConcentration(pump.solidConcentration),
     measurableParameterError: validateMeasurableParameter(pump.measurableParameter?.label),
     persmissibleTotalWearError: validatePermissibleTotalWear(pump.permissibleTotalWear),
     typeOfTimeEntryError: validateTypeOfTimeEntry(pump.typeOfTimeEntry?.label),
-  ) : const PumpValidationState();
+  );
 });
 
 
