@@ -68,11 +68,18 @@ class _InputWidgetState extends State<InputWidget> {
           ),
           SizedBox(
             height: 40,
-            child:
-              TextFormField(
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                textSelectionTheme: const TextSelectionThemeData(
+                  selectionColor: AppColors.greyColor,
+                  cursorColor: AppColors.primaryColor,
+                  selectionHandleColor: AppColors.primaryColor
+                ),
+              ),
+              child: TextFormField(
               controller: _controller,
               onChanged: widget.onChanged,
-              //validator: (value) => widget.validator,
+              cursorColor: AppColors.primaryColor,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 hintText: widget.placeholder,
@@ -98,6 +105,7 @@ class _InputWidgetState extends State<InputWidget> {
               ),
               style: const TextStyle(fontSize: 14, color: Colors.black),
               keyboardType: widget.keyboardType,
+            ),
             ),
           ),
 

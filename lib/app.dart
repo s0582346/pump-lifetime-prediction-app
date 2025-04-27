@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_predictive_maintenance_app/constants/app_colors.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/presentation/initial_screen.dart';
 
 class MyApp extends StatelessWidget {
