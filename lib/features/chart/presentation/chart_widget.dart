@@ -90,7 +90,7 @@ class ChartWidget extends ConsumerWidget {
           ),
         ),
         SizedBox(
-          height: 275,
+          height: 300,
           width: double.infinity,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(2, 20, 20, 20),
