@@ -34,7 +34,7 @@ class MeasurementService {
       // Initialize variables with default values
       Measurement? reference, referenceTotal;
       double? Qn, pn, QnTotal, pnTotal;
-      double? currentOperatingHours = double.tryParse(newMeasurement.currentOperatingHours) ?? 0.0; // default current operating hours from the new measurement
+      double? currentOperatingHours = newMeasurement.currentOperatingHours != null ? double.tryParse(newMeasurement.currentOperatingHours) : 0.0; // default current operating hours from the new measurement
       final isVolumeFlow = pump.measurableParameter == MeasurableParameter.volumeFlow;
       final previousEntry = measurementsTotal.isNotEmpty ? (getPreviousEntry(measurementsTotal, newMeasurement.id) ?? measurementsTotal.last) : null; // get the previous entry for the current adjustment
 
@@ -48,7 +48,7 @@ class MeasurementService {
         if (newDateOnly.isBefore(prevDateOnly)) {
           return ResultInfo.error('date', 'This date comes before your last entry. Do you still want to proceed?');
         }
-        if (int.parse(newMeasurement.currentOperatingHours) < previousEntry.currentOperatingHours) {
+        if (newMeasurement.currentOperatingHours != null && int.parse(newMeasurement.currentOperatingHours) < previousEntry.currentOperatingHours) {
           return ResultInfo.error('operatingHours', 'This value is less than your last recorded operating hours. Do you still want to proceed?');
         }
       }
@@ -147,6 +147,7 @@ class MeasurementService {
       return ResultInfo.success();
     } catch (e, stack) {
       print('Error saving measurement: $e');
+      print(stack);
       Utils().logError(e, stack);
       return ResultInfo.error(null, 'Error saving measurement');
     }

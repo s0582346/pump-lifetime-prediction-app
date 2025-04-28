@@ -123,7 +123,7 @@ class Utils {
       return 0;
     }
 
-    final dayDiff = currentDate.difference(lastDate).inHours / 24;
+    final dayDiff = currentDate.difference(lastDate).inDays.toDouble();
     
     if (dayDiff <= 0) {
       return 0;
