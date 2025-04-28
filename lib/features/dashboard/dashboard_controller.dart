@@ -36,10 +36,18 @@ class DashboardController extends AsyncNotifier<DashboardState> {
       adjustments = await _adjustmentService.fetchAdjustmentsByPumpId(pump.id);
       adjustments = adjustments.where((a) => a.id != '${pump.id}-S').toList(); // first adjustment is the sum of all adjustments, so we skip it
 
+      final predictionTotal = predictions.firstWhere(
+        (p) => p.adjusmentId == '${pump.id}-S',
+        orElse: () => Prediction(),
+      );
+
+      final filteredPredictions = predictions.where((p) => p.adjusmentId != '${pump.id}-S').toList();
+
       return DashboardState(
         measurements: measurements,
         adjustments: adjustments,
-        predictions: predictions,
+        predictions: filteredPredictions,
+        predictionTotal: predictionTotal,
       );
     
     } catch (e, stack) {
@@ -58,24 +66,29 @@ class DashboardState {
   final List<Measurement>? measurements;
   final List<Adjustment> adjustments;
   final List<Prediction>? predictions;
+  final Prediction? predictionTotal;
 
   DashboardState({
     List<Measurement>? measurements,
     List<Adjustment>? adjustments,
     List<Prediction>? predictions,
+    Prediction? predictionTotal,
   })  : measurements = measurements ?? [],
         predictions = predictions ?? [],
-        adjustments = adjustments ?? [];
+        adjustments = adjustments ?? [],
+        predictionTotal = predictionTotal ?? Prediction();
 
   DashboardState copyWith({
     List<Measurement>? measurements,
     List<Adjustment>? adjustments,
     List<Prediction>? predictions,
+    Prediction? predictionTotal,
   }) {
     return DashboardState(
       measurements: measurements ?? this.measurements,
       adjustments: adjustments ?? this.adjustments,
       predictions: predictions ?? this.predictions,
+      predictionTotal: predictionTotal ?? this.predictionTotal,
     );
   }
 }

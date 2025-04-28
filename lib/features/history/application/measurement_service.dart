@@ -48,7 +48,7 @@ class MeasurementService {
         if (newDateOnly.isBefore(prevDateOnly)) {
           return ResultInfo.error('date', 'This date comes before your last entry. Do you still want to proceed?');
         }
-        if (newMeasurement.currentOperatingHours != null && int.parse(newMeasurement.currentOperatingHours) < previousEntry.currentOperatingHours) {
+        if (newMeasurement.currentOperatingHours != null && pump.typeOfTimeEntry != TimeEntry.relative && int.parse(newMeasurement.currentOperatingHours) < previousEntry.currentOperatingHours) {
           return ResultInfo.error('operatingHours', 'This value is less than your last recorded operating hours. Do you still want to proceed?');
         }
       }

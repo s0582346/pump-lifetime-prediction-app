@@ -43,16 +43,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         final measurements = data.measurements;
         final predictions = data.predictions;
         final adjustments = data.adjustments;
-        
-        // Get the total prediction
-        Prediction? predictionTotal;
-        if (predictions != null && predictions.isNotEmpty) {
-          predictionTotal = predictions.firstWhere(
-          (p) => p.adjusmentId == '${pump!.id}-S',
-          orElse: () => Prediction(),
-          );
-        }
-
+        final predictionTotal = data.predictionTotal;
+       
         // Get the regression spots for the chart
         List<FlSpot> regressionSpots = [];
         if (predictionTotal?.a != null && measurements!.isNotEmpty) {
@@ -61,7 +53,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             predictionTotal.b, 
             predictionTotal.c,
             start: measurements.first.currentOperatingHours.toDouble(),
-            end: predictionTotal.estimatedOperatingHours ?? measurements.last.currentOperatingHours.toDouble(),
+            end: predictions!.last.estimatedOperatingHours ?? measurements.last.currentOperatingHours.toDouble(),
             targetY: 0.0,
           );
         }

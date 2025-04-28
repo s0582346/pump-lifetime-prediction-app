@@ -133,38 +133,7 @@ class Utils {
     
     return currentOperatingHours;
   }
-
-  /// -> Estimate Daily Usage
-  /// Calculate the average operating hours per day based on the start operating hours,
-  /// current operating hours, current date and last date
-  double? calculateAverageOperatingHoursPerDay({
-    required int startOperatingHours,
-    required int currentOperatingHours,
-    required DateTime startDate,
-    required DateTime currentDate,
-  }) {
-
-    print("is start bigger than current: ${startOperatingHours >= currentOperatingHours}");
-    // Ensure we don't have illogical inputs
-    if (startOperatingHours >= currentOperatingHours) {
-      return null;
-    }
-
-    // Compute fractional day difference
-    final double dayDiff = currentDate.difference(startDate).inHours / 24;
-
-    print("dayDiff: $dayDiff");
-
-    // If dayDiff is 0, it means either same day or timestamps are identical
-    if (dayDiff <= 0) {
-      return null;
-    }
-
-    final double average = (currentOperatingHours - startOperatingHours) / dayDiff;
-    print("average: $average");
-    return average; 
-  }
-
+  
   // Generate a list of FlSpot objects based on a quadratic function
   List<FlSpot> generateQuadraticSpots(
   double a,
