@@ -164,7 +164,8 @@ List<double> findIntersectionAtY(double a, double b, double c, double targetY) {
     if (lastMeasurement == null) {
       return null; // No measurements available
     }
-    final ratio = (lastMeasurement.Qn ?? lastMeasurement.pn) * 1000;
+
+    final ratio = (lastMeasurement.Qn != 0 ? lastMeasurement.Qn : lastMeasurement.pn) * 1000;
 
     final wearPercentage = (ratio / 1000) * 100;
 
