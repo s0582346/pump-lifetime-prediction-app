@@ -22,7 +22,6 @@ NETZSCH pumps, particularly those with the patented xLC® stator adjustment syst
 
 This app is part of a Bachelor's thesis project in collaboration with NETZSCH Pumps & Systems GmbH, and builds upon prior research including:
 
-- Tribological wear analysis using Miller and ROG tribometers
 - Laboratory data from NETZSCH’s Technikum
 - The xLC® stator adjustment system and its influence on pump performance and wear
 
