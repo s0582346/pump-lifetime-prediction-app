@@ -146,8 +146,6 @@ class MeasurementService {
 
       return ResultInfo.success();
     } catch (e, stack) {
-      print('Error saving measurement: $e');
-      print(stack);
       Utils().logError(e, stack);
       return ResultInfo.error(null, 'Error saving measurement');
     }

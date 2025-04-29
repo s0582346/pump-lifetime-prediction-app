@@ -138,6 +138,7 @@ class SumLineChart extends StatelessWidget {
     );
   }
 
+  /// Generates threshold lines based on the number of adjustments and the maximum X value.
   List<LineChartBarData> _generateThresholdLines({
     required int adjustmentCount,
     required double adjustedMaxX,
@@ -168,6 +169,9 @@ class SumLineChart extends StatelessWidget {
   return thresholdLines;
   }
 
+  /// Generates prediction lines based on the provided predictions and adjustments.
+  /// The function iterates through the adjustments and finds the corresponding prediction for each adjustment.
+  /// Based on the estemated operating hours from the prediction, it creates a line that spans from the maximum Y value to the minimum Y value.
   List<LineChartBarData> _generatePredictionLines({
     List<Prediction>? predictions,
     required List<Adjustment> adjustments,

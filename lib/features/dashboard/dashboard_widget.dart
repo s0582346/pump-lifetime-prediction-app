@@ -126,6 +126,9 @@ class DashboardWidget extends ConsumerWidget {
     );
   }
 
+
+  /// Calculates the minimum Y value for the chart based on the permissible total wear.
+  /// It ensures that the minimum Y value is slightly below the permissible total wear percentage.
   double _calculateMinY(double permissibleTotalWear) {
     return .9 - (permissibleTotalWear / 100);
   }

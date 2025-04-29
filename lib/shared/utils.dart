@@ -92,16 +92,6 @@ class Utils {
     return 0.0;
   }
 
-  void showError(String message, {BuildContext? context}) {
-    if (context != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
-    } else {
-      debugPrint("Error: $message");
-    }
-  }
-
   /// Log error to a file in the app's documents directory
   Future<void> logError(Object error, StackTrace stackTrace) async {
     final dir = await getApplicationDocumentsDirectory();

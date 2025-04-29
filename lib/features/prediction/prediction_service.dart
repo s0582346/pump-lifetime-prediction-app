@@ -171,8 +171,6 @@ Future<void> predictTotal(Pump pump) async {
   final b = coeffs.length > 1 ? coeffs[1] : 0.0;
   final c = coeffs.length > 0 ? coeffs[0] : 0.0;
 
-  //print('${a}x^2 + ${b}x + ${c}');
-
   prediction = prediction.copyWith(
     adjusmentId: adjustmentId,
     a: a,
