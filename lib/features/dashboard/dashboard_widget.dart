@@ -92,6 +92,10 @@ class DashboardWidget extends ConsumerWidget {
           value: pump.medium,
         ),
         PropertyWidget(
+          label: 'Viscosity',
+          value: pump.viscosityLevel!.label,
+        ),
+        PropertyWidget(
           label: 'Type Of Time Entry',
           value: pump.typeOfTimeEntry!.label.replaceAll('per day', ''),
         ),

@@ -3,6 +3,7 @@ import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump_typ
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/rotor_geometry.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/rotor_stages.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/time_entry.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/viscosity_level.dart';
 import 'package:flutter_predictive_maintenance_app/shared/utils.dart';
 
 class Pump {
@@ -14,6 +15,7 @@ class Pump {
   final RotorStages? numberOfStages;
   final speedChange; // Drehzahländerung
   final medium;
+  final ViscosityLevel? viscosityLevel; // watery, low, medium, high
   final MeasurableParameter? measurableParameter; // volume flow or pressure
   final permissibleTotalWear; // percent
   final solidConcentration; // percent
@@ -27,6 +29,7 @@ class Pump {
     this.numberOfStages,
     this.speedChange,
     this.medium,
+    this.viscosityLevel,
     this.measurableParameter,
     this.permissibleTotalWear,
     this.solidConcentration,
@@ -41,6 +44,7 @@ class Pump {
     numberOfStages,
     speedChange,
     medium,
+    viscosityLevel,
     measurableParameter,
     permissibleTotalWear,
     solidConcentration,
@@ -54,6 +58,7 @@ class Pump {
       numberOfStages: numberOfStages ?? this.numberOfStages,
       speedChange: speedChange ?? this.speedChange,
       medium: medium ?? this.medium,
+      viscosityLevel: viscosityLevel ?? this.viscosityLevel,
       measurableParameter: measurableParameter ?? this.measurableParameter,
       permissibleTotalWear: permissibleTotalWear ?? this.permissibleTotalWear,
       solidConcentration: solidConcentration ?? this.solidConcentration,
@@ -71,6 +76,7 @@ class Pump {
       'numberOfStages': numberOfStages.toString(),
       'speedChange': speedChange,
       'medium': medium,
+      'viscosityLevel': viscosityLevel.toString(),
       'measurableParameter': measurableParameter.toString(),
       'permissibleTotalWear': Utils().convertToInt(permissibleTotalWear, factor: 100),
       'solidConcentration': solidConcentration,
@@ -87,6 +93,7 @@ class Pump {
       numberOfStages: RotorStages.fromString(map['numberOfStages']),
       speedChange: map['speedChange'],
       medium: map['medium'],
+      viscosityLevel: ViscosityLevel.fromString(map['viscosityLevel']),
       measurableParameter: MeasurableParameter.fromString(map['measurableParameter']),
       permissibleTotalWear: (map['permissibleTotalWear']).toInt() / 100,
       solidConcentration: map['solidConcentration'],

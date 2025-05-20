@@ -4,6 +4,7 @@ import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump_typ
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/rotor_geometry.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/rotor_stages.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/time_entry.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/viscosity_level.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/presentation/pump_controller.dart';
 import 'package:flutter_predictive_maintenance_app/shared/components/input_widget.dart';
@@ -61,7 +62,14 @@ class PumpFormWidget extends ConsumerWidget {
           onChanged: (value) => pumpDataNotifier.medium = value,
           keyboardType: TextInputType.text,
         ),
-         InputWidget(
+        SelectWidget<ViscosityLevel>(
+          label: 'Viscosity',
+          selectedValue: pumpDataState.viscosityLevel,
+          onChanged: (value) => pumpDataNotifier.viscosityLevel = value,
+          items: ViscosityLevel.values,
+          itemLabelBuilder: (level) => level.label,
+        ),
+        InputWidget(
           label: 'Solid Concentration [%]',
           placeholder: 'z.B. 30%',
           initialValue: pumpDataState.solidConcentration,
