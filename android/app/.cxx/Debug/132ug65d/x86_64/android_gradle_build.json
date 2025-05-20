@@ -1,0 +1,28 @@
+{
+  "buildFiles": [
+    "C:\\Users\\paolo\\OneDrive\\Dokumente\\Coding projects\\Flutter projects\\flutter\\packages\\flutter_tools\\gradle\\src\\main\\groovy\\CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\paolo\\AppData\\Local\\Android\\sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-C",
+      "C:\\Users\\paolo\\OneDrive\\Dokumente\\HTW-Berlin\\7.Semester\\Netzsch\\App\\bachelorarbeit_paolo\\pump-lifetime-prediction-app\\android\\app\\.cxx\\Debug\\132ug65d\\x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\paolo\\AppData\\Local\\Android\\sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-C",
+    "C:\\Users\\paolo\\OneDrive\\Dokumente\\HTW-Berlin\\7.Semester\\Netzsch\\App\\bachelorarbeit_paolo\\pump-lifetime-prediction-app\\android\\app\\.cxx\\Debug\\132ug65d\\x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {},
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "C:\\Users\\paolo\\AppData\\Local\\Android\\Sdk\\ndk\\25.1.8937393\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang.exe",
+      "cppCompilerExecutable": "C:\\Users\\paolo\\AppData\\Local\\Android\\Sdk\\ndk\\25.1.8937393\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": []
+}
