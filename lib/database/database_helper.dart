@@ -46,6 +46,7 @@ class DatabaseHelper {
         numberOfStages TEXT,
         speedChange TEXT,
         medium TEXT,
+        viscosityLevel TEXT,
         measurableParameter TEXT NOT NULL,
         permissibleTotalWear INTEGER NOT NULL,
         typeOfTimeEntry TEXT NOT NULL,

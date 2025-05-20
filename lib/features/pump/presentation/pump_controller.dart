@@ -7,6 +7,7 @@ import 'package:flutter_predictive_maintenance_app/features/pump/domain/pump_typ
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/rotor_geometry.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/rotor_stages.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/domain/time_entry.dart';
+import 'package:flutter_predictive_maintenance_app/features/pump/domain/viscosity_level.dart';
 import 'package:flutter_predictive_maintenance_app/features/pump/presentation/pump_validation_state.dart';
 import 'package:flutter_predictive_maintenance_app/shared/result_info.dart';
 import 'package:flutter_predictive_maintenance_app/shared/widgets/alert_widget.dart';
@@ -29,6 +30,7 @@ class PumpController extends Notifier<Pump> {
   set numberOfStages(RotorStages? value) => state = state.copyWith(numberOfStages: value);
   set speedChange(String? value) => state = state.copyWith(speedChange: value);
   set medium(String? value) => state = state.copyWith(medium: value);
+  set viscosityLevel(ViscosityLevel? value) => state = state.copyWith(viscosityLevel: value);
   set measurableParameter(MeasurableParameter? value) {
     state = state.copyWith(measurableParameter: value);
   } 
@@ -100,7 +102,6 @@ final pumpFormProvider = NotifierProvider<PumpController, Pump>(() => PumpContro
 final pumpsProvider = FutureProvider<List<Pump>>((ref) async {
   return await ref.read(pumpServiceProvider).getPumps();
 });
-
 
 final isSubmittingProvider = StateProvider<bool>((ref) => false);
 
