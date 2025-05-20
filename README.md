@@ -14,8 +14,7 @@ NETZSCH pumps, particularly those with the patented xLC® stator adjustment syst
 🧠 Technology Stack
 
 - Frontend: Flutter + Riverpod architecture
-- Backend/Logic: Dart-based regression models
-- Data Handling: Persisted user inputs for tracking operational history
+- Backend/Logic: Dart-based regression model
 - Architecture: Inspired by Clean Architecture — domain, data, application, and presentation layers
 
 📚 Background
